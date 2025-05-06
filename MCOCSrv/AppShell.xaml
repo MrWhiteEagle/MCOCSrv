@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="MCOCSrv.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:MCOCSrv"
+    Shell.FlyoutBehavior="Flyout"
+    Title="MCOCSrv">
+
+    <FlyoutItem Title="Home" Icon="home_icon.png">
+		<ShellContent
+			ContentTemplate="{DataTemplate local:MainPage}"
+			Route="MainPage" />
+    </FlyoutItem>
+    <FlyoutItem Title="Instances" Icon="instance_icon.png">
+        <ShellContent
+            ContentTemplate="{DataTemplate local:InstancePage}"
+            Route="InstancePage" />
+    </FlyoutItem>
+    <FlyoutItem Title="Console" Icon="console_icon.png">
+        <ShellContent
+        ContentTemplate="{DataTemplate local:ConsolePage}"
+        Route="ConsolePage" />
+    </FlyoutItem>
+    <FlyoutItem Title="Settings" Icon="settings_icon.png">
+        <ShellContent
+    ContentTemplate="{DataTemplate local:SettingsPage}"
+    Route="SettingsPage" />
+    </FlyoutItem>
+    <FlyoutItem Title="About" Icon="about_icon.png">
+        <ShellContent
+    ContentTemplate="{DataTemplate local:AboutPage}"
+    Route="AboutPage" />
+    </FlyoutItem>
+</Shell>

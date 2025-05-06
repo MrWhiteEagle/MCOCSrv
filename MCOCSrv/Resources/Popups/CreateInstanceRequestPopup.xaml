@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MCOCSrv.Resources.Raw"
+             x:Class="MCOCSrv.Resources.Popups.CreateInstanceRequestPopup"
+             IsVisible="False"
+             InputTransparent="True">
+    <Border Stroke="#8C1AF6" HeightRequest="600" WidthRequest="450" BackgroundColor="{StaticResource Gray900}">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="10"/>
+        </Border.StrokeShape>
+        <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="Fill" Spacing="15" Padding="10">
+            <Label Text="New Instance" Style="{StaticResource TitleHeadLine}" FontSize="18"/>
+            <Label 
+                Text="Name Instance:"
+                HorizontalTextAlignment="Center"
+                />
+            <Entry x:Name="InstanceNameField" WidthRequest="400"/>
+            <BoxView HeightRequest="10"/>
+            <Label
+                Text="Pick type:"
+                HorizontalTextAlignment="Center"
+                />
+            <Picker x:Name="InstanceTypeField" WidthRequest="400" ItemsSource="{x:Static local:InstanceTypes.All}"/>
+            <Label Text="Version:" HorizontalTextAlignment="Center"/>
+            <Entry x:Name="InstanceTypeVersionField" WidthRequest="400"/>
+            <BoxView HeightRequest="10"/>
+            <HorizontalStackLayout HorizontalOptions="Start" Spacing="10" Padding="20,0">
+                <Label Grid.Column="0" Text="Use custom path?" VerticalTextAlignment="Center"/>
+                <CheckBox Grid.Column="1" x:Name="CustomPathCheckbox" IsChecked="False" CheckedChanged="CustomPathCheckbox_CheckedChanged"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Spacing="10" Padding="20">
+                <Entry x:Name="CustomPathField" HorizontalOptions="Start" WidthRequest="300"/>
+                <Button x:Name="CustomPathSelectorButton" HorizontalOptions="End" Text="Browse" Clicked="CustomPathSelectorButton_Clicked" IsEnabled="False"/>
+            </HorizontalStackLayout>
+            <Grid
+                RowDefinitions="Auto"
+                HorizontalOptions="Fill"
+                Padding="30,0">
+                <Button Grid.Row="0" x:Name="CancedAddInstanceButton" Style="{StaticResource CancelButton}" Text="Cancel" Clicked="onCancel" HorizontalOptions="Start"/>
+                <Button Grid.Row="1" x:Name="AddInstanceButtonConfirm" Style="{StaticResource AddNewButton}" Text="Confirm" Clicked="onConfirm" HorizontalOptions="End"/>
+            </Grid>
+        </VerticalStackLayout>
+    </Border>
+</ContentView>
