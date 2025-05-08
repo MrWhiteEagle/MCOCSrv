@@ -58,6 +58,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Resources\Raw\InstanceSource.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Resources\Images\Icons\about_icon.svg" />
 	  <None Remove="Resources\Images\Icons\console_icon.svg" />
 	  <None Remove="Resources\Images\Icons\home_icon.svg" />
@@ -108,6 +112,11 @@
 
 	<ItemGroup>
 	  <Folder Include="Resources\Data\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiAsset Include="Resources\Classes\InstanceSource.cs" />
+	  <MauiAsset Include="Resources\Classes\InstanceTypes.cs" />
 	</ItemGroup>
 
 </Project>
