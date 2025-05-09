@@ -115,7 +115,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiAsset Include="Resources\Classes\InstanceSource.cs" />
+	  <MauiAsset Include="Resources\Classes\ServerVersionFetcher.cs" />
 	  <MauiAsset Include="Resources\Classes\InstanceTypes.cs" />
 	</ItemGroup>
 

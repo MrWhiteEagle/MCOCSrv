@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using MCOCSrv.Resources.Classes;
 using Microsoft.Extensions.Logging;
 
 namespace MCOCSrv;
@@ -7,6 +8,8 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+
+        Global.EnsurePathsExist();
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()

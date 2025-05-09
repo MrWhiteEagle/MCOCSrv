@@ -6,7 +6,6 @@
         Forge,
         Neoforge,
         Fabric,
-        Quilt,
         Paper,
         Purpur,
         Sponge
@@ -22,7 +21,6 @@
             "Forge" => InstanceType.Forge,
             "Neoforge" => InstanceType.Neoforge,
             "Fabric" => InstanceType.Fabric,
-            "Quilt" => InstanceType.Quilt,
             "Paper" => InstanceType.Paper,
             "Purpur" => InstanceType.Purpur,
             "Sponge" => InstanceType.Sponge
@@ -34,7 +32,6 @@
             InstanceType.Forge => "Forge",
             InstanceType.Neoforge => "Neoforge",
             InstanceType.Fabric => "Fabric",
-            InstanceType.Quilt => "Quilt",
             InstanceType.Paper => "Paper",
             InstanceType.Purpur => "Purpur",
             InstanceType.Sponge => "Sponge"
