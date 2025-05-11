@@ -5,7 +5,7 @@
              x:Class="MCOCSrv.Resources.Popups.CreateInstanceRequestPopup"
              IsVisible="False"
              InputTransparent="True">
-    <Border Stroke="#8C1AF6" HeightRequest="600" WidthRequest="450" BackgroundColor="{StaticResource Gray900}">
+    <Border Stroke="{StaticResource Primary}" HeightRequest="600" WidthRequest="450" BackgroundColor="{StaticResource Gray900}">
         <Border.StrokeShape>
             <RoundRectangle CornerRadius="10"/>
         </Border.StrokeShape>

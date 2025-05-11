@@ -1,6 +1,7 @@
 using CommunityToolkit.Maui.Storage;
 using MCOCSrv.Resources.Models;
 using MCOCSrv.Resources.Raw;
+using System.Diagnostics;
 
 namespace MCOCSrv.Resources.Popups;
 
@@ -29,7 +30,7 @@ public partial class CreateInstanceRequestPopup : ContentView
         }
         else
         {
-            Console.WriteLine("not all field are correctly filled!");
+            Debug.WriteLine("not all fields are correctly filled!");
         }
     }
 

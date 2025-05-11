@@ -1,4 +1,5 @@
 ﻿using MCOCSrv.Resources.Raw;
+using System.Diagnostics;
 using System.Text.Json;
 namespace MCOCSrv.Resources.Models
 {
@@ -44,7 +45,7 @@ namespace MCOCSrv.Resources.Models
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error writing instance File: {ex.Message}");
+                Debug.WriteLine($"Error writing instance File: {ex.Message}");
             }
         }
 
@@ -65,7 +66,7 @@ namespace MCOCSrv.Resources.Models
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error reading or pushing instances file: {ex}");
+                    Debug.WriteLine($"Error reading or pushing instances file: {ex}");
                 }
             }
             else
@@ -80,7 +81,7 @@ namespace MCOCSrv.Resources.Models
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to create and write instances file: {ex}");
+                    Debug.WriteLine($"Failed to create and write instances file: {ex}");
                 }
             }
 

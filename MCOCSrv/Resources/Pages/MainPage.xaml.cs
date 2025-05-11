@@ -1,13 +1,38 @@
-﻿namespace MCOCSrv
+﻿using MCOCSrv.Resources.Classes;
+using System.Diagnostics;
+
+namespace MCOCSrv
 {
     public partial class MainPage : ContentPage
     {
+        private readonly ServerVersionFetcher serverVersionFetcher;
         int count = 0;
         int textID = 0;
 
-        public MainPage()
+        public MainPage(ServerVersionFetcher serverVersionFetcher)
         {
             InitializeComponent();
+            this.serverVersionFetcher = serverVersionFetcher;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            Debug.WriteLine("[MCOCSrv] Loaded Main App");
+
+            try
+            {
+                Debug.WriteLine("[MCOCSrv] Trying Fetch....");
+                LoadingSourcePopup.IsVisible = true;
+                await serverVersionFetcher.initializeSources();
+                LoadingSourcePopup.IsVisible = false;
+            }
+            catch (Exception ex)
+            {
+                LoadingSourcePopup.IsVisible = false;
+                await DisplayAlert("[MCOCSrv] Error fetching sources!", $"Caught exception: {ex.Message}", "Got it");
+            }
         }
 
         private void OnCounterClicked(object sender, EventArgs e)
@@ -23,7 +48,7 @@
         }
 
         private void ChangeText(object sender, EventArgs e)
-        {   
+        {
             if (textID == 0)
             {
                 textID = 1;
@@ -34,7 +59,7 @@
                 textID = 0;
                 ChangingText.Text = "But it's still a .NET MAUI APP!";
             }
-            
+
         }
     }
 

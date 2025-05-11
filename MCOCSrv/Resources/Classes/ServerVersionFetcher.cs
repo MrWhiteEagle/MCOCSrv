@@ -1,5 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Text.Json;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace MCOCSrv.Resources.Classes
 {
@@ -12,12 +14,67 @@ namespace MCOCSrv.Resources.Classes
         private Dictionary<string, string> Fabric = new Dictionary<string, string>();
         private Dictionary<string, string> Paper = new Dictionary<string, string>();
         private Dictionary<string, string> Purpur = new Dictionary<string, string>();
-        private Dictionary<string, string> Pponge = new Dictionary<string, string>();
+        private Dictionary<string, string> Sponge = new Dictionary<string, string>();
         private HttpClient client;
 
         public ServerVersionFetcher()
         {
             this.client = new HttpClient();
+        }
+
+        public async Task initializeSources()
+        {
+            Debug.WriteLine($"[SERVER FETCHER] FETCH - START");
+            try
+            {
+                await FetchVanilla(client);
+                await FetchForge();
+                await FetchNeoForge(client);
+                await FetchFabric(client);
+                await FetchPaper(client);
+                await FetchPurpur(client);
+                await FetchSponge(client);
+                await SaveSources();
+                Debug.WriteLine($"[SERVER FETCHER] FETCH - FINISH");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[SERVER FETCHER] FETCH - FAIL");
+            }
+
+        }
+        private async Task SaveSources()
+        {
+            JsonSerializerOptions options = new JsonSerializerOptions() { WriteIndented = true };
+            try
+            {
+                string VanillaJson = JsonSerializer.Serialize(this.Vanilla, options);
+                string ForgeJson = JsonSerializer.Serialize(this.Forge, options);
+                string NeoForgeJson = JsonSerializer.Serialize(this.NeoForge, options);
+                string FabricJson = JsonSerializer.Serialize(this.Fabric, options);
+                string PaperJson = JsonSerializer.Serialize(this.Paper, options);
+                string PurpurJson = JsonSerializer.Serialize(this.Purpur, options);
+                string SpongeJson = JsonSerializer.Serialize(this.Sponge, options);
+
+                try
+                {
+                    await File.WriteAllTextAsync(Path.Combine(Global.AppDataSourcesPath, "serversource-vanilla.json"), VanillaJson);
+                    await File.WriteAllTextAsync(Path.Combine(Global.AppDataSourcesPath, "serversource-forge.json"), ForgeJson);
+                    await File.WriteAllTextAsync(Path.Combine(Global.AppDataSourcesPath, "serversource-neoforge.json"), NeoForgeJson);
+                    await File.WriteAllTextAsync(Path.Combine(Global.AppDataSourcesPath, "serversource-fabric.json"), FabricJson);
+                    await File.WriteAllTextAsync(Path.Combine(Global.AppDataSourcesPath, "serversource-paper.json"), PaperJson);
+                    await File.WriteAllTextAsync(Path.Combine(Global.AppDataSourcesPath, "serversource-purpur.json"), PurpurJson);
+                    await File.WriteAllTextAsync(Path.Combine(Global.AppDataSourcesPath, "serversource-sponge.json"), SpongeJson);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[SERVER FETCHER] Failed to write source file: {ex.Message}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[SERVER FETCHER] Failed to serialize dictionary: {ex.Message}");
+            }
         }
 
         private async Task FetchVanilla(HttpClient client)
@@ -44,22 +101,21 @@ namespace MCOCSrv.Resources.Classes
                         {
                             id = $"{id}--snapshot";
                         }
-                        Console.WriteLine($"[VANILLA FETCH] Found server file for {id}!");
+                        Debug.WriteLine($"[VANILLA FETCH] Found: {id}");
                         Vanilla[id] = serverUrl.GetString();
                     }
                     else
                     {
-                        Console.WriteLine($"[VANILLA FETCH] No server for {id}.");
+                        Debug.WriteLine($"[VANILLA FETCH] No server for {id}.");
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[VANILLA FETCH] Error fetching data for {id}.");
+                    Debug.WriteLine($"[VANILLA FETCH] Error fetching data for {id}.");
                 }
             }
-
-
+            Debug.WriteLine("[VANILLA FETCH] DONE");
         }
 
         private async Task FetchForge()
@@ -73,23 +129,24 @@ namespace MCOCSrv.Resources.Classes
                     Forge = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
                     if (Forge == null || Forge.Count == 0)
                     {
-                        Console.WriteLine("[FORGE FETCH] Manifest was read, but is empty/null!");
+                        Debug.WriteLine("[FORGE FETCH] Manifest was read, but is empty/null!");
                     }
                     else
                     {
-                        Console.WriteLine($"[FORGE FETCH] Succesfully got manifest! Versions: {Forge.Count}");
+                        Debug.WriteLine($"[FORGE FETCH] Succesfully got manifest! Versions: {Forge.Count}");
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[FORGE FETCH] Couldn't read manifest source file! {ex.Message}");
+                    Debug.WriteLine($"[FORGE FETCH] Couldn't read manifest source file! {ex.Message}");
                 }
             }
             else
             {
-                Console.WriteLine($"[FORGE FETCH] Manifest file doesn't exist!");
+                Debug.WriteLine($"[FORGE FETCH] Manifest file doesn't exist!");
             }
+            Debug.WriteLine("[FORGE FETCH] DONE");
         }
 
         private async Task FetchNeoForge(HttpClient client)
@@ -107,13 +164,14 @@ namespace MCOCSrv.Resources.Classes
                 {
                     if (!node.InnerText.Contains("beta"))
                     {
+                        Debug.WriteLine($"[NEOFORGE FETCH] Found stable: {node.InnerText}");
                         versions.Add(node.InnerText.Trim());
                     }
                 }
-                Console.WriteLine($"[NEOFORGE FETCH] Found {versions.Count} total versions from manifest!");
+                Debug.WriteLine($"[NEOFORGE FETCH] Found {versions.Count} total versions from manifest!");
                 if (versions.Count == 0)
                 {
-                    Console.WriteLine("[NeoForge FETCH] Found no versions - skipping fetch...");
+                    Debug.WriteLine("[NEOFORGE FETCH] Found no versions - skipping fetch...");
                     return;
                 }
                 versions.Sort((a, b) => Version.Parse(a).CompareTo(Version.Parse(b)));
@@ -129,21 +187,21 @@ namespace MCOCSrv.Resources.Classes
                         }
                         else
                         {
-                            Console.WriteLine($"[NEOFORGE FETCH] File for {version} doesn't exist!");
+                            Debug.WriteLine($"[NEOFORGE FETCH] File for {version} doesn't exist!");
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"[NEOFORGE FETCH] Error fetching file for {version}: {ex.Message}");
+                        Debug.WriteLine($"[NEOFORGE FETCH] Error fetching file for {version}: {ex.Message}");
                     }
 
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[NEOFORGE FETCH] Error fetching versions from Maven! {ex.Message}");
+                Debug.WriteLine($"[NEOFORGE FETCH] Error fetching versions from Maven! {ex.Message}");
             }
-
+            Debug.WriteLine("[NEOFORGE FETCH] DONE");
         }
 
         private async Task FetchFabric(HttpClient client)
@@ -160,24 +218,25 @@ namespace MCOCSrv.Resources.Classes
                     {
                         if (stable.GetBoolean() && version.GetString() != null)
                         {
+                            Debug.WriteLine($"[FABRIC FETCH] Found: {version.GetString()}");
                             versionList.Add(version.GetString());
                         }
                         else
                         {
-                            Console.WriteLine($"[FABRIC FETCH] Version {version.GetString()} is not stable! - skipping");
+                            Debug.WriteLine($"[FABRIC FETCH] Version {version.GetString()} is not stable! - skipping");
                         }
 
                     }
                     else
                     {
-                        Console.WriteLine($"[FABRIC FETCH] Error getting element from manifest: {element.ToString()}"); continue;
+                        Debug.WriteLine($"[FABRIC FETCH] Error getting element from manifest: {element.ToString()}"); continue;
                     }
                 }
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[FABRIC FETCH] Could not get version manifest from fabricmc.net: {ex.Message}");
+                Debug.WriteLine($"[FABRIC FETCH] Could not get version manifest from fabricmc.net: {ex.Message}");
             }
 
             foreach (var version in versionList)
@@ -186,8 +245,8 @@ namespace MCOCSrv.Resources.Classes
                 Fabric[version] = url;
 
             }
-
-            Console.WriteLine($"[FABRIC FETCH] Got {Fabric.Count} total versions!");
+            Debug.WriteLine("[FABRIC FETCH] DONE");
+            Debug.WriteLine($"[FABRIC FETCH] Got {Fabric.Count} total versions!");
         }
 
         private async Task FetchPaper(HttpClient client)
@@ -202,14 +261,15 @@ namespace MCOCSrv.Resources.Classes
                 {
                     foreach (var version in versionsElement.EnumerateArray())
                     {
+                        Debug.WriteLine($"[PAPER FETCH] Found: {version.GetString()}");
                         versionList.Add(version.GetString());
                     }
-                    Console.WriteLine($"[PAPER FETCH] Got {versionList.Count} total versions!");
+                    Debug.WriteLine($"[PAPER FETCH] Got {versionList.Count} total versions!");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[PAPER FETCH] Error getting version manifest! {ex.Message}");
+                Debug.WriteLine($"[PAPER FETCH] Error getting version manifest! {ex.Message}");
             }
 
             foreach (var version in versionList)
@@ -236,16 +296,17 @@ namespace MCOCSrv.Resources.Classes
                     }
                     else
                     {
-                        Console.WriteLine($"[PAPER FETCH] Got no builds for {version} - skipping.");
+                        Debug.WriteLine($"[PAPER FETCH] Got no builds for {version} - skipping.");
                         continue;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[PAPER FETCH] Error getting data for version {version}: {ex.Message}");
+                    Debug.WriteLine($"[PAPER FETCH] Error getting data for version {version}: {ex.Message}");
                 }
             }
-            Console.WriteLine($"[PAPER FETCH] Found {Paper.Count} total server files!");
+            Debug.WriteLine("[PAPER FETCH] DONE");
+            Debug.WriteLine($"[PAPER FETCH] Found {Paper.Count} total server files!");
         }
 
         private async Task FetchPurpur(HttpClient client)
@@ -261,13 +322,14 @@ namespace MCOCSrv.Resources.Classes
                 {
                     foreach (var version in versions.EnumerateArray())
                     {
+                        Debug.WriteLine($"[PURPUR FETCH] Found: {version}.");
                         versionList.Add(version.GetString());
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[PURPUR FETCH] Error getting version manifest: {ex.Message}");
+                Debug.WriteLine($"[PURPUR FETCH] Error getting version manifest: {ex.Message}");
             }
 
             foreach (var version in versionList)
@@ -285,14 +347,68 @@ namespace MCOCSrv.Resources.Classes
                     }
                     else
                     {
-                        Console.WriteLine($"[PURPUR FETCH] latest build for {version} returned null! - skipping");
+                        Debug.WriteLine($"[PURPUR FETCH] latest build for {version} returned null! - skipping");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[PURPUR FETCH] Error getting build for {version}: {ex.Message}");
+                    Debug.WriteLine($"[PURPUR FETCH] Error getting build for {version}: {ex.Message}");
                 }
             }
+            Debug.WriteLine("[PURPUR FETCH] DONE");
         }
+
+        private async Task FetchSponge(HttpClient client)
+        {
+            var SpongeVanillaVersionList = new List<string>();
+            var SpongeForgeVersionList = new List<string>();
+            var SpongeNeoVersionList = new List<string>();
+            try
+            {
+                string SVXml = await client.GetStringAsync("https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/maven-metadata.xml");
+                string SFXml = await client.GetStringAsync("https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongeforge/maven-metadata.xml");
+                string SNXml = await client.GetStringAsync("https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongeneo/maven-metadata.xml");
+
+                XDocument SVDoc = XDocument.Parse(SVXml);
+                XDocument SFDoc = XDocument.Parse(SFXml);
+                XDocument SNDoc = XDocument.Parse(SNXml);
+
+                SpongeVanillaVersionList = SVDoc.Descendants("version").Select(x => x.Value).Where(IsSpongeStable).OrderBy(v => v).ToList();
+                SpongeForgeVersionList = SFDoc.Descendants("version").Select(x => x.Value).Where(IsSpongeStable).OrderBy(v => v).ToList();
+                SpongeNeoVersionList = SNDoc.Descendants("version").Select(x => x.Value).Where(IsSpongeStable).OrderBy(v => v).ToList();
+
+                foreach (string version in SpongeVanillaVersionList)
+                {
+                    Debug.WriteLine($"[SPONGE FETCH]Found: SpongeVanilla: {version}");
+                    string url = $"https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/{version}/spongevanilla-{version}-universal.jar";
+                    Sponge[$"SpongeVanilla-{version}"] = url;
+                }
+
+                foreach (string version in SpongeForgeVersionList)
+                {
+                    Debug.WriteLine($"[SPONGE FETCH]Found: SpongeForge: {version}");
+                    string url = $"https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongeforge/{version}/spongeforge-{version}-universal.jar";
+                    Sponge[$"SpongeForge-{version}"] = url;
+                }
+
+                foreach (string version in SpongeNeoVersionList)
+                {
+                    Debug.WriteLine($"[SPONGE FETCH]Found: SpongeNeo: {version}");
+                    string url = $"https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongeneo/{version}/spongeneo-{version}-universal.jar";
+                    Sponge[$"SpongeNeo-{version}"] = url;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[SPONGE FETCH] Failed to resolve sponge's metadata files! {ex.Message}");
+            }
+
+            bool IsSpongeStable(string version)
+            {
+                return !System.Text.RegularExpressions.Regex.IsMatch(version, @"[a-zA-Z]");
+            }
+            Debug.WriteLine("[SPONGE FETCH] DONE");
+        }
+
     }
 }

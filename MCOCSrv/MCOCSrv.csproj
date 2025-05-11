@@ -90,6 +90,9 @@
 	  <Compile Update="Resources\Popups\CreateInstanceRequestPopup.xaml.cs">
 	    <DependentUpon>CreateInstanceRequestPopup.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Resources\Popups\LoadingPopup.xaml.cs">
+	    <DependentUpon>LoadingPopup.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -106,6 +109,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Popups\CreateInstanceRequestPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Popups\LoadingPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
