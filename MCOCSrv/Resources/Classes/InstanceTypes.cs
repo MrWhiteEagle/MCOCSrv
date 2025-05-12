@@ -4,7 +4,7 @@
     {
         Vanilla,
         Forge,
-        Neoforge,
+        NeoForge,
         Fabric,
         Paper,
         Purpur,
@@ -19,7 +19,7 @@
         {
             "Vanilla" => InstanceType.Vanilla,
             "Forge" => InstanceType.Forge,
-            "Neoforge" => InstanceType.Neoforge,
+            "NeoForge" => InstanceType.NeoForge,
             "Fabric" => InstanceType.Fabric,
             "Paper" => InstanceType.Paper,
             "Purpur" => InstanceType.Purpur,
@@ -30,7 +30,7 @@
         {
             InstanceType.Vanilla => "Vanilla",
             InstanceType.Forge => "Forge",
-            InstanceType.Neoforge => "Neoforge",
+            InstanceType.NeoForge => "NeoForge",
             InstanceType.Fabric => "Fabric",
             InstanceType.Paper => "Paper",
             InstanceType.Purpur => "Purpur",

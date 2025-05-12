@@ -1,5 +1,4 @@
 ﻿using MCOCSrv.Resources.Classes;
-using System.Diagnostics;
 
 namespace MCOCSrv
 {
@@ -19,14 +18,18 @@ namespace MCOCSrv
         {
             base.OnAppearing();
 
-            Debug.WriteLine("[MCOCSrv] Loaded Main App");
+            UILogger.LogUI("[MCOCSrv] Loaded Main App");
 
             try
             {
-                Debug.WriteLine("[MCOCSrv] Trying Fetch....");
+                UILogger.LogUI("[MCOCSrv] Trying Fetch....");
                 LoadingSourcePopup.IsVisible = true;
+                LoadingSourcePopup.IsEnabled = true;
+                LoadingSourcePopup.InputTransparent = false;
                 await serverVersionFetcher.initializeSources();
                 LoadingSourcePopup.IsVisible = false;
+                LoadingSourcePopup.IsEnabled = false;
+                LoadingSourcePopup.InputTransparent = true;
             }
             catch (Exception ex)
             {

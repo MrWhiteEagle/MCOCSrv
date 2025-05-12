@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MCOCSrv"
     Shell.FlyoutBehavior="Flyout"
+    IsEnabled="True"
     Title="MCOCSrv">
 
     <FlyoutItem Title="Home" Icon="home_icon.png">

@@ -1,4 +1,5 @@
-﻿using MCOCSrv.Resources.Raw;
+﻿using MCOCSrv.Resources.Classes;
+using MCOCSrv.Resources.Raw;
 using System.Diagnostics;
 using System.Text.Json;
 namespace MCOCSrv.Resources.Models
@@ -23,9 +24,27 @@ namespace MCOCSrv.Resources.Models
             this.TypeVersion = TypeVersion;
             this.CustomPath = CustomPath != null ? Path.Combine(CustomPath, ConvertNameToFileName(Name)) : null;
             this.CreationDate = DateTime.Now;
-            this.BasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MCOCSrv", "Instances", ConvertNameToFileName(Name));
+            this.BasePath = Path.Combine(Global.AppDataInstancesPath, ConvertNameToFileName(Name));
         }
 
+        public string GetPath()
+        {
+            return string.IsNullOrEmpty(CustomPath) ? BasePath : CustomPath;
+        }
+
+        public static async Task<List<InstanceModel>> readInstances()
+        {
+            if (File.Exists(Path.Combine(Global.AppDataPath, "instances.json")))
+            {
+                string instanceData = await File.ReadAllTextAsync(Path.Combine(Global.AppDataPath, "instances.json"));
+                List<InstanceModel> list = JsonSerializer.Deserialize<List<InstanceModel>>(instanceData);
+                return list;
+            }
+            else
+            {
+                return new List<InstanceModel>();
+            }
+        }
         public async Task CreateInstance()
         {
             string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });

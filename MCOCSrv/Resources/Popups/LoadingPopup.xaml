@@ -2,17 +2,27 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MCOCSrv.Resources.Popups.LoadingPopup"
+             IsEnabled="False"
+             InputTransparent="True"
              IsVisible="False"
-             HorizontalOptions="Center"
-             VerticalOptions="Center">
-    <Border Stroke="{StaticResource Primary}" HeightRequest="450" WidthRequest="450" BackgroundColor="{StaticResource Gray900}">
+             BackgroundColor="#80000000"
+             HorizontalOptions="FillAndExpand"
+             VerticalOptions="FillAndExpand">
+    <Grid>
+        <Border Stroke="{StaticResource Primary}" HeightRequest="350" WidthRequest="350" BackgroundColor="{StaticResource Gray900}">
         <Border.StrokeShape>
             <RoundRectangle CornerRadius="10"/>
         </Border.StrokeShape>
-        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
-            <ActivityIndicator IsRunning="True"/>
-            <Label Text="Fetching file sources." Style="{StaticResource SubHeadline}"/>
+        <VerticalStackLayout Padding="15" Spacing="15">
+            <Label Text="Fetching server file sources..." Style="{StaticResource TitleHeadLine}" FontSize="20"/>
+            <ActivityIndicator IsRunning="True" Color="{StaticResource Primary}" VerticalOptions="Center"/>
             <Label Text="Please wait...."/>
+            <Border Stroke="{StaticResource Primary}">
+                <ScrollView x:Name="PopupFetchOutputField" HeightRequest="200">
+                    <Label x:Name="PopupFetchOutput" Text=""/>
+                </ScrollView>
+            </Border>
         </VerticalStackLayout>
-    </Border>
+        </Border>
+    </Grid>
 </ContentView>
