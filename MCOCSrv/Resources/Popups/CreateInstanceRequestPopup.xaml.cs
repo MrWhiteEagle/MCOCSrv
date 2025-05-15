@@ -10,18 +10,19 @@ namespace MCOCSrv.Resources.Popups;
 
 public partial class CreateInstanceRequestPopup : ContentView
 {
-
+    public ObservableCollection<string> AvaibleVersions { get; set; }
+    private readonly ServerVersionFetcher serverVersionFetcher;
+    private readonly InstanceManager manager;
     public CreateInstanceRequestPopup()
     {
 
         BindingContext = this;
-        this.serverVersionFetcher = App.Current.Handler.MauiContext.Services.GetService<ServerVersionFetcher>();
+        this.serverVersionFetcher = Application.Current.Handler.MauiContext.Services.GetService<ServerVersionFetcher>();
+        this.manager = Application.Current.Handler.MauiContext.Services.GetService<InstanceManager>();
         AvaibleVersions = new ObservableCollection<string>();
         InitializeComponent();
 
     }
-    public ObservableCollection<string> AvaibleVersions { get; set; }
-    private readonly ServerVersionFetcher serverVersionFetcher;
 
     async void onConfirm(object sender, EventArgs e)
     {
@@ -29,7 +30,7 @@ public partial class CreateInstanceRequestPopup : ContentView
         this.InputTransparent = true;
         if (!string.IsNullOrEmpty(InstanceNameField.Text) &&
             InstanceTypeField.SelectedIndex != -1 &&
-            !string.IsNullOrEmpty(InstanceTypeVersionField.SelectedItem.ToString()))
+            InstanceTypeVersionField.SelectedIndex != -1)
         {
             InstanceModel newInstance = new(
                 Name: InstanceNameField.Text,
@@ -37,8 +38,7 @@ public partial class CreateInstanceRequestPopup : ContentView
                 Type: (InstanceType)InstanceTypeField.SelectedItem,
                 TypeVersion: InstanceTypeVersionField.SelectedItem.ToString(),
                 CustomPath: string.IsNullOrEmpty(CustomPathField.Text) || CustomPathCheckbox.IsChecked == false ? null : CustomPathField.Text);
-            await newInstance.CreateInstance();
-            await serverVersionFetcher.DownloadInstance(newInstance);
+            await manager.CreateInstance(newInstance);
         }
         else
         {

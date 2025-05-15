@@ -2,42 +2,66 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:popups="clr-namespace:MCOCSrv.Resources.Popups"
+             xmlns:models="clr-namespace:MCOCSrv.Resources.Models"
+             xmlns:converter="clr-namespace:MCOCSrv.Resources.Classes"
+             xmlns:buttons="clr-namespace:MCOCSrv.Resources.Content"
              x:Class="MCOCSrv.InstancePage"
              Shell.NavBarIsVisible="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:TypeToImageConverter x:Key="TypeToImageConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <Grid>
-    <VerticalStackLayout
-        Padding="20"
-        Spacing="10">
-        <Grid ColumnDefinitions="*,Auto">
-            <Label
-                Text="Installed Instances"
+        <Grid RowDefinitions="Auto, *" Padding="10">
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Padding="20" ColumnSpacing="10">
+                <Label
+                Text="INSTALLED INSTANCES"
                 Style="{StaticResource TitleHeadLine}"
                 HorizontalOptions="Start"
                 />
-            <Button
+                <Button
                 Text="Add new"
                 SemanticProperties.Hint="Adds a new instance"
                 HorizontalOptions="End"
                 Style="{StaticResource AddNewButton}"
                 Clicked="onCreateInstance"
                 />
+            </Grid>
+            <Border Grid.Row="1" Stroke="#8c1af6" Padding="5" StrokeThickness="2">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="15"/>
+                </Border.StrokeShape>
+                <CollectionView x:Name="InstanceList" ItemsSource="{Binding Instances}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="2"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:InstanceModel">
+                            <Border Padding="15" Stroke="{StaticResource Gray900}" BackgroundColor="{StaticResource Gray950}">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="15"/>
+                                </Border.StrokeShape>
+                                <Grid ColumnDefinitions="Auto, *, *, *, Auto, Auto, Auto" RowDefinitions="55">
+                                    <Image Grid.Column="0" Source="{Binding Type, Converter = {StaticResource TypeToImageConverter}}" Aspect="AspectFit"/>
+                                    <Label Grid.Column="1" Text="{Binding Name}" Style="{StaticResource InstanceData}"/>
+                                    <Label Grid.Column="2" Text="{Binding Type}" Style="{StaticResource InstanceData}"/>
+                                    <Label Grid.Column="3" Text="{Binding TypeVersion}" Style="{StaticResource InstanceData}"/>
+                                    <buttons:StartButton x:Name="StartBtn" Grid.Column="4" WidthRequest="50"/>
+                                    <buttons:SettingButton x:Name="SettingsBtn" Grid.Column="5" WidthRequest="50"/>
+                                    <buttons:DeleteButton x:Name="DeleteBtn" Grid.Column="6" WidthRequest="50" DeleteRequested="OnDeleteRequest"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
         </Grid>
-        <Border Stroke="#8c1af6">
-            <CollectionView ItemsSource="{Binding Instances}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Stroke="LightGray">
-                            <Label Text="{Binding Name}"/>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </Border>
-    </VerticalStackLayout>
         <popups:CreateInstanceRequestPopup
             x:Name="CreateInstancePopup"
             IsVisible="False"
             VerticalOptions="Center"
             HorizontalOptions="Center"/>
+        <popups:AreYouSurePopup x:Name="DeletionConfirmationPopup" VerticalOptions="Center" HorizontalOptions="Center"/>
     </Grid>
 </ContentPage>

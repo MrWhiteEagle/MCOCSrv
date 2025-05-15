@@ -9,13 +9,13 @@ namespace MCOCSrv.Resources.Classes
 
     public class ServerVersionFetcher
     {
-        public Dictionary<string, string> Vanilla = new Dictionary<string, string>();
-        private Dictionary<string, string> Forge = new Dictionary<string, string>();
-        private Dictionary<string, string> NeoForge = new Dictionary<string, string>();
-        private Dictionary<string, string> Fabric = new Dictionary<string, string>();
-        private Dictionary<string, string> Paper = new Dictionary<string, string>();
-        private Dictionary<string, string> Purpur = new Dictionary<string, string>();
-        private Dictionary<string, string> Sponge = new Dictionary<string, string>();
+        private Dictionary<string, string> Vanilla = new();
+        private Dictionary<string, string> Forge = new();
+        private Dictionary<string, string> NeoForge = new();
+        private Dictionary<string, string> Fabric = new();
+        private Dictionary<string, string> Paper = new();
+        private Dictionary<string, string> Purpur = new();
+        private Dictionary<string, string> Sponge = new();
         private HttpClient client;
 
         public ServerVersionFetcher()
