@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MCOCSrv.Resources.Content.ConsoleTemplate">
+    
+    <Grid RowDefinitions="Auto, *">
+    <Label
+        Grid.Row="0"
+        Text="{Binding Name, StringFormat='DASHBOARD - {0}'}"
+        Style="{StaticResource TitleHeadLine}" FontAttributes="Bold"/>
+    <Border Grid.Row="1" Stroke="{StaticResource PrimaryDark}" Margin="5">
+    <Border.StrokeShape>
+        <RoundRectangle CornerRadius="10"/>
+    </Border.StrokeShape>
+        <Grid RowDefinitions="7*, 3*" ColumnDefinitions="7*,1*,2*" Padding="10" RowSpacing="5" ColumnSpacing="5">
+            <Border Grid.Row="0" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="1" Stroke="{StaticResource Black}" BackgroundColor="{StaticResource Black}">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="7"/>
+            </Border.StrokeShape>
+            <Grid RowDefinitions="*,Auto">
+                    <ScrollView Grid.Row="0">
+                            <Label x:Name="ConsoleOutput" Text=""/>
+                    </ScrollView>
+                    <Border Grid.Row="1" Stroke="{StaticResource SecondaryDark}" BackgroundColor="{StaticResource Gray950}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="7"/>
+                        </Border.StrokeShape>
+                        <Entry x:Name="ConsoleInput" IsSpellCheckEnabled="False"/>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="1" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="7"/>
+                </Border.StrokeShape>
+                <Grid RowDefinitions="Auto,*" ColumnDefinitions="*, Auto" Padding="10" RowSpacing="10">
+                    <Label Grid.Row="0" Grid.Column="0" Text="Quick Actions" HorizontalOptions="Center" FontSize="17"/>
+                    <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource AddNewButton}" Text="Manage"/>
+                    <CollectionView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical"/>
+                        </CollectionView.ItemsLayout>
+                    </CollectionView>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}" HorizontalOptions="Start">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="7"/>
+                </Border.StrokeShape>
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="0">
+                    <ImageButton Grid.Row="0" Source="settings_icon.png" WidthRequest="100" HeightRequest="100"/>
+                    <ImageButton Grid.Row="1" Source="settings_icon.png" WidthRequest="100" HeightRequest="100"/>
+                    <ImageButton Grid.Row="2" Source="settings_icon.png" WidthRequest="100" HeightRequest="100"/>
+                    <ImageButton Grid.Row="3" Source="settings_icon.png" WidthRequest="100" HeightRequest="100"/>
+                    <ImageButton Grid.Row="4" Source="settings_icon.png" WidthRequest="100" HeightRequest="100"/>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="7"/>
+                </Border.StrokeShape>
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,*" Padding="10" RowSpacing="5" ColumnSpacing="5">
+                    <Button Grid.Row="0" Grid.Column="0" Text="Modify Config"/>
+                    <Button Grid.Row="0" Grid.Column="1" Text="Ban List"/>
+                </Grid>
+            </Border>
+            </Grid>
+    </Border>
+    </Grid>
+</ContentView>

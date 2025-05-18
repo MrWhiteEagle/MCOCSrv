@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:console="clr-namespace:MCOCSrv.Resources.Content"
              x:Class="MCOCSrv.ConsolePage"
-             Title="Console">
-    <VerticalStackLayout>
-        <Label 
-            Text="This is a page containing the active server's console!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Shell.NavBarIsVisible="False">
+    <Grid RowDefinitions="Auto, *">
+        <CollectionView Grid.Row="0" ItemsSource="{Binding Tabs}" BackgroundColor="{StaticResource Black}" SelectedItem="{Binding CurrentConsole}" SelectionChanged="Tabs_Changed" SelectionMode="Single">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="1"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Stroke="{StaticResource Tertiary}" HeightRequest="30" Padding="10, 0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <Label Text="{Binding Name}" LineBreakMode="NoWrap" FontSize="12" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer/>
+                        </Border.GestureRecognizers>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <ContentView Grid.Row="1" x:Name="ActiveWindow"/>
+    </Grid>
 </ContentPage>

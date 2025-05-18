@@ -106,6 +106,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Resources\Content\ConsoleTemplate.xaml.cs">
+	    <DependentUpon>ConsoleTemplate.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Resources\Content\DeleteButton.xaml.cs">
 	    <DependentUpon>DeleteButton.xaml</DependentUpon>
 	  </Compile>
@@ -121,6 +124,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Resources\Content\ConsoleTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Resources\Content\DeleteButton.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
