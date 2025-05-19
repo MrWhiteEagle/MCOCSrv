@@ -42,6 +42,11 @@
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<MauiImage Include="Resources\Images\Icons\Console_Icons\folder_icon_console.svg" />
+		<MauiImage Include="Resources\Images\Icons\Console_Icons\restart_icon_console.svg" />
+		<MauiImage Include="Resources\Images\Icons\Console_Icons\send_icon_console.svg" />
+		<MauiImage Include="Resources\Images\Icons\Console_Icons\stop_icon_console.svg" />
+		<MauiImage Include="Resources\Images\Icons\Console_Icons\world_icon_console.svg" />
 		<MauiImage Include="Resources\Images\Icons\delete_icon.svg" />
 		<MauiImage Include="Resources\Images\Icons\edit_icon.svg" />
 		<MauiImage Include="Resources\Images\Icons\start_icon.svg" />
@@ -68,6 +73,12 @@
 	<ItemGroup>
 	  <None Remove="Resources\Images\Icons\about_icon.svg" />
 	  <None Remove="Resources\Images\Icons\console_icon.svg" />
+	  <None Remove="Resources\Images\Icons\Console_Icons\backup_icon_console.svg" />
+	  <None Remove="Resources\Images\Icons\Console_Icons\folder_icon_console.svg" />
+	  <None Remove="Resources\Images\Icons\Console_Icons\restart_icon_console.svg" />
+	  <None Remove="Resources\Images\Icons\Console_Icons\send_icon_console.svg" />
+	  <None Remove="Resources\Images\Icons\Console_Icons\stop_icon_console.svg" />
+	  <None Remove="Resources\Images\Icons\Console_Icons\world_icon_console.svg" />
 	  <None Remove="Resources\Images\Icons\delete_icon.svg" />
 	  <None Remove="Resources\Images\Icons\edit_icon.svg" />
 	  <None Remove="Resources\Images\Icons\fabric_icon.png" />
@@ -85,18 +96,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiImage Include="Resources\Images\Icons\about_icon.svg" />
-	  <MauiImage Include="Resources\Images\Icons\console_icon.svg" />
-	  <MauiImage Include="Resources\Images\Icons\fabric_icon.png" />
-	  <MauiImage Include="Resources\Images\Icons\forge_icon.png" />
-	  <MauiImage Include="Resources\Images\Icons\home_icon.svg" />
-	  <MauiImage Include="Resources\Images\Icons\instance_icon.svg" />
-	  <MauiImage Include="Resources\Images\Icons\neoforge_icon.png" />
-	  <MauiImage Include="Resources\Images\Icons\paper_icon.png" />
-	  <MauiImage Include="Resources\Images\Icons\purpur_icon.png" />
-	  <MauiImage Include="Resources\Images\Icons\settings_icon.svg" />
-	  <MauiImage Include="Resources\Images\Icons\sponge_icon.png" />
-	  <MauiImage Include="Resources\Images\Icons\vanilla_icon.png" />
+	  <MauiImage Include="Resources\Images\Icons\Console_Icons\backup_icon_console.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiImage Include="Resources\Images\Icons\Shell_Icons\about_icon.svg" />
+	  <MauiImage Include="Resources\Images\Icons\Shell_Icons\console_icon.svg" />
+	  <MauiImage Include="Resources\Images\Icons\Instance_Icons\fabric_icon.png" />
+	  <MauiImage Include="Resources\Images\Icons\Instance_Icons\forge_icon.png" />
+	  <MauiImage Include="Resources\Images\Icons\Shell_Icons\home_icon.svg" />
+	  <MauiImage Include="Resources\Images\Icons\Shell_Icons\instance_icon.svg" />
+	  <MauiImage Include="Resources\Images\Icons\Instance_Icons\neoforge_icon.png" />
+	  <MauiImage Include="Resources\Images\Icons\Instance_Icons\paper_icon.png" />
+	  <MauiImage Include="Resources\Images\Icons\Instance_Icons\purpur_icon.png" />
+	  <MauiImage Include="Resources\Images\Icons\Shell_Icons\settings_icon.svg" />
+	  <MauiImage Include="Resources\Images\Icons\Instance_Icons\sponge_icon.png" />
+	  <MauiImage Include="Resources\Images\Icons\Instance_Icons\vanilla_icon.png" />
 	</ItemGroup>
 
 	<ItemGroup>

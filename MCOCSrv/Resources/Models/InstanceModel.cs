@@ -4,6 +4,7 @@ namespace MCOCSrv.Resources.Models
 {
     public class InstanceModel
     {
+        public ConsoleWrapper? Console;
         public string Name { get; set; }
         public string? Description { get; set; }
         public InstanceType Type { get; set; }
@@ -11,8 +12,9 @@ namespace MCOCSrv.Resources.Models
         public DateTime CreationDate { get; set; }
         public DateTime? LastUsed { get; set; }
         public string? CustomPath { get; set; }
-
         public string BasePath { get; set; }
+
+        public string LaunchArguments { get; set; }
 
         public InstanceModel(string Name, string? Description, InstanceType Type, string TypeVersion, string? CustomPath)
         {
@@ -23,6 +25,7 @@ namespace MCOCSrv.Resources.Models
             this.CustomPath = CustomPath;
             this.CreationDate = DateTime.Now;
             this.BasePath = Global.AppDataInstancesPath;
+            this.LaunchArguments = "";
         }
 
         public string GetPath()
@@ -40,6 +43,22 @@ namespace MCOCSrv.Resources.Models
             {
                 return true;
             }
+        }
+
+        public void InitializeConsole()
+        {
+            this.Console = new ConsoleWrapper(this);
+        }
+
+        public void DisposeConsole()
+        {
+            if (this.Console != null)
+            {
+                this.Console.Dispose();
+            }
+            Console = null;
+            UILogger.LogUI($"[INSTANCE {Name}] Disposed of console.");
+
         }
 
     }

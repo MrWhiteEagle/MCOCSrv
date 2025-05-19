@@ -25,7 +25,10 @@
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="7"/>
                         </Border.StrokeShape>
-                        <Entry x:Name="ConsoleInput" IsSpellCheckEnabled="False"/>
+                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="*">
+                                <Entry Grid.Column="0" x:Name="ConsoleInput" IsSpellCheckEnabled="False"/>
+                                <ImageButton Grid.Column="1" Source="send_icon_console.png" HeightRequest="44" WidthRequest="44" BackgroundColor="{StaticResource Gray950}" ToolTipProperties.Text="Send"/>
+                            </Grid>
                     </Border>
                 </Grid>
             </Border>
@@ -36,7 +39,7 @@
                 </Border.StrokeShape>
                 <Grid RowDefinitions="Auto,*" ColumnDefinitions="*, Auto" Padding="10" RowSpacing="10">
                     <Label Grid.Row="0" Grid.Column="0" Text="Quick Actions" HorizontalOptions="Center" FontSize="17"/>
-                    <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource AddNewButton}" Text="Manage"/>
+                    <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource AddNewButton}" Text="Manage" ToolTipProperties.Text="Add/Remove Quick actions"/>
                     <CollectionView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical"/>
@@ -50,11 +53,11 @@
                     <RoundRectangle CornerRadius="7"/>
                 </Border.StrokeShape>
                 <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="0">
-                    <ImageButton Grid.Row="0" Source="settings_icon.png" WidthRequest="100" HeightRequest="100"/>
-                    <ImageButton Grid.Row="1" Source="settings_icon.png" WidthRequest="100" HeightRequest="100"/>
-                    <ImageButton Grid.Row="2" Source="settings_icon.png" WidthRequest="100" HeightRequest="100"/>
-                    <ImageButton Grid.Row="3" Source="settings_icon.png" WidthRequest="100" HeightRequest="100"/>
-                    <ImageButton Grid.Row="4" Source="settings_icon.png" WidthRequest="100" HeightRequest="100"/>
+                    <ImageButton x:Name="Stop_Button" Grid.Row="0" Source="stop_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Stop the server"/>
+                    <ImageButton x:Name="Restart_Button" Grid.Row="1" Source="restart_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Restart the server"/>
+                    <ImageButton x:Name="World_Button" Grid.Row="2" Source="world_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Change active world"/>
+                    <ImageButton x:Name="Backup_Button" Grid.Row="3" Source="backup_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Create a backup of the server"/>
+                    <ImageButton x:Name="Folder_Button" Grid.Row="4" Source="folder_icon_console.png" WidthRequest="100" HeightRequest="100" CornerRadius="7" ToolTipProperties.Text="Browse the server files"/>
                 </Grid>
             </Border>
 

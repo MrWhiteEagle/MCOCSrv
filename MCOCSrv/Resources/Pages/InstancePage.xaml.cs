@@ -39,4 +39,15 @@ public partial class InstancePage : ContentPage
             DeletionConfirmationPopup.Show(instance);
         }
     }
+
+    void OnStartRequest(object sender, object item)
+    {
+        if (item is InstanceModel instance)
+        {
+            instance.InitializeConsole();
+            manager.running.Add(instance);
+
+
+        }
+    }
 }
