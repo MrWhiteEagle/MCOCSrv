@@ -45,6 +45,7 @@
 		<MauiImage Include="Resources\Images\Icons\Console_Icons\folder_icon_console.svg" />
 		<MauiImage Include="Resources\Images\Icons\Console_Icons\restart_icon_console.svg" />
 		<MauiImage Include="Resources\Images\Icons\Console_Icons\send_icon_console.svg" />
+		<MauiImage Include="Resources\Images\Icons\Console_Icons\start_icon_console.svg" />
 		<MauiImage Include="Resources\Images\Icons\Console_Icons\stop_icon_console.svg" />
 		<MauiImage Include="Resources\Images\Icons\Console_Icons\world_icon_console.svg" />
 		<MauiImage Include="Resources\Images\Icons\delete_icon.svg" />
@@ -77,6 +78,7 @@
 	  <None Remove="Resources\Images\Icons\Console_Icons\folder_icon_console.svg" />
 	  <None Remove="Resources\Images\Icons\Console_Icons\restart_icon_console.svg" />
 	  <None Remove="Resources\Images\Icons\Console_Icons\send_icon_console.svg" />
+	  <None Remove="Resources\Images\Icons\Console_Icons\start_icon_console.svg" />
 	  <None Remove="Resources\Images\Icons\Console_Icons\stop_icon_console.svg" />
 	  <None Remove="Resources\Images\Icons\Console_Icons\world_icon_console.svg" />
 	  <None Remove="Resources\Images\Icons\delete_icon.svg" />

@@ -7,18 +7,24 @@ public partial class LoadingPopup : ContentView
     public LoadingPopup()
     {
         InitializeComponent();
-        InitializeLogger();
     }
 
-    private void InitializeLogger()
+    private async void OnLog(object sender, string msg)
     {
-        UILogger.LogCallback = async msg =>
+        await MainThread.InvokeOnMainThreadAsync(() =>
         {
-            await MainThread.InvokeOnMainThreadAsync(() =>
-            {
-                PopupFetchOutput.Text += msg + Environment.NewLine;
-                PopupFetchOutputField.ScrollToAsync(0, PopupFetchOutputField.ContentSize.Height, false);
-            });
-        };
+            PopupFetchOutput.Text += msg + Environment.NewLine;
+            PopupFetchOutputField.ScrollToAsync(0, PopupFetchOutputField.ContentSize.Height, false);
+        });
+    }
+
+    private void Loaded(object sender, EventArgs a)
+    {
+        UILogger.LogReceived += OnLog;
+    }
+
+    private void Unloaded(object sender, EventArgs a)
+    {
+        UILogger.LogReceived -= OnLog;
     }
 }

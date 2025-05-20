@@ -4,12 +4,12 @@ namespace MCOCSrv.Resources.Classes
 {
     public static class UILogger
     {
-        public static Action<string>? LogCallback;
+        public static event EventHandler<string> LogReceived;
 
         public static void LogUI(string msg)
         {
             Debug.WriteLine(msg);
-            LogCallback.Invoke(msg);
+            LogReceived?.Invoke(null, msg);
         }
     }
 }

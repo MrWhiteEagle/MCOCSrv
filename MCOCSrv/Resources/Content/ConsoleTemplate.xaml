@@ -18,18 +18,15 @@
                 <RoundRectangle CornerRadius="7"/>
             </Border.StrokeShape>
             <Grid RowDefinitions="*,Auto">
-                    <ScrollView Grid.Row="0">
-                            <Label x:Name="ConsoleOutput" Text=""/>
+                    <ScrollView x:Name="ConsoleScrollView" Grid.Row="0">
+                            <Label x:Name="ConsoleOutput" Text="{Binding CombinedConsoleOutput}"/>
                     </ScrollView>
                     <Border Grid.Row="1" Stroke="{StaticResource SecondaryDark}" BackgroundColor="{StaticResource Gray950}">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="7"/>
                         </Border.StrokeShape>
-                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="*">
-                                <Entry Grid.Column="0" x:Name="ConsoleInput" IsSpellCheckEnabled="False"/>
-                                <ImageButton Grid.Column="1" Source="send_icon_console.png" HeightRequest="44" WidthRequest="44" BackgroundColor="{StaticResource Gray950}" ToolTipProperties.Text="Send"/>
-                            </Grid>
-                    </Border>
+                            <Entry Grid.Column="0" x:Name="ConsoleInput" IsSpellCheckEnabled="False"/>
+                        </Border>
                 </Grid>
             </Border>
 
@@ -53,8 +50,8 @@
                     <RoundRectangle CornerRadius="7"/>
                 </Border.StrokeShape>
                 <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="0">
-                    <ImageButton x:Name="Stop_Button" Grid.Row="0" Source="stop_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Stop the server"/>
-                    <ImageButton x:Name="Restart_Button" Grid.Row="1" Source="restart_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Restart the server"/>
+                    <ImageButton x:Name="Start_Stop_Button" Grid.Row="0" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Start/Stop the server"/>
+                    <ImageButton x:Name="Restart_Button" Grid.Row="1" Source="restart_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Restart the server" Command="{Binding RestartServer}"/>
                     <ImageButton x:Name="World_Button" Grid.Row="2" Source="world_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Change active world"/>
                     <ImageButton x:Name="Backup_Button" Grid.Row="3" Source="backup_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Create a backup of the server"/>
                     <ImageButton x:Name="Folder_Button" Grid.Row="4" Source="folder_icon_console.png" WidthRequest="100" HeightRequest="100" CornerRadius="7" ToolTipProperties.Text="Browse the server files"/>

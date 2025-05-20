@@ -1,4 +1,5 @@
 ﻿using MCOCSrv.Resources.Models;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace MCOCSrv.Resources.Classes
@@ -13,6 +14,7 @@ namespace MCOCSrv.Resources.Classes
         private Process? ServerProcess;
         private bool WasDisposed = false;
         private string Arguments;
+        public ObservableCollection<string> ConsoleOutput { get; set; } = new();
         public Dictionary<string, string> Actions { get; set; } = new();
         public bool IsRunning => ServerProcess != null && !ServerProcess.HasExited && !WasDisposed;
 
@@ -26,11 +28,14 @@ namespace MCOCSrv.Resources.Classes
             this.Arguments = instance.LaunchArguments;
         }
 
+        //Get wrapper's instance name
         public string GetWorkingInstance()
         {
             return WorkingInstance.Name;
         }
 
+        //Check if running, if serverfile exists and for eula.
+        //Set up a process, subsc ribe to methods calling the handlers
         public async Task StartServer()
         {
             if (IsRunning)
@@ -50,13 +55,14 @@ namespace MCOCSrv.Resources.Classes
             }
             //Start setup
             ServerProcess = new Process();
-            ServerProcess.StartInfo.FileName = "java";
-            ServerProcess.StartInfo.Arguments = $"-jar {ServerFile} {Arguments}";
+            ServerProcess.StartInfo.FileName = "javaw";
+            ServerProcess.StartInfo.Arguments = $"-jar {ServerFile} {Arguments} nogui";
             ServerProcess.StartInfo.WorkingDirectory = WorkingPath;
             //Output redirection
             ServerProcess.StartInfo.RedirectStandardOutput = true;
             ServerProcess.StartInfo.RedirectStandardError = true;
-            //ServerProcess.StartInfo.CreateNoWindow = true;
+            ServerProcess.StartInfo.RedirectStandardInput = true;
+            ServerProcess.StartInfo.CreateNoWindow = true;
             ServerProcess.OutputDataReceived += ConsoleOutputReceived;
             ServerProcess.ErrorDataReceived += ConsoleOutputReceived;
             //Exit Setup
@@ -76,7 +82,8 @@ namespace MCOCSrv.Resources.Classes
             }
         }
 
-        public void SendCommand(string cmd)
+        // try send command thought input handler
+        public async Task SendCommand(string cmd)
         {
             if (!IsRunning)
             {
@@ -111,6 +118,7 @@ namespace MCOCSrv.Resources.Classes
             }
         }
 
+        //Send stop command if running - after that dispose of resources safely
         public async Task StopServer()
         {
             if (!IsRunning)
@@ -119,7 +127,7 @@ namespace MCOCSrv.Resources.Classes
                 return;
             }
             UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] STOPPING SERVER...");
-            SendCommand("stop");
+            await SendCommand("stop");
             int timeout = 10000;
             if (ServerProcess.WaitForExit(timeout))
             {
@@ -145,6 +153,7 @@ namespace MCOCSrv.Resources.Classes
             }
 
         }
+        //Dispose of the process safely (prepare for next use)
         private void DisposeProcess()
         {
             if (ServerProcess != null)
@@ -157,6 +166,7 @@ namespace MCOCSrv.Resources.Classes
                 ServerProcess.OutputDataReceived -= ConsoleOutputReceived;
                 ServerProcess.ErrorDataReceived -= ConsoleOutputReceived;
                 ServerProcess.Exited -= ConsoleExited;
+                //If process has not finished, attempt kill.
                 if (!ServerProcess.HasExited)
                 {
                     try
@@ -172,6 +182,7 @@ namespace MCOCSrv.Resources.Classes
                         UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] CANNOT DISPOSE OF PROCESS - KILL FAILED: {ex.Message}");
                     }
                 }
+                //Try auto dispose
                 try
                 {
                     ServerProcess.Dispose();
@@ -185,13 +196,14 @@ namespace MCOCSrv.Resources.Classes
             }
         }
 
+        //Request close - wait 10 seconds, if still running fail the restart. Start again on succesful close
         public async Task RestartServer()
         {
             if (IsRunning)
             {
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] ATTEMPTING RESTART");
                 await StopServer();
-                await Task.Delay(1000);
+                await Task.Delay(10000);
                 if (!IsRunning)
                 {
                     StartServer();
@@ -213,6 +225,7 @@ namespace MCOCSrv.Resources.Classes
 
         //}
 
+        //Check if EULA file exists - and if it does if its true
         public bool EulaCheck()
         {
             if (File.Exists(EulaFile))
@@ -233,6 +246,7 @@ namespace MCOCSrv.Resources.Classes
             }
         }
 
+        //Disposes of any unhandled processes and releases resources on demand (finalizer for closing consoles and ending its use)
         public void Dispose()
         {
             Dispose(true);
@@ -249,16 +263,19 @@ namespace MCOCSrv.Resources.Classes
             WasDisposed = true;
         }
 
+        //Calls every time console outputs data
         public event EventHandler<string> ConsoleOutputHandler;
 
         private void ConsoleOutputReceived(object sender, DataReceivedEventArgs a)
         {
             if (a.Data != null)
             {
+                ConsoleOutput.Add(a.Data);
                 ConsoleOutputHandler?.Invoke(this, a.Data);
             }
         }
 
+        //Calls when server closes (any reason to process end)
         public event EventHandler<int> ConsoleExitHandler;
         private void ConsoleExited(object sender, EventArgs a)
         {

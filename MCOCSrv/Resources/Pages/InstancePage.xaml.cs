@@ -46,8 +46,6 @@ public partial class InstancePage : ContentPage
         {
             instance.InitializeConsole();
             manager.running.Add(instance);
-
-
         }
     }
 }

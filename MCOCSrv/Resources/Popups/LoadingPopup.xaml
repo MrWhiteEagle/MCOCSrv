@@ -7,7 +7,9 @@
              IsVisible="False"
              BackgroundColor="#80000000"
              HorizontalOptions="FillAndExpand"
-             VerticalOptions="FillAndExpand">
+             VerticalOptions="FillAndExpand"
+             Loaded="Loaded"
+             Unloaded="Unloaded">
     <Grid>
         <Border Stroke="{StaticResource Primary}" HeightRequest="350" WidthRequest="350" BackgroundColor="{StaticResource Gray900}">
         <Border.StrokeShape>

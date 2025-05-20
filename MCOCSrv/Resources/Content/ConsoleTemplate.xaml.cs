@@ -1,27 +1,270 @@
+using MCOCSrv.Resources.Classes;
 using MCOCSrv.Resources.Models;
 using MCOCSrv.Resources.Raw;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace MCOCSrv.Resources.Content;
 
-public partial class ConsoleTemplate : ContentView
+public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
 {
-    public string Name { get; set; } = "Empty";
+    // ============INSTANCE/TAB PROPERTIES============
+    private string _name = "Empty";
+    public string Name
+    {
+        get => _name;
+
+        set
+        {
+            if (_name != value)
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+    }
     InstanceType? Type;
+    InstanceModel Instance;
     string? Version;
     string? Path;
+
+    //============CONSOLE PROPERTIES============
+    ConsoleWrapper Console;
+    private ObservableCollection<string> ConsoleOutputLines { get; set; } = new();
+
+    //OUTPUT PROPERTY
+    private string _combinedConsoleOutput;
+    public string CombinedConsoleOutput
+    {
+        get => _combinedConsoleOutput;
+        set
+        {
+            if (_combinedConsoleOutput != value)
+            {
+                _combinedConsoleOutput = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+    //============INPUT PROPERTY============
+    //private string _commandInput;
+    //public string CommandInput
+    //{
+    //    get => _commandInput;
+    //    set
+    //    {
+    //        if (_commandInput != value)
+    //        {
+    //            _commandInput = value;
+    //            OnPropertyChanged();
+    //        }
+    //    }
+    //}
+
+    //============COMMANDS FOR QUICK ACTIONS============
+    public ICommand SendCommand { get; set; }
+    public ICommand StopServer { get; set; }
+    public ICommand StartServer { get; set; }
+    public ICommand RestartServer { get; set; }
+    public ICommand ForceSave { get; set; }
+    public ICommand ForceBackup { get; set; }
+
+
     public ConsoleTemplate()
     {
+        SendCommand = new Command(async () => await ExecuteSendCommand());
+        StopServer = new Command(async () => await ExecuteStopServer());
+        StartServer = new Command(async () => await ExecuteStartServer());
+        RestartServer = new Command(async () => await ExecuteRestartServer());
+        ForceSave = new Command(async () => await ExecuteForceSave());
+        //ForceBackup = new Command(async () => await ExecuteForceBackup());
+
         InitializeComponent();
         BindingContext = this;
-        Debug.WriteLine(Name);
     }
 
     public void SetupTab(InstanceModel instance)
     {
+        this.Instance = instance;
         this.Name = instance.Name;
         this.Type = instance.Type;
         this.Version = instance.TypeVersion;
         this.Path = instance.GetPath();
+        //Defensive - Check for instance containing a console, create if not
+        if (instance.Console == null)
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Somehow instance has no console - adding one...");
+            instance.Console = new ConsoleWrapper(instance);
+        }
+        this.Console = instance.Console;
+
+        //Defensive - duplicate event handlers prevention
+        Console.ConsoleOutputHandler -= OnConsoleOutput;
+        Console.ConsoleExitHandler -= OnConsoleExit;
+
+        Console.ConsoleOutputHandler += OnConsoleOutput;
+        Console.ConsoleExitHandler += OnConsoleExit;
+
+        //Restore console history from wrapper - if it exists, if not - assign empty
+        ConsoleOutputLines.Clear();
+        if (Console.ConsoleOutput != null)
+        {
+            foreach (string line in Console.ConsoleOutput)
+            {
+                ConsoleOutputLines.Add(line);
+                CombinedConsoleOutput += line + Environment.NewLine;
+            }
+            ScrollToConsoleEnd();
+        }
+        else
+        {
+            CombinedConsoleOutput = string.Empty;
+        }
+        UpdateActionsState();
+
+        ConsoleInput.ReturnCommand = SendCommand;
+
+
+    }
+
+    //============Console Handler Methods============
+    private void OnConsoleOutput(object? sender, string data)
+    {
+        Microsoft.Maui.Controls.Application.Current?.Dispatcher.Dispatch(() =>
+        {
+            ConsoleOutputLines.Add(data);
+            CombinedConsoleOutput += data + Environment.NewLine;
+            ScrollToConsoleEnd();
+        });
+    }
+
+    private void OnConsoleInput()
+    {
+
+    }
+
+    private void OnConsoleExit(object? sender, int code)
+    {
+        Microsoft.Maui.Controls.Application.Current?.Dispatcher.Dispatch(() =>
+        {
+            ConsoleOutputLines.Add($"[MCOCSrv] Server exited with code {code}.");
+            CombinedConsoleOutput += $"[MCOCSrv] Server exited with code {code}." + Environment.NewLine;
+            ScrollToConsoleEnd();
+            UpdateActionsState();
+        });
+    }
+
+    //============Actions Implementation============
+    private async Task ExecuteStartServer()
+    {
+        if (Console != null && !Console.IsRunning)
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Requesting Server Start...");
+            await Console.StartServer();
+        }
+        else
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Cannot request start - server running already or console is null.");
+        }
+        UpdateActionsState();
+    }
+
+    private async Task ExecuteStopServer()
+    {
+
+        if (Console != null && Console.IsRunning)
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Requesting Server Stop...");
+            await Console.StopServer();
+        }
+        else
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Cannot request stop - server is already not running or console is null.");
+        }
+        UpdateActionsState();
+    }
+
+    private async Task ExecuteSendCommand()
+    {
+        if (Console != null && Console.IsRunning && !string.IsNullOrEmpty(ConsoleInput.Text))
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Sending command: {ConsoleInput.Text}");
+            await Console.SendCommand(ConsoleInput.Text);
+        }
+        else if (Console == null)
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Cannot send command - console is NULL");
+        }
+        else if (Console != null && !Console.IsRunning)
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Cannot send command - server not running");
+        }
+        else
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Cannot send command - command is empty or null.");
+            UILogger.LogUI($"[CONSOLE {Name}] ");
+        }
+
+        ConsoleInput.Text = string.Empty;
+    }
+
+    private async Task ExecuteRestartServer()
+    {
+        if (Console != null)
+        {
+            await Console.RestartServer();
+            UpdateActionsState();
+        }
+    }
+
+    private async Task ExecuteForceSave()
+    {
+        if (Console != null && Console.IsRunning)
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Requesting save...");
+            await Console.SendCommand("save-all flush");
+        }
+        else if (Console == null)
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Cannot force a save - console is NULL");
+        }
+        else if (!Console.IsRunning)
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Cannot force a save - server not running");
+        }
+        else
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Cannot force a save. No reason, just not feeling like it");
+        }
+    }
+
+
+    //============OTHER METHODS============
+    private void UpdateActionsState()
+    {
+        bool isRunning = Console.IsRunning;
+        if (isRunning)
+        {
+            Start_Stop_Button.Source = "stop_icon_console.png";
+            Start_Stop_Button.Command = StopServer;
+        }
+        else
+        {
+            Start_Stop_Button.Source = "start_icon_console.png";
+            Start_Stop_Button.Command = StartServer;
+        }
+    }
+    private async void ScrollToConsoleEnd()
+    {
+        await Task.Delay(1);
+        await ConsoleScrollView.ScrollToAsync(ConsoleOutput, ScrollToPosition.End, true);
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
