@@ -2,43 +2,41 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"  
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
             xmlns:local="clr-namespace:MCOCSrv.Resources.Raw" 
-            x:Class="MCOCSrv.Resources.Popups.CreateInstanceRequestPopup"  
+            x:Class="MCOCSrv.Resources.Popups.CreateInstanceRequestPopup"
             IsVisible="False"  
             InputTransparent="True">  
-   <Border Stroke="{StaticResource Primary}" HeightRequest="600" WidthRequest="450" BackgroundColor="{StaticResource Gray900}">  
-       <Border.StrokeShape>  
-           <RoundRectangle CornerRadius="10"/>  
-       </Border.StrokeShape>  
-       <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="Fill" Spacing="15" Padding="10">  
-           <Label Text="New Instance" Style="{StaticResource TitleHeadLine}" FontSize="18"/>  
-           <Label   
-               Text="Name Instance:"  
-               HorizontalTextAlignment="Center"  
-               />  
-           <Entry x:Name="InstanceNameField" WidthRequest="400"/>  
-           <BoxView HeightRequest="10"/>  
-           <Label  
-               Text="Pick type:"  
-               HorizontalTextAlignment="Center"  
-               />  
-           <Picker x:Name="InstanceTypeField" WidthRequest="400" ItemsSource="{x:Static local:InstanceTypes.All}" SelectedIndexChanged="InstanceTypeField_SelectedIndexChanged"/>  
-           <Label Text="Version:" HorizontalTextAlignment="Center"/>
-            <Picker x:Name="InstanceTypeVersionField" WidthRequest="400" ItemsSource="{Binding AvaibleVersions}"/>  
-           <BoxView HeightRequest="10"/>  
-           <HorizontalStackLayout HorizontalOptions="Start" Spacing="10" Padding="20,0">  
-               <Label Grid.Column="0" Text="Use custom path?" VerticalTextAlignment="Center"/>  
-               <CheckBox Grid.Column="1" x:Name="CustomPathCheckbox" IsChecked="False" CheckedChanged="CustomPathCheckbox_CheckedChanged"/>  
-           </HorizontalStackLayout>  
-           <HorizontalStackLayout Spacing="10" Padding="20">  
-               <Entry x:Name="CustomPathField" HorizontalOptions="Start" WidthRequest="300"/>  
-               <Button x:Name="CustomPathSelectorButton" HorizontalOptions="End" Text="Browse" Clicked="CustomPathSelectorButton_Clicked" IsEnabled="False"/>  
-           </HorizontalStackLayout>  
-           <Grid  
-               RowDefinitions="Auto"  
-               HorizontalOptions="Fill"  
-               Padding="30,0">  
-               <Button Grid.Row="0" x:Name="CancedAddInstanceButton" Style="{StaticResource CancelButton}" Text="Cancel" Clicked="onCancel" HorizontalOptions="Start"/>  
-               <Button Grid.Row="1" x:Name="AddInstanceButtonConfirm" Style="{StaticResource AddNewButton}" Text="Confirm" Clicked="onConfirm" HorizontalOptions="End"/>  
+   <Border Stroke="{StaticResource PrimaryDark}" BackgroundColor="{StaticResource Gray900}" StrokeShape="RoundRectangle 15" Padding="30" MinimumWidthRequest="500">  
+       <VerticalStackLayout Spacing="30">  
+           <Label Text="New Instance" Style="{StaticResource TitleHeadLine}" FontSize="20"/>
+            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*" RowSpacing="5">
+                <Label
+                Grid.Row="0"
+                Text="Name Instance:"  
+                HorizontalTextAlignment="Center"/>
+                <Entry Grid.Row="1" x:Name="InstanceNameField"/>
+            </Grid>
+            <Grid ColumnDefinitions="Auto, *" ColumnSpacing="10">
+                <Label
+                Grid.Column="0"
+                Text="Pick type:"  
+                VerticalTextAlignment="Center"/>  
+                <Picker Grid.Column="1" x:Name="InstanceTypeField" ItemsSource="{x:Static local:InstanceTypes.All}" SelectedIndexChanged="InstanceTypeField_SelectedIndexChanged"/>  
+            </Grid>
+            <Grid ColumnDefinitions="Auto, *" ColumnSpacing="10">
+                <Label Grid.Column="0" Text="Version:" VerticalTextAlignment="Center"/>
+                <Picker Grid.Column="1" x:Name="InstanceTypeVersionField" ItemsSource="{Binding AvaibleVersions}"/>
+            </Grid>
+            <Grid ColumnDefinitions="Auto, Auto" ColumnSpacing="10">
+                <Label Grid.Column="0" Text="Use custom path?" VerticalTextAlignment="Center"/>
+                <Switch Grid.Column="1" x:Name="CustomPathSwitch" Toggled="CustomPathSwitchToggled"/>
+            </Grid>
+            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                <Entry Grid.Column="0" x:Name="CustomPathField" IsEnabled="False"/>
+                <Button Grid.Column="1" x:Name="CustomPathSelectorButton" Style="{StaticResource CustomButton}" Text="Browse" Clicked="CustomPathSelectorButton_Clicked" IsEnabled="False"/>
+            </Grid>
+            <Grid  ColumnDefinitions="*, *" ColumnSpacing="10" HorizontalOptions="Fill" Padding="30,0">  
+               <Button Grid.Column="0" x:Name="CancedAddInstanceButton" Style="{StaticResource CancelButton}" Text="Cancel" Clicked="onCancel" HorizontalOptions="Center"/>  
+               <Button Grid.Column="1" x:Name="AddInstanceButtonConfirm" Style="{StaticResource AddNewButton}" Text="Confirm" Clicked="onConfirm" HorizontalOptions="Center"/>  
            </Grid>  
        </VerticalStackLayout>  
    </Border>  

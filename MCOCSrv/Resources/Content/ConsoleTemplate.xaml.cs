@@ -267,4 +267,9 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+
+    private void ManageQuickActionsBtn_Clicked(object sender, EventArgs e)
+    {
+
+    }
 }

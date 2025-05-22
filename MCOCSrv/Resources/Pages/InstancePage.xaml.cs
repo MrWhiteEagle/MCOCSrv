@@ -18,12 +18,6 @@ public partial class InstancePage : ContentPage
         BindingContext = this;
     }
 
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-        await manager.FetchInstances();
-    }
-
     void onCreateInstance(object sender, EventArgs e)
     {
         CreateInstancePopup.IsVisible = true;
@@ -40,12 +34,32 @@ public partial class InstancePage : ContentPage
         }
     }
 
-    void OnStartRequest(object sender, object item)
+    async void OnStartRequest(object sender, object item)
     {
         if (item is InstanceModel instance)
         {
-            instance.InitializeConsole();
-            manager.running.Add(instance);
+            if (instance.Console != null)
+            {
+                await instance.Console.StartServer();
+            }
+            if (!manager.running.Contains(instance))
+            {
+                manager.running.Add(instance);
+            }
         }
     }
+
+    async void OnStopRequest(object sender, object item)
+    {
+        if (item is InstanceModel instance)
+        {
+            if (instance.Console != null)
+            {
+                await instance.Console.StopServer();
+                instance.Console.Dispose();
+            }
+            manager.running.Remove(instance);
+        }
+    }
+
 }

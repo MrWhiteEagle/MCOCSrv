@@ -31,6 +31,7 @@ public partial class ConsolePage : ContentPage, INotifyPropertyChanged
         InitializeComponent();
         BindingContext = this;
         this.Manager = instanceManager;
+
     }
 
     protected override void OnAppearing()
@@ -64,7 +65,7 @@ public partial class ConsolePage : ContentPage, INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

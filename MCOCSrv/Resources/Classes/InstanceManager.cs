@@ -43,8 +43,9 @@ namespace MCOCSrv.Resources.Classes
                     instances.Clear();
                     foreach (InstanceModel instance in list)
                     {
+                        instance.InitializeConsole();
                         instances.Add(instance);
-                        UILogger.LogUI($"[INSTANCE MANAGER] {instance.Name} Found");
+                        UILogger.LogUI($"[INSTANCE MANAGER] {instance.Name} Found and Initiated");
                     }
                     UILogger.LogUI($"[INSTANCE MANAGER] Found {instances.Count} total.");
                 }
@@ -115,6 +116,7 @@ namespace MCOCSrv.Resources.Classes
                 }
                 await fetcher.DownloadInstance(instance);
                 await AppendInstanceListFile(instance);
+                instance.InitializeConsole();
                 instances.Add(instance);
             }
             catch (Exception ex)

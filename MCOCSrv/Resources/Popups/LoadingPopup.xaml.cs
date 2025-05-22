@@ -14,6 +14,7 @@ public partial class LoadingPopup : ContentView
         await MainThread.InvokeOnMainThreadAsync(() =>
         {
             PopupFetchOutput.Text += msg + Environment.NewLine;
+            Task.Delay(1);
             PopupFetchOutputField.ScrollToAsync(0, PopupFetchOutputField.ContentSize.Height, false);
         });
     }

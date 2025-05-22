@@ -5,21 +5,18 @@
              IsEnabled="False"
              IsVisible="False"
              InputTransparent="True">
-    <Border WidthRequest="300" HeightRequest="150" Stroke="{StaticResource Primary}" BackgroundColor="{StaticResource Gray900}" Padding="20">
-        <Border.StrokeShape>
-            <RoundRectangle CornerRadius="10"/>
-        </Border.StrokeShape>
-    <VerticalStackLayout Spacing="30" HorizontalOptions="Center" VerticalOptions="Fill">
-        <Label 
+    <Border Stroke="{StaticResource PrimaryDark}" BackgroundColor="{StaticResource Gray900}" Padding="40, 20" StrokeShape="RoundRectangle 10">
+        <Grid RowDefinitions="*, *, Auto" ColumnDefinitions="*, *" RowSpacing="30" ColumnSpacing="20">
+            <Label
+            Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
             Text="Are you sure?"
             Style="{StaticResource TitleHeadLine}"
             FontSize="24"
             VerticalOptions="Center" 
             HorizontalOptions="Center"/>
-            <Grid ColumnDefinitions="*,*,*">
-                <Button x:Name="Cancel_button" Grid.Column ="0" Style="{StaticResource CancelButton}" Text="No" Clicked="Cancel_Button_Clicked"/>
-                <Button x:Name="Confirm_button"  Grid.Column ="2" Style="{StaticResource AddNewButton}" Text="Yes" Clicked="Confirm_Button_Clicked"/>
-            </Grid>
-    </VerticalStackLayout>
+            <Label x:Name="DeletionInfo" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalOptions="Center"/>
+            <Button Grid.Row="2" Grid.Column="0" x:Name="Cancel_button" Style="{StaticResource CancelButton}" Text="No" Clicked="Cancel_Button_Clicked"/>
+            <Button Grid.Row="2" Grid.Column="1" x:Name="Confirm_button" Style="{StaticResource AddNewButton}" Text="Yes" Clicked="Confirm_Button_Clicked"/>
+        </Grid>
     </Border>
 </ContentView>

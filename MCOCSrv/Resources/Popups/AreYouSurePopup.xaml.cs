@@ -1,15 +1,17 @@
 using MCOCSrv.Resources.Classes;
 using MCOCSrv.Resources.Models;
+using System.ComponentModel;
 
 namespace MCOCSrv.Resources.Popups;
 
-public partial class AreYouSurePopup : ContentView
+public partial class AreYouSurePopup : ContentView, INotifyPropertyChanged
 {
     private InstanceModel toDelete;
     private InstanceManager manager;
     public AreYouSurePopup()
     {
         InitializeComponent();
+        BindingContext = this;
         this.manager = Application.Current.Handler.MauiContext.Services.GetService<InstanceManager>();
     }
 
@@ -30,6 +32,7 @@ public partial class AreYouSurePopup : ContentView
         this.IsVisible = true;
         this.InputTransparent = false;
         toDelete = context;
+        DeletionInfo.Text = $"{toDelete.Name} will be deleted forever!";
     }
 
     public void Hide()

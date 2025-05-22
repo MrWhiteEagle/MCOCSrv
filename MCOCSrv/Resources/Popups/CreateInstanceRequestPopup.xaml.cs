@@ -17,8 +17,8 @@ public partial class CreateInstanceRequestPopup : ContentView
     {
 
         BindingContext = this;
-        this.serverVersionFetcher = Application.Current.Handler.MauiContext.Services.GetService<ServerVersionFetcher>();
-        this.manager = Application.Current.Handler.MauiContext.Services.GetService<InstanceManager>();
+        this.serverVersionFetcher = App.Current.Handler.MauiContext.Services.GetService<ServerVersionFetcher>();
+        this.manager = App.Current.Handler.MauiContext.Services.GetService<InstanceManager>();
         AvaibleVersions = new ObservableCollection<string>();
         InitializeComponent();
 
@@ -37,7 +37,7 @@ public partial class CreateInstanceRequestPopup : ContentView
                 Description: null,
                 Type: (InstanceType)InstanceTypeField.SelectedItem,
                 TypeVersion: InstanceTypeVersionField.SelectedItem.ToString(),
-                CustomPath: string.IsNullOrEmpty(CustomPathField.Text) || CustomPathCheckbox.IsChecked == false ? null : CustomPathField.Text);
+                CustomPath: string.IsNullOrEmpty(CustomPathField.Text) || CustomPathSwitch.IsToggled == false ? null : CustomPathField.Text);
             await manager.CreateInstance(newInstance);
         }
         else
@@ -52,7 +52,7 @@ public partial class CreateInstanceRequestPopup : ContentView
         this.InputTransparent = true;
     }
 
-    private void CustomPathCheckbox_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    private void CustomPathSwitchToggled(object sender, ToggledEventArgs e)
     {
         if (e.Value == true)
         {
@@ -86,7 +86,7 @@ public partial class CreateInstanceRequestPopup : ContentView
         InstanceNameField.Text = null;
         InstanceTypeField.SelectedIndex = -1;
         InstanceTypeVersionField.SelectedIndex = -1;
-        CustomPathCheckbox.IsChecked = false;
+        CustomPathSwitch.IsToggled = false;
         CustomPathField.Text = null;
         AvaibleVersions.Clear();
     }

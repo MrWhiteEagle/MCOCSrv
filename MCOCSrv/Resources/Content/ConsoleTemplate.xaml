@@ -3,11 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MCOCSrv.Resources.Content.ConsoleTemplate">
     
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, *" Padding="10">
     <Label
         Grid.Row="0"
-        Text="{Binding Name, StringFormat='DASHBOARD - {0}'}"
-        Style="{StaticResource TitleHeadLine}" FontAttributes="Bold"/>
+        Text="{Binding Name, StringFormat='COMMAND CENTER - {0}'}"
+        Style="{StaticResource TitleHeadLine}" FontAttributes="Bold"
+        HorizontalTextAlignment="Center"/>
     <Border Grid.Row="1" Stroke="{StaticResource PrimaryDark}" Margin="5">
     <Border.StrokeShape>
         <RoundRectangle CornerRadius="10"/>
@@ -18,7 +19,7 @@
                 <RoundRectangle CornerRadius="7"/>
             </Border.StrokeShape>
             <Grid RowDefinitions="*,Auto">
-                    <ScrollView x:Name="ConsoleScrollView" Grid.Row="0">
+                    <ScrollView x:Name="ConsoleScrollView" Grid.Row="0" Padding="10">
                             <Label x:Name="ConsoleOutput" Text="{Binding CombinedConsoleOutput}"/>
                     </ScrollView>
                     <Border Grid.Row="1" Stroke="{StaticResource SecondaryDark}" BackgroundColor="{StaticResource Gray950}">
@@ -36,7 +37,7 @@
                 </Border.StrokeShape>
                 <Grid RowDefinitions="Auto,*" ColumnDefinitions="*, Auto" Padding="10" RowSpacing="10">
                     <Label Grid.Row="0" Grid.Column="0" Text="Quick Actions" HorizontalOptions="Center" FontSize="17"/>
-                    <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource AddNewButton}" Text="Manage" ToolTipProperties.Text="Add/Remove Quick actions"/>
+                    <Button x:Name="ManageQuickActionsBtn" Grid.Row="0" Grid.Column="1" Style="{StaticResource AddNewButton}" Text="Manage" ToolTipProperties.Text="Add/Remove Quick actions" Clicked="ManageQuickActionsBtn_Clicked"/>
                     <CollectionView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical"/>

@@ -2,13 +2,53 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MCOCSrv.Resources.Content.StartButton">
-    <Border x:Name="MainBorder" BackgroundColor="{StaticResource Transparent}" Stroke="#0bde00" HeightRequest="40" WidthRequest="40" Padding="5">
-        <Border.StrokeShape>
-            <RoundRectangle CornerRadius="5"/>
-        </Border.StrokeShape>
-        <Border.GestureRecognizers>
+    <Grid RowDefinitions="40" ColumnDefinitions="40" HeightRequest="40" WidthRequest="40">
+        <Border Grid.Row="0" x:Name="StartBorder" BackgroundColor="{StaticResource Transparent}" Stroke="#0bde00" HeightRequest="40" WidthRequest="40" Padding="5" IsEnabled="True" IsVisible="True" InputTransparent="False" StrokeShape="RoundRectangle 5" ToolTipProperties.Text="Start the server">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal">
+                            <VisualState.Setters>
+                                <Setter Property="Opacity" Value="1"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="PointerOver">
+                            <VisualState.Setters>
+                                <Setter Property="Opacity" Value="0.85"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </VisualStateManager.VisualStateGroups>
+            <Border.GestureRecognizers>
             <TapGestureRecognizer Tapped="Start_Instance_Clicked"/>
         </Border.GestureRecognizers>
-        <Image Source="start_icon.png"/>
-    </Border>
+            <Image x:Name="StartIcon" Source="start_icon.png"/>
+        </Border>
+        <Border Grid.Row="0" x:Name="WorkingBorder" BackgroundColor="{StaticResource Transparent}" Stroke="{StaticResource Transparent}" HeightRequest="40" WidthRequest="40" Padding="5" IsEnabled="False" IsVisible="False" InputTransparent="True" StrokeShape="RoundRectangle 5" ToolTipProperties.Text="Working...">
+            <ActivityIndicator IsRunning="True"/>
+        </Border>
+        <Border Grid.Row="0" x:Name="StopBorder" BackgroundColor="{StaticResource Transparent}" Stroke="#ff0000" HeightRequest="40" WidthRequest="40" Padding="5" IsEnabled="False" IsVisible="False" InputTransparent="True" StrokeShape="RoundRectangle 5" ToolTipProperties.Text="Stop the server">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal">
+                            <VisualState.Setters>
+                                <Setter Property="Opacity" Value="1"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="PointerOver">
+                            <VisualState.Setters>
+                                <Setter Property="Opacity" Value="0.85"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </VisualStateManager.VisualStateGroups>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="Stop_Instance_Clicked"/>
+            </Border.GestureRecognizers>
+            <Image x:Name="StopIcon" Source="stop_icon.png"/>
+        </Border>
+    </Grid>
 </ContentView>

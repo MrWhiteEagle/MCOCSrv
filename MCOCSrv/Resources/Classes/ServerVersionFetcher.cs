@@ -25,6 +25,7 @@ namespace MCOCSrv.Resources.Classes
 
         public async Task DownloadInstance(InstanceModel instance)
         {
+            Toaster.ToastifyLong($"Starting Download of: \n{instance.Type}-{instance.TypeVersion}\n Please wait...");
             UILogger.LogUI($"[SERVER FETCHER] Start Download: Type - {instance.Type}, Version - {instance.TypeVersion} to: {instance.GetPath()}...");
             try
             {
@@ -33,10 +34,13 @@ namespace MCOCSrv.Resources.Classes
                 await File.WriteAllBytesAsync(Path.Combine(instance.GetPath(), $"{instance.Name}-{instance.TypeVersion}.jar"), download);
 
                 UILogger.LogUI($"[SERVER FETCHER] DONWLOAD OK - PATH: {instance.GetPath()}");
+                Toaster.ToastifyLong($"Download for: \n{instance.Type}-{instance.TypeVersion}\n FINISHED!");
+
             }
             catch (Exception ex)
             {
                 UILogger.LogUI($"[SERVER FETCHER] Failed download: {ex.Message}");
+                Toaster.ToastifyLong($"Download of: \n{instance.Type}-{instance.TypeVersion} failed. \nException: {ex.Message}");
             }
 
         }
@@ -118,6 +122,7 @@ namespace MCOCSrv.Resources.Classes
             {
                 UILogger.LogUI("[SERVER FETCHER] Source files not generated or deleted - starting fetch");
                 UILogger.LogUI("[SERVER FETCHER] FETCH - START");
+                Toaster.ToastifyLong($"Source URL files are missing, redownloading....");
                 try
                 {
                     await FetchVanilla(client);

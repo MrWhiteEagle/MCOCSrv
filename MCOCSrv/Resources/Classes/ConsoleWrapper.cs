@@ -14,6 +14,20 @@ namespace MCOCSrv.Resources.Classes
         private Process? ServerProcess;
         private bool WasDisposed = false;
         private string Arguments;
+        private int _state;
+        public int State
+        {
+            get => _state;
+            set
+            {
+                if (_state != value)
+                {
+                    _state = value;
+                    ServerStateChanged(value);
+                    UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] State changed to {value}.");
+                }
+            }
+        }
         public ObservableCollection<string> ConsoleOutput { get; set; } = new();
         public Dictionary<string, string> Actions { get; set; } = new();
         public bool IsRunning => ServerProcess != null && !ServerProcess.HasExited && !WasDisposed;
@@ -26,6 +40,7 @@ namespace MCOCSrv.Resources.Classes
             this.PropertiesFile = Path.Combine(this.WorkingPath, "server.properties");
             this.EulaFile = Path.Combine(this.WorkingPath, "eula.txt");
             this.Arguments = instance.LaunchArguments;
+            this.State = 0;
         }
 
         //Get wrapper's instance name
@@ -38,20 +53,25 @@ namespace MCOCSrv.Resources.Classes
         //Set up a process, subsc ribe to methods calling the handlers
         public async Task StartServer()
         {
+            State = 1;
             if (IsRunning)
             {
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Server already running!");
+                State = 2;
                 return;
             }
             if (!File.Exists(ServerFile))
             {
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Server File does not exist! File: {ServerFile}");
+                State = 0;
                 return;
             }
             if (!EulaCheck())
             {
-                UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] User did not agree to Minecraft EULA!");
-                return;
+                UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] User did not agree to Minecraft EULA! - creating file automatically...");
+                string eula = "eula=true";
+                File.WriteAllText(EulaFile, eula);
+
             }
             //Start setup
             ServerProcess = new Process();
@@ -75,10 +95,12 @@ namespace MCOCSrv.Resources.Classes
                 ServerProcess.BeginOutputReadLine();
                 ServerProcess.BeginErrorReadLine();
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Server Started!");
+                State = 2;
             }
             catch (Exception ex)
             {
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Error starting server: {ex.Message}");
+                State = 0;
             }
         }
 
@@ -121,9 +143,11 @@ namespace MCOCSrv.Resources.Classes
         //Send stop command if running - after that dispose of resources safely
         public async Task StopServer()
         {
+            State = 1;
             if (!IsRunning)
             {
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Server already not running!");
+                State = 0;
                 return;
             }
             UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] STOPPING SERVER...");
@@ -131,6 +155,7 @@ namespace MCOCSrv.Resources.Classes
             int timeout = 10000;
             if (ServerProcess.WaitForExit(timeout))
             {
+                State = 0;
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] SERVER STOPPED.");
             }
             else
@@ -138,15 +163,18 @@ namespace MCOCSrv.Resources.Classes
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] SERVER TIMEOUT OF {timeout} - ATTEMPTING KILL...");
                 try
                 {
-
+                    ServerProcess.Kill();
+                    State = 0;
                 }
                 catch (InvalidOperationException ex)
                 {
                     UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Server Exited Unexpectedly (likely before kill but after timeout) {ex.Message}");
+                    State = 0;
                 }
                 catch (Exception ex)
                 {
                     UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] ERROR KILLING SERVER PROCESS: {ex.Message}");
+                    State = 1;
                 }
 
                 DisposeProcess();
@@ -220,11 +248,6 @@ namespace MCOCSrv.Resources.Classes
             }
         }
 
-        //public string GetProperties()
-        //{
-
-        //}
-
         //Check if EULA file exists - and if it does if its true
         public bool EulaCheck()
         {
@@ -281,6 +304,7 @@ namespace MCOCSrv.Resources.Classes
         {
             if (ServerProcess != null)
             {
+                State = 0;
                 var exitcode = ServerProcess.ExitCode;
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Server Exited with code: {exitcode}");
 
@@ -288,6 +312,16 @@ namespace MCOCSrv.Resources.Classes
 
                 ConsoleExitHandler?.Invoke(this, exitcode);
             }
+        }
+
+        public event EventHandler<int> ServerStateHandler;
+
+        private void ServerStateChanged(int state)
+        {
+            //0-stopped
+            //1-working
+            //2-running
+            ServerStateHandler?.Invoke(this, state);
         }
     }
 }

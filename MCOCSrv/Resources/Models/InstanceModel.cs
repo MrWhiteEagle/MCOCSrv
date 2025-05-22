@@ -61,5 +61,17 @@ namespace MCOCSrv.Resources.Models
 
         }
 
+        public bool IsRunning()
+        {
+            if (this.Console != null && this.Console.IsRunning)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }

@@ -13,11 +13,20 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
-            .UseMauiCommunityToolkit()
+            .UseMauiCommunityToolkit(options =>
+            {
+                options.SetShouldEnableSnackbarOnWindows(true);
+            })
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                fonts.AddFont("Roboto-Regular.ttf", "Roboto");
+                fonts.AddFont("Roboto-Bold.ttf", "RobotoBold");
+                fonts.AddFont("Roboto-ExtraBold.ttf", "RobotoExtraBold");
+                fonts.AddFont("Roboto-Thin.ttf", "RobotoThin");
+                fonts.AddFont("Roboto-Light.ttf", "RobotoLight");
+
             });
         builder.Services.AddSingleton<ServerVersionFetcher>();
         builder.Services.AddSingleton<InstanceManager>();

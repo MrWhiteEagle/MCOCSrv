@@ -5,16 +5,25 @@
              x:Class="MCOCSrv.ConsolePage"
              Shell.NavBarIsVisible="False">
     <Grid RowDefinitions="Auto, *">
-        <CollectionView Grid.Row="0" ItemsSource="{Binding Tabs}" BackgroundColor="{StaticResource Black}" SelectedItem="{Binding CurrentConsole}" SelectionChanged="Tabs_Changed" SelectionMode="Single">
+        <CollectionView x:Name="InstanceTabList" Grid.Row="0" ItemsSource="{Binding Tabs}" BackgroundColor="{StaticResource Black}" SelectedItem="{Binding CurrentConsole}" SelectionChanged="Tabs_Changed" SelectionMode="Single">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="1"/>
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Border Stroke="{StaticResource Tertiary}" HeightRequest="30" Padding="10, 0">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10"/>
-                        </Border.StrokeShape>
+                    <Border Stroke="{StaticResource Transparent}" HeightRequest="30" Padding="15, 0" StrokeShape="RoundRectangle 10">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroupList>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="{StaticResource Tertiary}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateGroupList>
+                        </VisualStateManager.VisualStateGroups>
                         <Label Text="{Binding Name}" LineBreakMode="NoWrap" FontSize="12" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer/>
