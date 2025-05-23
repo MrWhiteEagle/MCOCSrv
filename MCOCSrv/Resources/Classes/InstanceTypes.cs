@@ -1,4 +1,4 @@
-﻿namespace MCOCSrv.Resources.Raw
+﻿namespace MCOCSrv.Resources.Classes
 {
     public enum InstanceType
     {
@@ -23,7 +23,7 @@
             "Fabric" => InstanceType.Fabric,
             "Paper" => InstanceType.Paper,
             "Purpur" => InstanceType.Purpur,
-            "Sponge" => InstanceType.Sponge
+            "Sponge" => InstanceType.Sponge,
         };
 
         public static string ToString(InstanceType type) => type switch
@@ -34,7 +34,8 @@
             InstanceType.Fabric => "Fabric",
             InstanceType.Paper => "Paper",
             InstanceType.Purpur => "Purpur",
-            InstanceType.Sponge => "Sponge"
+            InstanceType.Sponge => "Sponge",
+            _ => "NULL"
         };
     }
 

@@ -1,4 +1,6 @@
-﻿namespace MCOCSrv
+﻿using System.Diagnostics;
+
+namespace MCOCSrv
 {
     public partial class AppShell : Shell
     {
@@ -13,6 +15,7 @@
         {
 
             var route = e.Current?.Location?.ToString();
+            Debug.WriteLine(route.ToString());
 
             string newTitle = route switch
             {
@@ -21,6 +24,7 @@
                 "//ConsolePage" => "MCOCSrv - Server Console",
                 "//AboutPage" => "MCOCSrv - App Info",
                 "//SettingsPage" => "MCOCSrv - App Settings",
+                "//InstanceSettingsPage" => "MCOCSrv - Instance Settings",
                 _ => "MCOCSrv"
             };
 

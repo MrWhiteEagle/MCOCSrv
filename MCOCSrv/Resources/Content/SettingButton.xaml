@@ -20,7 +20,7 @@
             </VisualStateGroupList>
         </VisualStateManager.VisualStateGroups>
         <Border.GestureRecognizers>
-            <TapGestureRecognizer/>
+            <TapGestureRecognizer Tapped="OnSettingsRequest"/>
         </Border.GestureRecognizers>
         <Image Source="edit_icon.png"/>
     </Border>

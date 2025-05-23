@@ -2,23 +2,21 @@ using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Storage;
 using MCOCSrv.Resources.Classes;
 using MCOCSrv.Resources.Models;
-using MCOCSrv.Resources.Raw;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace MCOCSrv.Resources.Popups;
 
 public partial class CreateInstanceRequestPopup : ContentView
 {
     public ObservableCollection<string> AvaibleVersions { get; set; }
-    private readonly ServerVersionFetcher serverVersionFetcher;
-    private readonly InstanceManager manager;
+    private readonly ServerVersionFetcher? serverVersionFetcher;
+    private readonly InstanceManager? manager;
     public CreateInstanceRequestPopup()
     {
 
         BindingContext = this;
-        this.serverVersionFetcher = App.Current.Handler.MauiContext.Services.GetService<ServerVersionFetcher>();
-        this.manager = App.Current.Handler.MauiContext.Services.GetService<InstanceManager>();
+        this.serverVersionFetcher = App.Current?.Handler?.MauiContext?.Services.GetService<ServerVersionFetcher>();
+        this.manager = App.Current?.Handler?.MauiContext?.Services.GetService<InstanceManager>();
         AvaibleVersions = new ObservableCollection<string>();
         InitializeComponent();
 
@@ -26,23 +24,29 @@ public partial class CreateInstanceRequestPopup : ContentView
 
     async void onConfirm(object sender, EventArgs e)
     {
-        this.IsVisible = false;
-        this.InputTransparent = true;
         if (!string.IsNullOrEmpty(InstanceNameField.Text) &&
             InstanceTypeField.SelectedIndex != -1 &&
-            InstanceTypeVersionField.SelectedIndex != -1)
+            InstanceVersionField.SelectedIndex != -1 && NameCheck(InstanceNameField.Text))
         {
             InstanceModel newInstance = new(
                 Name: InstanceNameField.Text,
                 Description: null,
                 Type: (InstanceType)InstanceTypeField.SelectedItem,
-                TypeVersion: InstanceTypeVersionField.SelectedItem.ToString(),
+                Version: InstanceVersionField.SelectedItem.ToString(),
                 CustomPath: string.IsNullOrEmpty(CustomPathField.Text) || CustomPathSwitch.IsToggled == false ? null : CustomPathField.Text);
+            this.IsVisible = false;
+            this.InputTransparent = true;
             await manager.CreateInstance(newInstance);
+        }
+        else if (!NameCheck(InstanceNameField.Text))
+        {
+            WarningText.Text = "Name already exists!";
+            WarningText.IsVisible = true;
         }
         else
         {
-            Debug.WriteLine("not all fields are correctly filled!");
+            WarningText.Text = "Some fields are not filled correctly!";
+            WarningText.IsVisible = true;
         }
     }
 
@@ -85,10 +89,11 @@ public partial class CreateInstanceRequestPopup : ContentView
     {
         InstanceNameField.Text = null;
         InstanceTypeField.SelectedIndex = -1;
-        InstanceTypeVersionField.SelectedIndex = -1;
+        InstanceVersionField.SelectedIndex = -1;
         CustomPathSwitch.IsToggled = false;
         CustomPathField.Text = null;
         AvaibleVersions.Clear();
+        WarningText.IsVisible = false;
     }
 
     private void InstanceTypeField_SelectedIndexChanged(object sender, EventArgs e)
@@ -96,12 +101,22 @@ public partial class CreateInstanceRequestPopup : ContentView
         if (InstanceTypeField.SelectedItem is InstanceType selectedType)
         {
             AvaibleVersions.Clear();
-            var versions = serverVersionFetcher.getVersions(selectedType).ToObservableCollection<string>();
+            var versions = serverVersionFetcher.GetVersions(selectedType).ToObservableCollection<string>();
             foreach (var version in versions)
             {
                 AvaibleVersions.Add(version);
             }
 
         }
+    }
+
+    private bool NameCheck(string name)
+    {
+        foreach (var instance in manager.instances)
+        {
+            if (instance.Name == name)
+                return false;
+        }
+        return true;
     }
 }

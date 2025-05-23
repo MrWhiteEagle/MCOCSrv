@@ -36,7 +36,7 @@ namespace MCOCSrv.Resources.Classes
         {
             this.WorkingInstance = instance;
             this.WorkingPath = instance.GetPath();
-            this.ServerFile = Path.Combine(this.WorkingPath, $"{instance.Name}-{instance.TypeVersion}.jar");
+            this.ServerFile = Path.Combine(this.WorkingPath, $"{instance.id}-{instance.Version}.jar");
             this.PropertiesFile = Path.Combine(this.WorkingPath, "server.properties");
             this.EulaFile = Path.Combine(this.WorkingPath, "eula.txt");
             this.Arguments = instance.LaunchArguments;
@@ -51,7 +51,7 @@ namespace MCOCSrv.Resources.Classes
 
         //Check if running, if serverfile exists and for eula.
         //Set up a process, subsc ribe to methods calling the handlers
-        public async Task StartServer()
+        public void StartServer()
         {
             State = 1;
             if (IsRunning)
@@ -105,7 +105,7 @@ namespace MCOCSrv.Resources.Classes
         }
 
         // try send command thought input handler
-        public async Task SendCommand(string cmd)
+        public void SendCommand(string cmd)
         {
             if (!IsRunning)
             {
@@ -151,7 +151,7 @@ namespace MCOCSrv.Resources.Classes
                 return;
             }
             UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] STOPPING SERVER...");
-            await SendCommand("stop");
+            SendCommand("stop");
             int timeout = 10000;
             if (ServerProcess.WaitForExit(timeout))
             {
@@ -287,9 +287,9 @@ namespace MCOCSrv.Resources.Classes
         }
 
         //Calls every time console outputs data
-        public event EventHandler<string> ConsoleOutputHandler;
+        public event EventHandler<string>? ConsoleOutputHandler;
 
-        private void ConsoleOutputReceived(object sender, DataReceivedEventArgs a)
+        private void ConsoleOutputReceived(object? sender, DataReceivedEventArgs a)
         {
             if (a.Data != null)
             {
@@ -299,8 +299,8 @@ namespace MCOCSrv.Resources.Classes
         }
 
         //Calls when server closes (any reason to process end)
-        public event EventHandler<int> ConsoleExitHandler;
-        private void ConsoleExited(object sender, EventArgs a)
+        public event EventHandler<int>? ConsoleExitHandler;
+        private void ConsoleExited(object? sender, EventArgs a)
         {
             if (ServerProcess != null)
             {
@@ -314,7 +314,7 @@ namespace MCOCSrv.Resources.Classes
             }
         }
 
-        public event EventHandler<int> ServerStateHandler;
+        public event EventHandler<int>? ServerStateHandler;
 
         private void ServerStateChanged(int state)
         {

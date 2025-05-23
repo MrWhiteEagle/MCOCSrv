@@ -1,5 +1,4 @@
 ﻿using MCOCSrv.Resources.Models;
-using MCOCSrv.Resources.Raw;
 using System.Text.Json;
 using System.Xml;
 using System.Xml.Linq;
@@ -25,25 +24,26 @@ namespace MCOCSrv.Resources.Classes
 
         public async Task DownloadInstance(InstanceModel instance)
         {
-            Toaster.ToastifyLong($"Starting Download of: \n{instance.Type}-{instance.TypeVersion}\n Please wait...");
-            UILogger.LogUI($"[SERVER FETCHER] Start Download: Type - {instance.Type}, Version - {instance.TypeVersion} to: {instance.GetPath()}...");
+            Toaster.Toastify($"Starting Download of: \n{instance.Type}-{instance.Version}\n Please wait...");
+            UILogger.LogUI($"[SERVER FETCHER] Start Download: Type - {instance.Type}, Version - {instance.Version} to: {instance.GetPath()}...");
             try
             {
-                var download = await client.GetByteArrayAsync(GetUrl(instance.Type, instance.TypeVersion));
+                var download = await client.GetByteArrayAsync(GetUrl(instance.Type, instance.Version));
 
-                await File.WriteAllBytesAsync(Path.Combine(instance.GetPath(), $"{instance.Name}-{instance.TypeVersion}.jar"), download);
+                await File.WriteAllBytesAsync(Path.Combine(instance.GetPath(), $"{instance.id}-{instance.Version}.jar"), download);
 
                 UILogger.LogUI($"[SERVER FETCHER] DONWLOAD OK - PATH: {instance.GetPath()}");
-                Toaster.ToastifyLong($"Download for: \n{instance.Type}-{instance.TypeVersion}\n FINISHED!");
+                Toaster.Toastify($"Download for: \n{instance.Type}-{instance.Version}\n FINISHED!");
 
             }
             catch (Exception ex)
             {
                 UILogger.LogUI($"[SERVER FETCHER] Failed download: {ex.Message}");
-                Toaster.ToastifyLong($"Download of: \n{instance.Type}-{instance.TypeVersion} failed. \nException: {ex.Message}");
+                Toaster.ToastifyLong($"Download of: \n{instance.Type}-{instance.Version} failed. \nException: {ex.Message}");
             }
 
         }
+#pragma warning disable CS8524
         private string GetUrl(InstanceType type, string version) => type switch
         {
             InstanceType.Vanilla => Vanilla[version],
@@ -54,7 +54,8 @@ namespace MCOCSrv.Resources.Classes
             InstanceType.Purpur => Purpur[version],
             InstanceType.Sponge => Sponge[version]
         };
-        public List<string> getVersions(InstanceType type)
+#pragma warning restore CS8524
+        public List<string> GetVersions(InstanceType type)
         {
             switch (type)
             {
@@ -78,7 +79,7 @@ namespace MCOCSrv.Resources.Classes
             }
         }
 
-        private bool FileCheck()
+        private static bool FileCheck()
         {
             if (File.Exists(Path.Combine(Global.AppDataSourcesPath, "serversource-vanilla.json")) &&
                 File.Exists(Path.Combine(Global.AppDataSourcesPath, "serversource-forge.json")) &&
@@ -97,7 +98,7 @@ namespace MCOCSrv.Resources.Classes
             }
         }
 
-        public async Task initializeSources()
+        public async Task InitializeSources()
         {
             if (FileCheck())
             {
@@ -108,6 +109,7 @@ namespace MCOCSrv.Resources.Classes
                 string paperJson = await File.ReadAllTextAsync(Path.Combine(Global.AppDataSourcesPath, "serversource-paper.json"));
                 string purpurJson = await File.ReadAllTextAsync(Path.Combine(Global.AppDataSourcesPath, "serversource-purpur.json"));
                 string spongeJson = await File.ReadAllTextAsync(Path.Combine(Global.AppDataSourcesPath, "serversource-sponge.json"));
+
 
                 Vanilla = JsonSerializer.Deserialize<Dictionary<string, string>>(JsonDocument.Parse(vanillaJson));
                 Forge = JsonSerializer.Deserialize<Dictionary<string, string>>(JsonDocument.Parse(forgeJson));
@@ -185,8 +187,8 @@ namespace MCOCSrv.Resources.Classes
 
             foreach (var version in versions.EnumerateArray())
             {
-                string id = version.GetProperty("id").GetString();
-                string versionUrl = version.GetProperty("url").GetString();
+                string? id = version.GetProperty("id").GetString();
+                string? versionUrl = version.GetProperty("url").GetString();
 
                 try
                 {
@@ -386,7 +388,7 @@ namespace MCOCSrv.Resources.Classes
                         for (int i = buildArray.Count - 1; i >= 0; i--)
                         {
                             var build = buildArray[i];
-                            string channel = build.GetProperty("channel").GetString();
+                            string? channel = build.GetProperty("channel").GetString();
                             if (channel == "default")
                             {
                                 int buildNumber = build.GetProperty("build").GetInt32();
@@ -440,7 +442,7 @@ namespace MCOCSrv.Resources.Classes
                     string buildJson = await client.GetStringAsync($"https://api.purpurmc.org/v2/purpur/{version}");
                     using JsonDocument buildDoc = JsonDocument.Parse(buildJson);
 
-                    string build = buildDoc.RootElement.GetProperty("builds").GetProperty("latest").GetString();
+                    string? build = buildDoc.RootElement.GetProperty("builds").GetProperty("latest").GetString();
                     if (!string.IsNullOrEmpty(build))
                     {
                         string url = $"https://api.purpurmc.org/v2/purpur/{version}/{build}/download";

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MCOCSrv.Resources.Pages.SingletonPages.InstanceSettingsPage"
+             Title="InstanceSettingsPage"
+             Shell.NavBarIsVisible="False">
+    <Border Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" BackgroundColor="{StaticResource Gray950}">
+        <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, *, Auto" ColumnSpacing="10" RowSpacing="10">
+            <Label Text="{Binding InstanceName}" Style="{StaticResource TitleHeadLine}"/>
+            <CollectionView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+
+            </CollectionView>
+            <Button Grid.Column="0" Grid.Row="2" Text="Cancel" Style="{StaticResource CancelButton}"/>
+            <Button Grid.Column="1" Grid.Row="2" Text="Save" Style="{StaticResource AddNewButton}"/>
+        </Grid>
+    </Border>
+</ContentPage>

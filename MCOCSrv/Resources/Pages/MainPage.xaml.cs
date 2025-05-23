@@ -26,7 +26,7 @@ namespace MCOCSrv
                 LoadingSourcePopup.IsVisible = true;
                 LoadingSourcePopup.IsEnabled = true;
                 LoadingSourcePopup.InputTransparent = false;
-                await serverVersionFetcher.initializeSources();
+                await serverVersionFetcher.InitializeSources();
                 LoadingSourcePopup.IsVisible = false;
                 LoadingSourcePopup.IsEnabled = false;
                 LoadingSourcePopup.InputTransparent = true;

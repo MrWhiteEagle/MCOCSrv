@@ -1,14 +1,14 @@
 ﻿using MCOCSrv.Resources.Classes;
-using MCOCSrv.Resources.Raw;
 namespace MCOCSrv.Resources.Models
 {
     public class InstanceModel
     {
         public ConsoleWrapper? Console;
+        public string id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
         public InstanceType Type { get; set; }
-        public string TypeVersion { get; set; }
+        public string Version { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime? LastUsed { get; set; }
         public string? CustomPath { get; set; }
@@ -16,12 +16,12 @@ namespace MCOCSrv.Resources.Models
 
         public string LaunchArguments { get; set; }
 
-        public InstanceModel(string Name, string? Description, InstanceType Type, string TypeVersion, string? CustomPath)
+        public InstanceModel(string Name, string? Description, InstanceType Type, string Version, string? CustomPath)
         {
             this.Name = Name;
             this.Description = Description;
             this.Type = Type;
-            this.TypeVersion = TypeVersion;
+            this.Version = Version;
             this.CustomPath = CustomPath;
             this.CreationDate = DateTime.Now;
             this.BasePath = Global.AppDataInstancesPath;

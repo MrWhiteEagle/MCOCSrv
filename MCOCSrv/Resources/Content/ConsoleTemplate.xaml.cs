@@ -1,6 +1,5 @@
 using MCOCSrv.Resources.Classes;
 using MCOCSrv.Resources.Models;
-using MCOCSrv.Resources.Raw;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -27,6 +26,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     }
     InstanceType? Type;
     InstanceModel Instance;
+    InstanceManager manager;
     string? Version;
     string? Path;
 
@@ -76,13 +76,14 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     {
         SendCommand = new Command(async () => await ExecuteSendCommand());
         StopServer = new Command(async () => await ExecuteStopServer());
-        StartServer = new Command(async () => await ExecuteStartServer());
+        StartServer = new Command(() => ExecuteStartServer());
         RestartServer = new Command(async () => await ExecuteRestartServer());
-        ForceSave = new Command(async () => await ExecuteForceSave());
+        ForceSave = new Command(() => ExecuteForceSave());
         //ForceBackup = new Command(async () => await ExecuteForceBackup());
 
         InitializeComponent();
         BindingContext = this;
+        manager = App.Current.Handler.GetService<InstanceManager>();
     }
 
     public void SetupTab(InstanceModel instance)
@@ -90,7 +91,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         this.Instance = instance;
         this.Name = instance.Name;
         this.Type = instance.Type;
-        this.Version = instance.TypeVersion;
+        this.Version = instance.Version;
         this.Path = instance.GetPath();
         //Defensive - Check for instance containing a console, create if not
         if (instance.Console == null)
@@ -157,12 +158,12 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     }
 
     //============Actions Implementation============
-    private async Task ExecuteStartServer()
+    private void ExecuteStartServer()
     {
         if (Console != null && !Console.IsRunning)
         {
             UILogger.LogUI($"[CONSOLE {Name}] Requesting Server Start...");
-            await Console.StartServer();
+            Console.StartServer();
         }
         else
         {
@@ -191,7 +192,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         if (Console != null && Console.IsRunning && !string.IsNullOrEmpty(ConsoleInput.Text))
         {
             UILogger.LogUI($"[CONSOLE {Name}] Sending command: {ConsoleInput.Text}");
-            await Console.SendCommand(ConsoleInput.Text);
+            Console.SendCommand(ConsoleInput.Text);
         }
         else if (Console == null)
         {
@@ -219,12 +220,12 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         }
     }
 
-    private async Task ExecuteForceSave()
+    private void ExecuteForceSave()
     {
         if (Console != null && Console.IsRunning)
         {
             UILogger.LogUI($"[CONSOLE {Name}] Requesting save...");
-            await Console.SendCommand("save-all flush");
+            Console.SendCommand("save-all flush");
         }
         else if (Console == null)
         {
@@ -267,7 +268,6 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-
     private void ManageQuickActionsBtn_Clicked(object sender, EventArgs e)
     {
 

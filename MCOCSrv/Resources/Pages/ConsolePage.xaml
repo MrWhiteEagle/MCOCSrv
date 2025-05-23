@@ -24,10 +24,7 @@
                                 </VisualStateGroup>
                             </VisualStateGroupList>
                         </VisualStateManager.VisualStateGroups>
-                        <Label Text="{Binding Name}" LineBreakMode="NoWrap" FontSize="12" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer/>
-                        </Border.GestureRecognizers>
+                        <Label Grid.Column="0" Text="{Binding Name}" LineBreakMode="NoWrap" FontSize="12" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" HorizontalOptions="Start"/>
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

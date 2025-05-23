@@ -29,18 +29,18 @@ public partial class InstancePage : ContentPage
     {
         if (item is InstanceModel instance)
         {
-            Debug.WriteLine($"DELETING INSTANCE {instance.Name}");
+            Debug.WriteLine($"Delete request: {instance.Name}");
             DeletionConfirmationPopup.Show(instance);
         }
     }
 
-    async void OnStartRequest(object sender, object item)
+    void OnStartRequest(object sender, object item)
     {
         if (item is InstanceModel instance)
         {
             if (instance.Console != null)
             {
-                await instance.Console.StartServer();
+                instance.Console.StartServer();
             }
             if (!manager.running.Contains(instance))
             {

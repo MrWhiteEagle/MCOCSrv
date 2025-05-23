@@ -47,11 +47,23 @@ namespace MCOCSrv.Resources.Classes
                         instances.Add(instance);
                         UILogger.LogUI($"[INSTANCE MANAGER] {instance.Name} Found and Initiated");
                     }
+                    instances.OrderBy(i => i.id).ToList();
                     UILogger.LogUI($"[INSTANCE MANAGER] Found {instances.Count} total.");
                 }
             }
             UILogger.LogUI("[INSTANCE MANAGER] FETCH - DONE");
+        }
 
+        public InstanceModel? GetInstanceById(string id)
+        {
+            foreach (var instance in instances)
+            {
+                if (instance.id == id)
+                {
+                    return instance;
+                }
+            }
+            return null;
         }
 
         public async Task DeleteInstance(InstanceModel instance)
@@ -66,9 +78,8 @@ namespace MCOCSrv.Resources.Classes
                 {
                     Directory.Delete(instance.BasePath, true);
                 }
-                UILogger.LogUI($"BEFORE DELETE: {instances.Count}");
                 instances.Remove(instance);
-                UILogger.LogUI($"AFTER DELETE: {instances.Count}");
+                running.Remove(instance);
                 string json = JsonSerializer.Serialize(instances, new JsonSerializerOptions { WriteIndented = true });
                 await File.WriteAllTextAsync(Global.AppDataInstancesFilePath, json);
                 UILogger.LogUI($"[INSTANCE MANAGER] DELETE INSTANCE - DONE");
@@ -95,11 +106,11 @@ namespace MCOCSrv.Resources.Classes
         }
         public async Task CreateInstance(InstanceModel instance)
         {
-            instance.Name = ConvertNameToFileName(instance.Name);
-            instance.BasePath = Path.Combine(Global.AppDataInstancesPath, instance.Name);
+            instance.id = ConvertNameToFileName(instance.Name);
+            instance.BasePath = Path.Combine(Global.AppDataInstancesPath, instance.id);
             if (instance.CustomPath != null)
             {
-                instance.CustomPath = Path.Combine(instance.CustomPath, ConvertNameToFileName(instance.Name));
+                instance.CustomPath = Path.Combine(instance.CustomPath, instance.id);
             }
             string json = JsonSerializer.Serialize(instance, new JsonSerializerOptions { WriteIndented = true });
             try
@@ -107,12 +118,12 @@ namespace MCOCSrv.Resources.Classes
                 if (instance.CustomPath != null)
                 {
                     Directory.CreateDirectory(instance.CustomPath);
-                    await File.WriteAllTextAsync(Path.Combine(instance.CustomPath, $"{instance.Name}.json"), json);
+                    await File.WriteAllTextAsync(Path.Combine(instance.CustomPath, $"{instance.id}.json"), json);
                 }
                 else
                 {
                     Directory.CreateDirectory(instance.BasePath);
-                    await File.WriteAllTextAsync(Path.Combine(instance.BasePath, $"{instance.Name}.json"), json);
+                    await File.WriteAllTextAsync(Path.Combine(instance.BasePath, $"{instance.id}.json"), json);
                 }
                 await fetcher.DownloadInstance(instance);
                 await AppendInstanceListFile(instance);
@@ -176,6 +187,5 @@ namespace MCOCSrv.Resources.Classes
             }
         }
     }
-
 }
 

@@ -46,7 +46,7 @@
                                     <Image Grid.Column="0" Source="{Binding Type, Converter = {StaticResource TypeToImageConverter}}" Aspect="AspectFit"/>
                                     <Label Grid.Column="1" Text="{Binding Name}" Style="{StaticResource InstanceData}"/>
                                     <Label Grid.Column="2" Text="{Binding Type}" Style="{StaticResource InstanceData}"/>
-                                    <Label Grid.Column="3" Text="{Binding TypeVersion}" Style="{StaticResource InstanceData}"/>
+                                    <Label Grid.Column="3" Text="{Binding Version}" Style="{StaticResource InstanceData}"/>
                                     <buttons:StartButton x:Name="StartBtn" Grid.Column="4" WidthRequest="50" StartRequested="OnStartRequest" StopRequested="OnStopRequest"/>
                                     <buttons:SettingButton x:Name="SettingsBtn" Grid.Column="5" WidthRequest="50"/>
                                     <buttons:DeleteButton x:Name="DeleteBtn" Grid.Column="6" WidthRequest="50" DeleteRequested="OnDeleteRequest"/>
