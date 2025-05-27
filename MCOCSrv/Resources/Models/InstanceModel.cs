@@ -13,10 +13,11 @@ namespace MCOCSrv.Resources.Models
         public DateTime? LastUsed { get; set; }
         public string? CustomPath { get; set; }
         public string BasePath { get; set; }
-
         public string LaunchArguments { get; set; }
 
-        public InstanceModel(string Name, string? Description, InstanceType Type, string Version, string? CustomPath)
+        public Dictionary<string, string> Actions { get; set; }
+
+        public InstanceModel(string Name, string? Description, InstanceType Type, string Version, string? CustomPath, Dictionary<string, string> actions)
         {
             this.Name = Name;
             this.Description = Description;
@@ -26,6 +27,7 @@ namespace MCOCSrv.Resources.Models
             this.CreationDate = DateTime.Now;
             this.BasePath = Global.AppDataInstancesPath;
             this.LaunchArguments = "";
+            this.Actions = actions;
         }
 
         public string GetPath()

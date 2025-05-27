@@ -33,7 +33,8 @@ public partial class CreateInstanceRequestPopup : ContentView
                 Description: null,
                 Type: (InstanceType)InstanceTypeField.SelectedItem,
                 Version: InstanceVersionField.SelectedItem.ToString(),
-                CustomPath: string.IsNullOrEmpty(CustomPathField.Text) || CustomPathSwitch.IsToggled == false ? null : CustomPathField.Text);
+                CustomPath: string.IsNullOrEmpty(CustomPathField.Text) || CustomPathSwitch.IsToggled == false ? null : CustomPathField.Text,
+                actions: new Dictionary<string, string>());
             this.IsVisible = false;
             this.InputTransparent = true;
             await manager.CreateInstance(newInstance);

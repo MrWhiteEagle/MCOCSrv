@@ -4,14 +4,39 @@
              x:Class="MCOCSrv.Resources.Pages.SingletonPages.InstanceSettingsPage"
              Title="InstanceSettingsPage"
              Shell.NavBarIsVisible="False">
-    <Border Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" BackgroundColor="{StaticResource Gray950}">
-        <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, *, Auto" ColumnSpacing="10" RowSpacing="10">
-            <Label Text="{Binding InstanceName}" Style="{StaticResource TitleHeadLine}"/>
-            <CollectionView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+    <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto, Auto" Padding="10" RowSpacing="10" ColumnSpacing="10">
+        <Label Grid.Row="0" Grid.Column="0" Text="{Binding InstanceName, StringFormat='{0} - SETTINGS'}" Style="{StaticResource TitleHeadLine}"/>
+        <Button Grid.Row="0" Grid.Column="1" x:Name="CancelButton" Text="Cancel" Style="{StaticResource CancelButton}" Clicked="CancelClicked" HorizontalOptions="End"/>
+        <Button Grid.Row="0" Grid.Column="2" x:Name="SaveButton" Text="Save" Style="{StaticResource AddNewButton}" Clicked="SaveClicked" HorizontalOptions="End"/>
+        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" BackgroundColor="{StaticResource Gray950}">
+            <Grid RowDefinitions="Auto, *" ColumnDefinitions="*" Padding="10" RowSpacing="20">
+                <Border Grid.Row="0" Grid.Column="0" StrokeShape="RoundRectangle 10" Stroke="{StaticResource Gray500}">
+                    <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto" ColumnSpacing="10" RowSpacing="10" Padding="10">
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Java and memory settings" Style="{StaticResource SettingsData}" FontSize="18"/>
+                        <Label Grid.Row="1" Grid.Column="0" Text="Maximum RAM usage in GB" Style="{StaticResource SettingsData}"/>
+                        <Entry Grid.Row="2" Grid.Column="0"/>
 
-            </CollectionView>
-            <Button Grid.Column="0" Grid.Row="2" Text="Cancel" Style="{StaticResource CancelButton}"/>
-            <Button Grid.Column="1" Grid.Row="2" Text="Save" Style="{StaticResource AddNewButton}"/>
-        </Grid>
-    </Border>
+                        <Label Grid.Row="1" Grid.Column="1" Text="Java Arguments (MAKE SURE YOU KNOW WHAT YOUR DOING)" Style="{StaticResource SettingsData}"/>
+                        <Entry Grid.Row="2" Grid.Column="1"/>
+
+                    </Grid>
+                </Border>
+                <FlexLayout Grid.Row="1" Grid.Column="0" Direction="Column">
+                    <Label Text="Server.properties settings" Style="{StaticResource SettingsData}" FontSize="18" Margin="10"/>
+                    <ScrollView Padding="10">
+                        <FlexLayout BindableLayout.ItemsSource="{Binding SettingsList}" Wrap="Wrap" JustifyContent="SpaceAround" AlignItems="Center">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*, *" FlexLayout.Basis="50%" Margin="5">
+                                        <Label Grid.Column="0" Text="{Binding Name}" Style="{StaticResource SettingsData}" HorizontalTextAlignment="Start"/>
+                                        <Entry Grid.Column="1" Text="{Binding Value}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </FlexLayout>
+                    </ScrollView>
+                </FlexLayout>
+            </Grid>
+        </Border>
+    </Grid>
 </ContentPage>
