@@ -1,12 +1,14 @@
 ﻿using MCOCSrv.Resources.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 namespace MCOCSrv.Resources.Classes
 {
     public class InstanceManager
     {
+        //MAIN CLASS USED FOR HANDLING INSTANCE-RELATED OPERATIONS
         public ObservableCollection<InstanceModel> instances { get; private set; } = new();
         public ObservableCollection<InstanceModel> running { get; private set; } = new();
         private ServerVersionFetcher fetcher;
@@ -17,8 +19,10 @@ namespace MCOCSrv.Resources.Classes
             running = new();
         }
 
+        //MAIN METHOD TO FETCH INSTALLED INSTANCES
         public async Task FetchInstances()
         {
+            //CALL FILE CONTAINING KEY-VALUE PAIRS WITH INFO ABOUT INSTANCE LOCATIONS
             UILogger.LogUI("[INSTANCE MANAGER] FETCH - START");
             string json;
             if (File.Exists(Global.AppDataInstancesFilePath))
@@ -36,15 +40,33 @@ namespace MCOCSrv.Resources.Classes
             }
             else
             {
-                var list = JsonSerializer.Deserialize<List<InstanceModel>>(json);
-                if (list.Count > 0 || list != null)
+                var list = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                if (list != null || list.Count > 0)
                 {
                     instances.Clear();
-                    foreach (InstanceModel instance in list)
+                    foreach (var instancePath in list)
                     {
-                        instance.InitializeConsole();
-                        instances.Add(instance);
-                        UILogger.LogUI($"[INSTANCE MANAGER] {instance.Name} Found and Initiated");
+                        try
+                        {
+                            //DESERIALIZE RECEIVED FILES CONTAINING INSTANCE DATA
+                            string instancejson = await File.ReadAllTextAsync(Path.Combine(instancePath.Value, $"{instancePath.Key}.json"));
+                            InstanceModel instance = JsonSerializer.Deserialize<InstanceModel>(instancejson);
+                            if (instance != null)
+                            {
+                                instance.InitializeConsole();
+                                instances.Add(instance);
+                                UILogger.LogUI($"[INSTANCE MANAGER] {instance.Name} Found and Initiated");
+                            }
+                            else
+                            {
+                                UILogger.LogUI($"[INSTANCE MANAGER] Instance was null!");
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            UILogger.LogUI($"[INSTANCE MANAGER] Cannot read instance file for {instancePath.Key}: {ex.Message}");
+                        }
                     }
                     instances.OrderBy(i => i.id).ToList();
                     UILogger.LogUI($"[INSTANCE MANAGER] Found {instances.Count} total.");
@@ -69,17 +91,11 @@ namespace MCOCSrv.Resources.Classes
         {
             try
             {
-                if (instance.CustomPath != null)
-                {
-                    Directory.Delete(instance.CustomPath, true);
-                }
-                else
-                {
-                    Directory.Delete(instance.BasePath, true);
-                }
+                //DELETE FILES>REMOVE FROM MEMORY>SERIALIZE NEW INSTANCE DATA TO MAIN FILE
+                Directory.Delete(instance.GetPath(), true);
                 instances.Remove(instance);
                 running.Remove(instance);
-                string json = JsonSerializer.Serialize(instances, new JsonSerializerOptions { WriteIndented = true });
+                string json = JsonSerializer.Serialize(GetInstancesPathData(), new JsonSerializerOptions { WriteIndented = true });
                 await File.WriteAllTextAsync(Global.AppDataInstancesFilePath, json);
                 UILogger.LogUI($"[INSTANCE MANAGER] DELETE INSTANCE - DONE");
 
@@ -90,19 +106,7 @@ namespace MCOCSrv.Resources.Classes
             }
         }
 
-        public static async Task<List<InstanceModel>> readInstances()
-        {
-            if (File.Exists(Path.Combine(Global.AppDataPath, "instances.json")))
-            {
-                string instanceData = await File.ReadAllTextAsync(Path.Combine(Global.AppDataPath, "instances.json"));
-                List<InstanceModel> list = JsonSerializer.Deserialize<List<InstanceModel>>(instanceData);
-                return list;
-            }
-            else
-            {
-                return new List<InstanceModel>();
-            }
-        }
+        //RUN DURING CREATION - CORRECT PROPERTY ASSIGNMENT
         public async Task CreateInstance(InstanceModel instance)
         {
             instance.id = ConvertNameToFileName(instance.Name);
@@ -116,6 +120,7 @@ namespace MCOCSrv.Resources.Classes
             {
                 await SaveInstance(instance);
                 await fetcher.DownloadInstance(instance);
+                //ADD TO CURRENT
                 instance.InitializeConsole();
                 instances.Add(instance);
             }
@@ -124,14 +129,16 @@ namespace MCOCSrv.Resources.Classes
                 Debug.WriteLine($"[INSTANCE MANAGER] Error writing instance File: {ex.Message}");
             }
         }
+        //SAVE ANY CHANGES TO INSTANCE PROPERTIES ITSELF AND CHANGE THE MAIN FILE (in case of path change)
         public async Task SaveInstance(InstanceModel instance)
         {
             string path = Path.Combine(instance.GetPath(), $"{instance.id}.json");
-            string json = JsonSerializer.Serialize(instance, new JsonSerializerOptions { WriteIndented = true });
+            string json = JsonSerializer.Serialize(instance, new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
+            Directory.CreateDirectory(instance.GetPath());
             try
             {
                 await File.WriteAllTextAsync(path, json);
-                await AppendInstanceListFile(instance);
+                await AppendInstanceListFile(instance.id, instance);
             }
             catch (Exception ex)
             {
@@ -140,17 +147,25 @@ namespace MCOCSrv.Resources.Classes
 
         }
 
-        private async Task AppendInstanceListFile(InstanceModel instance)
+        //CHANGE MAIN FILE
+        private async Task AppendInstanceListFile(string id, InstanceModel toChange)
         {
 
             if (File.Exists(Global.AppDataInstancesFilePath))
             {
                 string content = await File.ReadAllTextAsync(Global.AppDataInstancesFilePath);
-                List<InstanceModel> InstanceList = JsonSerializer.Deserialize<List<InstanceModel>>(content) ?? new List<InstanceModel>();
+                Dictionary<string, string> InstanceDataList = JsonSerializer.Deserialize<Dictionary<string, string>>(content) ?? new Dictionary<string, string>();
                 try
                 {
-                    InstanceList.Add(instance);
-                    string json = JsonSerializer.Serialize(InstanceList, new JsonSerializerOptions { WriteIndented = true });
+                    foreach (var data in InstanceDataList)
+                    {
+                        if (data.Key == toChange.id)
+                        {
+                            InstanceDataList.Remove(data.Key);
+                        }
+                    }
+                    InstanceDataList.Add(toChange.id, toChange.GetPath());
+                    string json = JsonSerializer.Serialize(InstanceDataList, new JsonSerializerOptions { WriteIndented = true });
                     await File.WriteAllTextAsync(Global.AppDataInstancesFilePath, json);
 
                 }
@@ -164,9 +179,9 @@ namespace MCOCSrv.Resources.Classes
 
                 try
                 {
-                    List<InstanceModel> InstanceList = new List<InstanceModel>();
-                    InstanceList.Add(instance);
-                    string json = JsonSerializer.Serialize(InstanceList, new JsonSerializerOptions { WriteIndented = true });
+                    Dictionary<string, string> InstanceDataList = new();
+                    InstanceDataList.Add(toChange.id, toChange.GetPath());
+                    string json = JsonSerializer.Serialize(InstanceDataList, new JsonSerializerOptions { WriteIndented = true });
                     await File.WriteAllTextAsync(Global.AppDataInstancesFilePath, json);
                 }
                 catch (Exception ex)
@@ -177,6 +192,7 @@ namespace MCOCSrv.Resources.Classes
 
         }
 
+        //RETURNS LIST OF SERVER.PROPERTIES FILE AS A LIST OF SETTING OBJECTS
         public List<Setting> GetInstanceSettings(InstanceModel instance)
         {
             string path = Path.Combine(instance.GetPath(), "server.properties");
@@ -186,7 +202,6 @@ namespace MCOCSrv.Resources.Classes
                 try
                 {
                     var fileRead = File.ReadLines(path);
-                    Debug.WriteLine(fileRead);
                     foreach (var line in fileRead)
                     {
                         if (!line.StartsWith('#') && !string.IsNullOrEmpty(line))
@@ -205,17 +220,20 @@ namespace MCOCSrv.Resources.Classes
             return settings;
         }
 
+        //SAVES A LIST OF SETTING OBJECTS AS A SERVER.PROPERTIES FILE
         public async Task SaveInstanceSettings(List<Setting> settings, InstanceModel instance, string Arguments)
         {
             string path = Path.Combine(instance.GetPath(), "server.properties");
             //SAVE PROPERTIES
             try
             {
-                await File.WriteAllTextAsync(path, "#Minecraft Server Properties\n#Generated By MCOCSrv\n#Last Edited On: " + DateTime.Now.ToShortDateString() + "\n");
+                List<string> finalSettings = new();
                 foreach (var setting in settings)
                 {
-                    await File.AppendAllTextAsync(path, $"{setting.Name}={setting.Value}");
+                    finalSettings.Add($"{setting.Name}={setting.Value}");
                 }
+                await File.WriteAllTextAsync(path, "#Minecraft Server Properties\n#Generated By MCOCSrv\n#Last Edited On: " + DateTime.Now.ToShortDateString() + "\n");
+                await File.AppendAllLinesAsync(path, finalSettings);
             }
             catch (Exception ex)
             {
@@ -227,6 +245,35 @@ namespace MCOCSrv.Resources.Classes
 
         }
 
+        //MOVE INSTANCE FOLDER TO ANOTHER DIRECTORY
+        public async Task MoveInstance(InstanceModel instance, string NewPath)
+        {
+            NewPath += $"\\{Path.GetFileName(instance.GetPath())}";
+            try
+            {
+                await Task.Run(() =>
+                {
+                    Debug.WriteLine(NewPath);
+                    Directory.Move(instance.GetPath(), NewPath);
+                });
+                if (NewPath == instance.BasePath)
+                {
+                    instance.CustomPath = null;
+                }
+                else
+                {
+                    instance.CustomPath = NewPath;
+                }
+                await SaveInstance(instance);
+
+            }
+            catch (Exception ex)
+            {
+                UILogger.LogUI($"[INSTANCE MANAGER] Cannot move instance: {ex.Message}");
+            }
+        }
+
+        //ID TO FILENAME (CHANGE SPACES TO UNDERSCORES)
         private static string ConvertNameToFileName(string rawName)
         {
             if (rawName.Contains(' '))
@@ -239,6 +286,17 @@ namespace MCOCSrv.Resources.Classes
             {
                 return rawName;
             }
+        }
+
+        //SUPPORT METHOD RETURNING A DICTIONARY CONTAINING INSTANCE DATA KEY=ID VALUE=PATH FROM THE MAIN FILE
+        private Dictionary<string, string> GetInstancesPathData()
+        {
+            Dictionary<string, string> result = new();
+            foreach (var instance in instances)
+            {
+                result.Add(instance.Name, instance.GetPath());
+            }
+            return result;
         }
     }
 }

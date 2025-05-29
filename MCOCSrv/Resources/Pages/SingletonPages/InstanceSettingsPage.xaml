@@ -4,20 +4,23 @@
              x:Class="MCOCSrv.Resources.Pages.SingletonPages.InstanceSettingsPage"
              Title="InstanceSettingsPage"
              Shell.NavBarIsVisible="False">
-    <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto, Auto" Padding="10" RowSpacing="10" ColumnSpacing="10">
+    <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto, Auto, Auto" Padding="10" RowSpacing="10" ColumnSpacing="10">
         <Label Grid.Row="0" Grid.Column="0" Text="{Binding InstanceName, StringFormat='{0} - SETTINGS'}" Style="{StaticResource TitleHeadLine}"/>
-        <Button Grid.Row="0" Grid.Column="1" x:Name="CancelButton" Text="Cancel" Style="{StaticResource CancelButton}" Clicked="CancelClicked" HorizontalOptions="End"/>
-        <Button Grid.Row="0" Grid.Column="2" x:Name="SaveButton" Text="Save" Style="{StaticResource AddNewButton}" Clicked="SaveClicked" HorizontalOptions="End"/>
-        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" BackgroundColor="{StaticResource Gray950}">
+        <Button Grid.Row="0" Grid.Column="1" Text="Move Instance" ToolTipProperties.Text="Move instance folder to another directory" Style="{StaticResource CustomButton}" Clicked="MoveButtonClicked"/>
+        <Button Grid.Row="0" Grid.Column="2" x:Name="CancelButton" Text="Cancel" Style="{StaticResource CancelButton}" Clicked="CancelClicked" HorizontalOptions="End"/>
+        <Button Grid.Row="0" Grid.Column="3" x:Name="SaveButton" Text="Save" Style="{StaticResource AddNewButton}" Clicked="SaveClicked" HorizontalOptions="End"/>
+        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" BackgroundColor="{StaticResource Gray950}">
             <Grid RowDefinitions="Auto, *" ColumnDefinitions="*" Padding="10" RowSpacing="20">
                 <Border Grid.Row="0" Grid.Column="0" StrokeShape="RoundRectangle 10" Stroke="{StaticResource Gray500}">
-                    <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto" ColumnSpacing="10" RowSpacing="10" Padding="10">
-                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Java and memory settings" Style="{StaticResource SettingsData}" FontSize="18"/>
-                        <Label Grid.Row="1" Grid.Column="0" Text="Maximum RAM usage in GB" Style="{StaticResource SettingsData}"/>
-                        <Entry Grid.Row="2" Grid.Column="0"/>
+                    <Grid ColumnDefinitions="*, *, *, *" RowDefinitions="Auto, Auto, Auto" ColumnSpacing="10" RowSpacing="10" Padding="10">
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Text="Java and memory settings" Style="{StaticResource SettingsData}" FontSize="18"/>
+                        <Label Grid.Row="1" Grid.Column="0" Text="Minimum RAM usage in MB" Style="{StaticResource SettingsData}"/>
+                        <Entry Grid.Row="2" Grid.Column="0" Text="{Binding MinHeap}" ToolTipProperties.Text="Just the number. Remember that 1GB = 1024MB!"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="Maximum RAM usage in MB" Style="{StaticResource SettingsData}"/>
+                        <Entry Grid.Row="2" Grid.Column="1" Text="{Binding MaxHeap}" ToolTipProperties.Text="Just the number. Remember that  1GB = 1024MB!"/>
 
-                        <Label Grid.Row="1" Grid.Column="1" Text="Java Arguments (MAKE SURE YOU KNOW WHAT YOUR DOING)" Style="{StaticResource SettingsData}"/>
-                        <Entry Grid.Row="2" Grid.Column="1"/>
+                        <Label Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Text="Java Arguments (MAKE SURE YOU KNOW WHAT YOURE DOING)" Style="{StaticResource SettingsData}"/>
+                        <Entry x:Name="ArgumentsField" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding Arguments}" ToolTipProperties.Text="Those are added at the end of normal arguments (after -Xms -Xmx). You can also set maximum/minimum heap size here. Make sure you keep the heap setting here (and not in the normal field when you do so, the program will handle the rest)"/>
 
                     </Grid>
                 </Border>

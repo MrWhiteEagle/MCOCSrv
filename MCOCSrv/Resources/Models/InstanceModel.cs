@@ -14,6 +14,8 @@ namespace MCOCSrv.Resources.Models
         public string? CustomPath { get; set; }
         public string BasePath { get; set; }
         public string LaunchArguments { get; set; }
+        public string MaxHeap { get; set; }
+        public string MinHeap { get; set; }
 
         public Dictionary<string, string> Actions { get; set; }
 
@@ -27,6 +29,8 @@ namespace MCOCSrv.Resources.Models
             this.CreationDate = DateTime.Now;
             this.BasePath = Global.AppDataInstancesPath;
             this.LaunchArguments = "";
+            this.MaxHeap = "";
+            this.MinHeap = "";
             this.Actions = actions;
         }
 

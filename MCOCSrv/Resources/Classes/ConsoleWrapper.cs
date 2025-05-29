@@ -13,7 +13,6 @@ namespace MCOCSrv.Resources.Classes
         private readonly string EulaFile;
         private Process? ServerProcess;
         private bool WasDisposed = false;
-        private string Arguments;
         private int _state;
         public int State
         {
@@ -30,7 +29,7 @@ namespace MCOCSrv.Resources.Classes
         }
         public ObservableCollection<string> ConsoleOutput { get; set; } = new();
         public Dictionary<string, string> Actions { get; set; } = new();
-        public bool IsRunning => ServerProcess != null && !ServerProcess.HasExited && !WasDisposed;
+        public bool IsRunning => ServerProcess != null && !ServerProcess.HasExited;
 
         public ConsoleWrapper(InstanceModel instance)
         {
@@ -39,7 +38,6 @@ namespace MCOCSrv.Resources.Classes
             this.ServerFile = Path.Combine(this.WorkingPath, $"{instance.id}-{instance.Version}.jar");
             this.PropertiesFile = Path.Combine(this.WorkingPath, "server.properties");
             this.EulaFile = Path.Combine(this.WorkingPath, "eula.txt");
-            this.Arguments = instance.LaunchArguments;
             this.State = 0;
         }
 
@@ -76,7 +74,7 @@ namespace MCOCSrv.Resources.Classes
             //Start setup
             ServerProcess = new Process();
             ServerProcess.StartInfo.FileName = "javaw";
-            ServerProcess.StartInfo.Arguments = $"-jar {ServerFile} {Arguments} nogui";
+            ServerProcess.StartInfo.Arguments = $"-jar {ServerFile} {WorkingInstance.MinHeap}M {WorkingInstance.MaxHeap}M {WorkingInstance.LaunchArguments} nogui";
             ServerProcess.StartInfo.WorkingDirectory = WorkingPath;
             //Output redirection
             ServerProcess.StartInfo.RedirectStandardOutput = true;
@@ -94,7 +92,7 @@ namespace MCOCSrv.Resources.Classes
                 ServerProcess.Start();
                 ServerProcess.BeginOutputReadLine();
                 ServerProcess.BeginErrorReadLine();
-                UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Server Started!");
+                UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Server Started With Heap Min:{WorkingInstance.MinHeap} Max:{WorkingInstance.MaxHeap}, arguments: {WorkingInstance.LaunchArguments}");
                 State = 2;
             }
             catch (Exception ex)
