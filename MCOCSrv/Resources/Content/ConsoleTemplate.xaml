@@ -52,7 +52,7 @@
                             </Grid>
                             <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
                                 <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Restart_Button" ToolTipProperties.Text="Restart the server"/>
+                                    <TapGestureRecognizer x:Name="Restart_Button" ToolTipProperties.Text="Restart the server" Command="{Binding RestartServer}"/>
                                 </Grid.GestureRecognizers>
                                 <Image Grid.Column="0" Grid.Row="0" Source="restart_icon_console.png"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Restart Server" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
@@ -66,7 +66,7 @@
                             </Grid>
                             <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
                                 <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Backup_Button" ToolTipProperties.Text="Backup the server"/>
+                                    <TapGestureRecognizer x:Name="Backup_Button" ToolTipProperties.Text="Backup the server, WARNING! will stop the server from saving any progress for the durection of the backup procedure!" Command="{Binding ForceBackup}"/>
                                 </Grid.GestureRecognizers>
                                 <Image Grid.Column="0" Grid.Row="0" Source="backup_icon_console.png"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Force Backup" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>

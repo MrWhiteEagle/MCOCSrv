@@ -2,6 +2,7 @@
 using MCOCSrv.Resources.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO.Compression;
 
 namespace MCOCSrv.Resources.Classes
 {
@@ -48,6 +49,11 @@ namespace MCOCSrv.Resources.Classes
         public string GetWorkingInstance()
         {
             return WorkingInstance.Name;
+        }
+
+        public string GetWorkingPath()
+        {
+            return WorkingPath;
         }
 
         //Check if running, if serverfile exists and for eula.
@@ -323,6 +329,46 @@ namespace MCOCSrv.Resources.Classes
             //1-working
             //2-running
             ServerStateHandler?.Invoke(this, state);
+        }
+
+        public async Task ForceServerBackup(string worldname)
+        {
+            UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Forcing backup of world: {worldname}");
+            ConsoleOutputHandler?.Invoke(this, "[MCOCSrv][Forcing a backup, please wait...]");
+            if (IsRunning)
+            {
+                SendCommand("save-off");
+                SendCommand("save-all");
+            }
+            await Task.Delay(3000); //Wait for save-off to take effect
+            try
+            {
+                Directory.CreateDirectory(Path.Combine(WorkingPath, "backups"));
+                string backupPath = Path.Combine(WorkingPath, "backups", $"{worldname}-{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.zip");
+                if (Directory.Exists(Path.Combine(WorkingPath, worldname)))
+                {
+                    ZipFile.CreateFromDirectory(Path.Combine(WorkingPath, worldname), backupPath);
+                    UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Backup created successfully at: {backupPath}");
+                    ConsoleOutputHandler?.Invoke(this, $"[MCOCSrv][Backup created successfully at: {backupPath}]");
+                }
+                else
+                {
+                    UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] World directory does not exist: {worldname}");
+                    ConsoleOutputHandler?.Invoke(this, $"[MCOCSrv][World directory does not exist: {worldname}]");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Error creating backup directory or file. {ex.Message}");
+                ConsoleOutputHandler?.Invoke(this, "[MCOCSrv][Error creating backup directory or file. Please check permissions and available space. If you get this message but still got your backup, the server didnt allow the app to copy all chunk data correctly, try with the server stopped.]]");
+            }
+            if (IsRunning)
+            {
+                SendCommand("save-on");
+            }
+            await Task.Delay(1000); //Wait for save-on to take effect
+            ConsoleOutputHandler?.Invoke(this, "[MCOCSrv][Backup sequence completed.]");
         }
     }
 }

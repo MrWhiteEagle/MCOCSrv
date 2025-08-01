@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Storage;
 using MCOCSrv.Resources.Classes;
 using MCOCSrv.Resources.Models;
 using System.Collections.ObjectModel;
@@ -66,7 +67,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         StartServer = new Command(() => ExecuteStartServer());
         RestartServer = new Command(async () => await ExecuteRestartServer());
         ForceSave = new Command(() => ExecuteForceSave());
-        //ForceBackup = new Command(async () => await ExecuteForceBackup());
+        ForceBackup = new Command(async () => await ExecuteForceBackup());
 
         InitializeComponent();
         BindingContext = this;
@@ -80,7 +81,6 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         this.Type = instance.Type;
         this.Version = instance.Version;
         this.Path = instance.GetPath();
-        //!!!!!!!!!!!!!!!!this.Actions = instance.Actions;
         //Defensive - Check for instance containing a console, create if not
         if (instance.Console == null)
         {
@@ -235,6 +235,15 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         if (sender is Button button && button.BindingContext is QuickAction action)
         {
             Console.SendCommand(action.Command);
+        }
+    }
+
+    private async Task ExecuteForceBackup()
+    {
+        var world = await FolderPicker.PickAsync(Console.GetWorkingPath());
+        if (world.IsSuccessful && world.Folder != null)
+        {
+            await Console.ForceServerBackup(world.Folder.Name);
         }
     }
 
