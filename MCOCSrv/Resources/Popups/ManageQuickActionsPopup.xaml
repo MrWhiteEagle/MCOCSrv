@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MCOCSrv.Resources.Popups.ManageQuickActionsPopup"
+             xmlns:popups="clr-namespace:MCOCSrv.Resources.Popups"
+             IsVisible="False"
+             InputTransparent="True"
+             VerticalOptions="Center"
+             HorizontalOptions="Center">
+    <Border Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" BackgroundColor="{StaticResource Gray900}" Padding="20">
+        <Grid>
+        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto, Auto, Auto" RowSpacing="10">
+            <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Text="Manage quick acitons" Style="{StaticResource TitleHeadLine}"/>
+            <Button Grid.Column="1" Grid.Row="0" Text="Add new" Style="{StaticResource AddNewButton}" HorizontalOptions="Center" Clicked="AddActionClicked"/>
+            <ScrollView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" MaximumHeightRequest="300">
+            <FlexLayout x:Name="ActionList" BindableLayout.ItemsSource="{Binding Actions}" Wrap="NoWrap" Direction="Column" Padding="10" MinimumWidthRequest="510">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Border Stroke="{StaticResource Black}" BackgroundColor="{StaticResource Gray950}" Padding="10" MinimumWidthRequest="500">
+                            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto, Auto" ColumnSpacing="5">
+                                <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}"/>
+                                <Label Grid.Row="1" Grid.Column="0" Text="{Binding Command}"/>
+                                <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Text="Edit" Clicked="EditActionClicked"/>
+                                <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Text="Delete" Clicked="DeleteActionClicked"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+                </ScrollView>
+                <Border Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" x:Name="EmptyActionFallBack" Stroke="{StaticResource Black}" BackgroundColor="{StaticResource Gray950}" Padding="10" MinimumWidthRequest="500">
+                    <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto, Auto" ColumnSpacing="5">
+                        <Label Grid.Row="0" Grid.Column="0" Text="No actions found"/>
+                    </Grid>
+                </Border>
+                <FlexLayout Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Direction="Row" JustifyContent="SpaceEvenly">
+                    <Button Text="Cancel" Style="{StaticResource CancelButton}" HorizontalOptions="Center" Clicked="CancelButtonClicked"/>
+                    <Button Text="Confirm" Style="{StaticResource AddNewButton}" HorizontalOptions="Center" Clicked="SaveButtonClicked"/>
+                </FlexLayout>
+        </Grid>
+            <popups:ActionEditPopup x:Name="ActionEditPopup"/>
+        </Grid>
+    </Border>
+</ContentView>

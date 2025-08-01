@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MCOCSrv.Resources.Popups.ActionEditPopup"
+             VerticalOptions="Center"
+             HorizontalOptions="Center"
+             IsVisible="False"
+             InputTransparent="True">
+    <Border BackgroundColor="{StaticResource Gray900}" Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" Padding="20">
+        <Grid RowDefinitions="Auto, Auto, Auto, Auto" ColumnDefinitions="Auto, Auto" RowSpacing="10" ColumnSpacing="30">
+            <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource TitleHeadLine}" Text="Edit Action"/>
+            <Entry Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ActionNameField" Placeholder="Name" IsSpellCheckEnabled="False"/>
+            <Entry Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ActionCommandField" Placeholder="Command" IsSpellCheckEnabled="False"/>
+            <Button Grid.Row="3" Grid.Column="1" Clicked="SaveButtonClicked" Text="Save" Style="{StaticResource AddNewButton}" HorizontalOptions="Center"/>
+            <Button Grid.Row="3" Grid.Column="0" Clicked="CancelButtonClicked" Text="Cancel" Style="{StaticResource CancelButton}" HorizontalOptions="Center"/>
+        </Grid>
+    </Border>
+</ContentView>

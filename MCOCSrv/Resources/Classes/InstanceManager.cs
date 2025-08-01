@@ -12,6 +12,8 @@ namespace MCOCSrv.Resources.Classes
         public ObservableCollection<InstanceModel> instances { get; private set; } = new();
         public ObservableCollection<InstanceModel> running { get; private set; } = new();
         private ServerVersionFetcher fetcher;
+
+        public EventHandler<InstanceModel> InstanceSaved;
         public InstanceManager(ServerVersionFetcher fetcher)
         {
             this.fetcher = fetcher;
@@ -144,6 +146,8 @@ namespace MCOCSrv.Resources.Classes
             {
                 UILogger.LogUI($"[INSTANCE MANAGER] Error saving instance {instance.Name}: {ex.Message}");
             }
+
+            InstanceSaved?.Invoke(this, instance);
 
         }
 

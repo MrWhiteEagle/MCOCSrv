@@ -27,6 +27,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     InstanceType? Type;
     InstanceModel Instance;
     InstanceManager manager;
+    public ObservableCollection<QuickAction> Actions { get; set; } = new();
     string? Version;
     string? Path;
 
@@ -48,20 +49,6 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
             }
         }
     }
-    //============INPUT PROPERTY============
-    //private string _commandInput;
-    //public string CommandInput
-    //{
-    //    get => _commandInput;
-    //    set
-    //    {
-    //        if (_commandInput != value)
-    //        {
-    //            _commandInput = value;
-    //            OnPropertyChanged();
-    //        }
-    //    }
-    //}
 
     //============COMMANDS FOR QUICK ACTIONS============
     public ICommand SendCommand { get; set; }
@@ -93,6 +80,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         this.Type = instance.Type;
         this.Version = instance.Version;
         this.Path = instance.GetPath();
+        //!!!!!!!!!!!!!!!!this.Actions = instance.Actions;
         //Defensive - Check for instance containing a console, create if not
         if (instance.Console == null)
         {
@@ -100,6 +88,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
             instance.Console = new ConsoleWrapper(instance);
         }
         this.Console = instance.Console;
+        ReloadActions();
 
         //Defensive - duplicate event handlers prevention
         Console.ConsoleOutputHandler -= OnConsoleOutput;
@@ -241,6 +230,14 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         }
     }
 
+    private void ExecuteQuickAction(object sender, EventArgs e)
+    {
+        if (sender is Button button && button.BindingContext is QuickAction action)
+        {
+            Console.SendCommand(action.Command);
+        }
+    }
+
 
     //============OTHER METHODS============
     private void UpdateActionsState()
@@ -248,12 +245,12 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         bool isRunning = Console.IsRunning;
         if (isRunning)
         {
-            Start_Stop_Button.Source = "stop_icon_console.png";
+            Start_Stop_Image.Source = "stop_icon_console.png";
             Start_Stop_Button.Command = StopServer;
         }
         else
         {
-            Start_Stop_Button.Source = "start_icon_console.png";
+            Start_Stop_Image.Source = "start_icon_console.png";
             Start_Stop_Button.Command = StartServer;
         }
     }
@@ -268,8 +265,33 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+
+    // OPEN MANAGE QUICK ACTIONS POPUP
     private void ManageQuickActionsBtn_Clicked(object sender, EventArgs e)
     {
+        QuickActionsPopup.Initialize(Instance, this);
+    }
 
+    // CALLBACK FOR ACTION EDITING FROM POPUP - SAVE INSTANCE AND RELOAD ACTIONS
+    public async void OnActionsEdited(ObservableCollection<QuickAction> newActions)
+    {
+        Instance.Actions.Clear();
+        foreach (var action in newActions)
+        {
+            Instance.Actions.Add(action);
+        }
+        await manager.SaveInstance(Instance);
+        ReloadActions();
+        UILogger.LogUI($"[CONSOLE {Name}] Actions saved successfully.");
+    }
+
+    // LOAD ACTIONS FROM INSTANCE
+    private void ReloadActions()
+    {
+        Actions.Clear();
+        foreach (var action in Instance.Actions)
+        {
+            Actions.Add(action);
+        }
     }
 }

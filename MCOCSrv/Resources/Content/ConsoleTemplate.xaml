@@ -1,74 +1,98 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:popups="clr-namespace:MCOCSrv.Resources.Popups"
              x:Class="MCOCSrv.Resources.Content.ConsoleTemplate">
-    
-    <Grid RowDefinitions="Auto, *" Padding="10">
-    <Label
+
+    <Grid>
+        <Grid RowDefinitions="Auto, *" Padding="10">
+            <Label
         Grid.Row="0"
         Text="{Binding Name, StringFormat='COMMAND CENTER - {0}'}"
         Style="{StaticResource TitleHeadLine}" FontAttributes="Bold"
         HorizontalTextAlignment="Center"/>
-    <Border Grid.Row="1" Stroke="{StaticResource PrimaryDark}" Margin="5">
-    <Border.StrokeShape>
-        <RoundRectangle CornerRadius="10"/>
-    </Border.StrokeShape>
-        <Grid RowDefinitions="7*, 3*" ColumnDefinitions="7*,1*,2*" Padding="10" RowSpacing="5" ColumnSpacing="5">
-            <Border Grid.Row="0" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="1" Stroke="{StaticResource Black}" BackgroundColor="{StaticResource Black}">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="7"/>
-            </Border.StrokeShape>
-            <Grid RowDefinitions="*,Auto">
-                    <ScrollView x:Name="ConsoleScrollView" Grid.Row="0" Padding="10">
-                            <Label x:Name="ConsoleOutput" Text="{Binding CombinedConsoleOutput}"/>
-                    </ScrollView>
-                    <Border Grid.Row="1" Stroke="{StaticResource SecondaryDark}" BackgroundColor="{StaticResource Gray950}">
+            <Border Grid.Row="1" Stroke="{StaticResource PrimaryDark}" Margin="5">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                <Grid RowDefinitions="7*, 3*" ColumnDefinitions="7*,1*,2*" Padding="10" RowSpacing="5" ColumnSpacing="5">
+                    <Border Grid.Row="0" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="1" Stroke="{StaticResource Black}" BackgroundColor="{StaticResource Black}" StrokeShape="RoundRectangle 5">
+                        <Grid RowDefinitions="*,Auto">
+                            <ScrollView x:Name="ConsoleScrollView" Grid.Row="0" Padding="10">
+                                <Label x:Name="ConsoleOutput" Text="{Binding CombinedConsoleOutput}"/>
+                            </ScrollView>
+                            <Border Grid.Row="1" Stroke="{StaticResource SecondaryDark}" BackgroundColor="{StaticResource Gray950}" StrokeShape="RoundRectangle 5">
+                                <Entry Grid.Column="0" x:Name="ConsoleInput" IsSpellCheckEnabled="False"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}" StrokeShape="RoundRectangle 5">
+                        <Grid RowDefinitions="Auto,*" ColumnDefinitions="*, Auto" Padding="10" RowSpacing="10">
+                            <Label Grid.Row="0" Grid.Column="0" Text="Quick Actions" HorizontalOptions="Center" FontSize="17"/>
+                            <Button x:Name="ManageQuickActionsBtn" Grid.Row="0" Grid.Column="1" Style="{StaticResource AddNewButton}" Text="Manage" ToolTipProperties.Text="Add/Remove Quick actions" Clicked="ManageQuickActionsBtn_Clicked"/>
+                            <FlexLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BindableLayout.ItemsSource="{Binding Actions}" Direction="Row" Wrap="Wrap" JustifyContent="Start" AlignItems="Start">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button FlexLayout.Basis="20%"  Text="{Binding Name}" Margin="10, 0" Clicked="ExecuteQuickAction"/>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </FlexLayout>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}" StrokeShape="RoundRectangle 5">
+                        <FlexLayout Direction="Column" Wrap="NoWrap" AlignItems="Stretch">
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer x:Name="Start_Stop_Button" ToolTipProperties.Text="Start/Stop the server"/>
+                                </Grid.GestureRecognizers>
+                                <Image Grid.Column="0" Grid.Row="0" x:Name="Start_Stop_Image"/>
+                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Start/Stop Server" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                            </Grid>
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer x:Name="Restart_Button" ToolTipProperties.Text="Restart the server"/>
+                                </Grid.GestureRecognizers>
+                                <Image Grid.Column="0" Grid.Row="0" Source="restart_icon_console.png"/>
+                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Restart Server" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                            </Grid>
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer x:Name="World_Button" ToolTipProperties.Text="Change Active World"/>
+                                </Grid.GestureRecognizers>
+                                <Image Grid.Column="0" Grid.Row="0" Source="world_icon_console.png"/>
+                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Change World" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                            </Grid>
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer x:Name="Backup_Button" ToolTipProperties.Text="Backup the server"/>
+                                </Grid.GestureRecognizers>
+                                <Image Grid.Column="0" Grid.Row="0" Source="backup_icon_console.png"/>
+                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Force Backup" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                            </Grid>
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer x:Name="Folder_Button" ToolTipProperties.Text="Browse Server Files"/>
+                                </Grid.GestureRecognizers>
+                                <Image Grid.Column="0" Grid.Row="0" Source="folder_icon_console.png"/>
+                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Browse Files" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                            </Grid>
+                        </FlexLayout>
+                    </Border>
+
+                    <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="7"/>
                         </Border.StrokeShape>
-                            <Entry Grid.Column="0" x:Name="ConsoleInput" IsSpellCheckEnabled="False"/>
-                        </Border>
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,*" Padding="10" RowSpacing="5" ColumnSpacing="5">
+                            <Button Grid.Row="0" Grid.Column="0" Text="Modify Config"/>
+                            <Button Grid.Row="0" Grid.Column="1" Text="Ban List"/>
+                        </Grid>
+                    </Border>
                 </Grid>
             </Border>
-
-            <Border Grid.Row="1" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="7"/>
-                </Border.StrokeShape>
-                <Grid RowDefinitions="Auto,*" ColumnDefinitions="*, Auto" Padding="10" RowSpacing="10">
-                    <Label Grid.Row="0" Grid.Column="0" Text="Quick Actions" HorizontalOptions="Center" FontSize="17"/>
-                    <Button x:Name="ManageQuickActionsBtn" Grid.Row="0" Grid.Column="1" Style="{StaticResource AddNewButton}" Text="Manage" ToolTipProperties.Text="Add/Remove Quick actions" Clicked="ManageQuickActionsBtn_Clicked"/>
-                    <CollectionView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-                        <CollectionView.ItemsLayout>
-                            <GridItemsLayout Orientation="Vertical"/>
-                        </CollectionView.ItemsLayout>
-                    </CollectionView>
-                </Grid>
-            </Border>
-
-            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}" HorizontalOptions="Start">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="7"/>
-                </Border.StrokeShape>
-                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="0">
-                    <ImageButton x:Name="Start_Stop_Button" Grid.Row="0" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Start/Stop the server"/>
-                    <ImageButton x:Name="Restart_Button" Grid.Row="1" Source="restart_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Restart the server" Command="{Binding RestartServer}"/>
-                    <ImageButton x:Name="World_Button" Grid.Row="2" Source="world_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Change active world"/>
-                    <ImageButton x:Name="Backup_Button" Grid.Row="3" Source="backup_icon_console.png" WidthRequest="100" HeightRequest="100" ToolTipProperties.Text="Create a backup of the server"/>
-                    <ImageButton x:Name="Folder_Button" Grid.Row="4" Source="folder_icon_console.png" WidthRequest="100" HeightRequest="100" CornerRadius="7" ToolTipProperties.Text="Browse the server files"/>
-                </Grid>
-            </Border>
-
-            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="7"/>
-                </Border.StrokeShape>
-                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,*" Padding="10" RowSpacing="5" ColumnSpacing="5">
-                    <Button Grid.Row="0" Grid.Column="0" Text="Modify Config"/>
-                    <Button Grid.Row="0" Grid.Column="1" Text="Ban List"/>
-                </Grid>
-            </Border>
-            </Grid>
-    </Border>
+        </Grid>
+            <popups:ManageQuickActionsPopup x:Name="QuickActionsPopup"/>
     </Grid>
 </ContentView>

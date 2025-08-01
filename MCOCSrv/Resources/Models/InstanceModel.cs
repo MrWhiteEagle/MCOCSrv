@@ -16,10 +16,9 @@ namespace MCOCSrv.Resources.Models
         public string LaunchArguments { get; set; }
         public string MaxHeap { get; set; }
         public string MinHeap { get; set; }
+        public List<QuickAction> Actions { get; set; }
 
-        public Dictionary<string, string> Actions { get; set; }
-
-        public InstanceModel(string Name, string? Description, InstanceType Type, string Version, string? CustomPath, Dictionary<string, string> actions)
+        public InstanceModel(string Name, string? Description, InstanceType Type, string Version, string? CustomPath)
         {
             this.Name = Name;
             this.Description = Description;
@@ -31,7 +30,7 @@ namespace MCOCSrv.Resources.Models
             this.LaunchArguments = "";
             this.MaxHeap = "";
             this.MinHeap = "";
-            this.Actions = actions;
+            this.Actions = new();
         }
 
         public string GetPath()

@@ -1,4 +1,5 @@
-﻿using MCOCSrv.Resources.Models;
+﻿using MCOCSrv.Resources.Content;
+using MCOCSrv.Resources.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -30,6 +31,8 @@ namespace MCOCSrv.Resources.Classes
         public ObservableCollection<string> ConsoleOutput { get; set; } = new();
         public Dictionary<string, string> Actions { get; set; } = new();
         public bool IsRunning => ServerProcess != null && !ServerProcess.HasExited;
+
+        public ConsoleTemplate? BoundConsole;
 
         public ConsoleWrapper(InstanceModel instance)
         {
