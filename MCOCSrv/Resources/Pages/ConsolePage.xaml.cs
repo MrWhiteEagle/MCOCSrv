@@ -34,15 +34,29 @@ public partial class ConsolePage : ContentPage, INotifyPropertyChanged
 
     }
 
+    // Read running instances and create a tab for each page not containing a console, if it does, use that console instead.
     protected override void OnAppearing()
     {
         base.OnAppearing();
         Tabs.Clear();
         foreach (var instance in Running)
         {
-            var tab = new ConsoleTemplate();
-            tab.SetupTab(instance);
-            Tabs.Add(tab);
+            if (instance.Console != null && instance.Console.BoundConsole != null)
+            {
+                var tab = instance.Console.BoundConsole;
+                Tabs.Add(tab);
+                tab.UpdateUIState();
+                tab.SetInitialSidebarActionStates();
+                tab.ReloadActions();
+
+            }
+            else
+            {
+                var tab = new ConsoleTemplate();
+                tab.SetupTab(instance);
+                Tabs.Add(tab);
+            }
+
         }
         if (Running.Count == 0)
         {
@@ -56,6 +70,7 @@ public partial class ConsolePage : ContentPage, INotifyPropertyChanged
         }
     }
 
+    // Handle tab changing
     private void Tabs_Changed(object sender, SelectionChangedEventArgs e)
     {
         if (e.CurrentSelection != null && e.CurrentSelection is ConsoleTemplate selected)

@@ -2,7 +2,7 @@ namespace MCOCSrv.Resources.Content;
 
 public partial class DeleteButton : ContentView
 {
-    public event EventHandler<object> DeleteRequested;
+    public event EventHandler<object>? DeleteRequested;
     public DeleteButton()
     {
         InitializeComponent();

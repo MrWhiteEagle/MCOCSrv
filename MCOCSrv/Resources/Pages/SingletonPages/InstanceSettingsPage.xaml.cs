@@ -17,13 +17,13 @@ public partial class InstanceSettingsPage : ContentPage
     public InstanceSettingsPage(InstanceModel instance)
     {
         InitializeComponent();
-        this.manager = App.Current.Handler.GetService<InstanceManager>();
+        this.manager = App.Current?.Handler.GetService<InstanceManager>();
         this.instance = instance;
         this.InstanceName = instance.Name;
         MaxHeap = instance.MaxHeap;
         MinHeap = instance.MinHeap;
         Arguments = instance.LaunchArguments;
-        SettingsList = manager.GetInstanceSettings(instance);
+        SettingsList = instance.Settings;
         BindingContext = this;
     }
 

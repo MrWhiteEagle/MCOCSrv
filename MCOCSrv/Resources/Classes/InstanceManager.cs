@@ -13,7 +13,7 @@ namespace MCOCSrv.Resources.Classes
         public ObservableCollection<InstanceModel> running { get; private set; } = new();
         private ServerVersionFetcher fetcher;
 
-        public EventHandler<InstanceModel> InstanceSaved;
+        public event EventHandler<InstanceModel>? InstanceSaved;
         public InstanceManager(ServerVersionFetcher fetcher)
         {
             this.fetcher = fetcher;
@@ -43,7 +43,7 @@ namespace MCOCSrv.Resources.Classes
             else
             {
                 var list = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                if (list != null || list.Count > 0)
+                if (list != null || list?.Count > 0)
                 {
                     instances.Clear();
                     foreach (var instancePath in list)
@@ -52,10 +52,13 @@ namespace MCOCSrv.Resources.Classes
                         {
                             //DESERIALIZE RECEIVED FILES CONTAINING INSTANCE DATA
                             string instancejson = await File.ReadAllTextAsync(Path.Combine(instancePath.Value, $"{instancePath.Key}.json"));
-                            InstanceModel instance = JsonSerializer.Deserialize<InstanceModel>(instancejson);
+                            InstanceModel? instance = JsonSerializer.Deserialize<InstanceModel>(instancejson);
                             if (instance != null)
                             {
                                 instance.InitializeConsole();
+                                instance.Settings = GetInstanceSettings(instance);
+                                GetBannedPlayers(instance);
+                                GetOppedPlayers(instance);
                                 instances.Add(instance);
                                 UILogger.LogUI($"[INSTANCE MANAGER] {instance.Name} Found and Initiated");
                             }
@@ -95,6 +98,12 @@ namespace MCOCSrv.Resources.Classes
             {
                 //DELETE FILES>REMOVE FROM MEMORY>SERIALIZE NEW INSTANCE DATA TO MAIN FILE
                 Directory.Delete(instance.GetPath(), true);
+                //If instance running, stop it first
+                if (instance.Console.IsRunning)
+                {
+                    instance.Console.StopServer();
+                    instance.Console.Dispose();
+                }
                 instances.Remove(instance);
                 running.Remove(instance);
                 string json = JsonSerializer.Serialize(GetInstancesPathData(), new JsonSerializerOptions { WriteIndented = true });
@@ -131,6 +140,7 @@ namespace MCOCSrv.Resources.Classes
                 Debug.WriteLine($"[INSTANCE MANAGER] Error writing instance File: {ex.Message}");
             }
         }
+
         //SAVE ANY CHANGES TO INSTANCE PROPERTIES ITSELF AND CHANGE THE MAIN FILE (in case of path change)
         public async Task SaveInstance(InstanceModel instance)
         {
@@ -151,7 +161,7 @@ namespace MCOCSrv.Resources.Classes
 
         }
 
-        //CHANGE MAIN FILE
+        //CHANGE MAIN FILE - contain info about instance paths
         private async Task AppendInstanceListFile(string id, InstanceModel toChange)
         {
 
@@ -301,6 +311,59 @@ namespace MCOCSrv.Resources.Classes
                 result.Add(instance.Name, instance.GetPath());
             }
             return result;
+        }
+
+        private List<PlayerData> GetBannedPlayers(InstanceModel instance)
+        {
+            string path = Path.Combine(instance.GetPath(), "banned-players.json");
+            if (File.Exists(path))
+            {
+                try
+                {
+                    List<PlayerData> players = new();
+                    string json = File.ReadAllText(path);
+                    JsonDocument doc = JsonDocument.Parse(json);
+                    foreach (JsonElement element in doc.RootElement.EnumerateArray())
+                    {
+                        players.Add(new PlayerData(element.GetProperty("uuid").ToString(), element.GetProperty("name").ToString()));
+                    }
+                    return players;
+                }
+                catch (Exception ex)
+                {
+                    UILogger.LogUI($"[INSTANCE MANAGER] Error getting banned players for {instance.Name}: {ex.Message}");
+                }
+            }
+            return new List<PlayerData>();
+        }
+
+        private List<PlayerData> GetOppedPlayers(InstanceModel instance)
+        {
+            string path = Path.Combine(instance.GetPath(), "ops.json");
+            if (File.Exists(path))
+            {
+                try
+                {
+                    List<PlayerData> players = new();
+                    string json = File.ReadAllText(path);
+                    JsonDocument doc = JsonDocument.Parse(json);
+                    foreach (JsonElement element in doc.RootElement.EnumerateArray())
+                    {
+                        players.Add(new PlayerData(element.GetProperty("uuid").ToString(), element.GetProperty("name").ToString()));
+                    }
+                    return players;
+                }
+                catch (Exception ex)
+                {
+                    UILogger.LogUI($"[INSTANCE MANAGER] Error getting operators for {instance.Name}: {ex.Message}");
+                }
+            }
+            return new List<PlayerData>();
+        }
+
+        public InstanceManager GetInstanceManager()
+        {
+            return this;
         }
     }
 }

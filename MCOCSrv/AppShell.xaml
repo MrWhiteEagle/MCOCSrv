@@ -22,17 +22,17 @@
     </FlyoutItem>
     <FlyoutItem Title="Console" Icon="console_icon.png">
         <ShellContent
-        ContentTemplate="{DataTemplate local:ConsolePage}"
-        Route="ConsolePage" />
+            ContentTemplate="{DataTemplate local:ConsolePage}"
+            Route="ConsolePage" />
     </FlyoutItem>
     <FlyoutItem Title="Settings" Icon="settings_icon.png">
         <ShellContent
-    ContentTemplate="{DataTemplate local:SettingsPage}"
-    Route="SettingsPage" />
+            ContentTemplate="{DataTemplate local:SettingsPage}"
+            Route="SettingsPage" />
     </FlyoutItem>
     <FlyoutItem Title="About" Icon="about_icon.png">
         <ShellContent
-    ContentTemplate="{DataTemplate local:AboutPage}"
-    Route="AboutPage" />
+            ContentTemplate="{DataTemplate local:AboutPage}"
+            Route="AboutPage" />
     </FlyoutItem>
 </Shell>

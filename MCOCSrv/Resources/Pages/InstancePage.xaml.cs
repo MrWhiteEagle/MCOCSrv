@@ -25,6 +25,7 @@ public partial class InstancePage : ContentPage
         CreateInstancePopup.resetInstancePopup();
     }
 
+    // Request instance deletion, and show confirmation popup
     void OnDeleteRequest(object sender, object item)
     {
         if (item is InstanceModel instance)
@@ -34,6 +35,7 @@ public partial class InstancePage : ContentPage
         }
     }
 
+    // Request instance startup to console, and add instance to running list
     void OnStartRequest(object sender, object item)
     {
         if (item is InstanceModel instance)
@@ -49,13 +51,14 @@ public partial class InstancePage : ContentPage
         }
     }
 
-    async void OnStopRequest(object sender, object item)
+    // Request instance shutdown, remove from running list, dispose console
+    void OnStopRequest(object sender, object item)
     {
         if (item is InstanceModel instance)
         {
             if (instance.Console != null)
             {
-                await instance.Console.StopServer();
+                instance.Console.StopServer();
                 instance.Console.Dispose();
             }
             manager.running.Remove(instance);

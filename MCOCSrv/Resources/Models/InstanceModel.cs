@@ -4,7 +4,7 @@ namespace MCOCSrv.Resources.Models
     public class InstanceModel
     {
         public ConsoleWrapper? Console;
-        public string id { get; set; }
+        public string? id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
         public InstanceType Type { get; set; }
@@ -17,6 +17,7 @@ namespace MCOCSrv.Resources.Models
         public string MaxHeap { get; set; }
         public string MinHeap { get; set; }
         public List<QuickAction> Actions { get; set; }
+        public List<Setting> Settings { get; set; }
 
         public InstanceModel(string Name, string? Description, InstanceType Type, string Version, string? CustomPath)
         {
@@ -32,12 +33,13 @@ namespace MCOCSrv.Resources.Models
             this.MinHeap = "";
             this.Actions = new();
         }
-
+        // Returns the path to instance, either the custom path or the base path if custom is not set.
         public string GetPath()
         {
             return string.IsNullOrEmpty(CustomPath) ? BasePath : CustomPath;
         }
 
+        // Checks if the instance has custom path set.
         public bool HasCustomPath()
         {
             if (string.IsNullOrEmpty(CustomPath))
@@ -50,11 +52,13 @@ namespace MCOCSrv.Resources.Models
             }
         }
 
+        // Assign a new Console to instance.
         public void InitializeConsole()
         {
             this.Console = new ConsoleWrapper(this);
         }
 
+        // Disposes of the console process and sets console to null.
         public void DisposeConsole()
         {
             if (this.Console != null)
@@ -66,6 +70,7 @@ namespace MCOCSrv.Resources.Models
 
         }
 
+        // Checks if the instance is running actively by checking if the console is open.
         public bool IsRunning()
         {
             if (this.Console != null && this.Console.IsRunning)

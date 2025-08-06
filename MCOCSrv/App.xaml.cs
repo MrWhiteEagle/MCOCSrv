@@ -12,7 +12,7 @@ namespace MCOCSrv
         protected override async void OnStart()
         {
             base.OnStart();
-            InstanceManager manager = App.Current.Handler.GetService<InstanceManager>();
+            InstanceManager? manager = App.Current?.Handler.GetService<InstanceManager>();
             if (manager != null)
             {
                 UILogger.LogUI("[MCOCSrv] Manager initialized, fetching instances...");
@@ -21,14 +21,12 @@ namespace MCOCSrv
             else
             {
                 Toaster.Toastify("Could not initialize instance manager. Try again, then attempt reinstall or report the issue.");
-                App.Current.Quit();
+                App.Current?.Quit();
             }
         }
-        protected override void OnSleep()
-        {
-            base.OnSleep();
-            Cleanup();
-        }
+
+
+        //ON APP DESTROY, CLEANUP RESOURCES AND CLOSE CONSOLES
         protected override Window CreateWindow(IActivationState? activationState)
         {
             Window window = new Window(new AppShell());
@@ -49,7 +47,7 @@ namespace MCOCSrv
             {
                 if (instance.Console != null && instance.Console.IsRunning)
                 {
-                    instance.Console.StopServer().Wait(TimeSpan.FromSeconds(10));
+                    instance.Console.StopServer();
                     instance.Console.Dispose();
                 }
             }

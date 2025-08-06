@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MCOCSrv.Resources.Popups.PlayerListPopup"
+             IsVisible="False"
+             InputTransparent="True"
+             VerticalOptions="Center"
+             HorizontalOptions="Center">
+    <Border Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" MaximumWidthRequest="500" BackgroundColor="{StaticResource Gray900}" Padding="10">
+        <Grid>
+        <VerticalStackLayout Spacing="10">
+            <Label Text="Player List"
+                   Style="{StaticResource TitleHeadLine}"/>
+            <ScrollView HeightRequest="400">
+                    <VerticalStackLayout x:Name="PlayerList" BindableLayout.ItemsSource="{Binding Players}">
+                        <Label x:Name="EmptyPlaceholder" Text="No players Online" Style="{StaticResource SettingsData}" BackgroundColor="{StaticResource Gray950}"/>
+                            <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*, Auto, Auto, Auto" RowDefinitions="Auto, Auto" BackgroundColor="{StaticResource Gray950}" ColumnSpacing="5">
+                                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" Style="{StaticResource SettingsData}"/>
+                                    <Label Grid.Row="1" Grid.Column="0" Text="{Binding UUID, StringFormat='UUID - {0}'}" Style="{StaticResource SettingsData}"/>
+                                    <Button x:Name="KickButton" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Text="Kick" Clicked="KickPlayerRequest"/>
+                                    <Button x:Name="BanButton" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="Ban" Clicked="BanPlayerRequest"/>
+                                    <Button x:Name="OpButton" Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Op" Clicked="OpPlayerRequest"/>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+            </ScrollView>
+            <Button Text="Close" Style="{StaticResource CancelButton}" WidthRequest="100" Clicked="OnClose"/>
+        </VerticalStackLayout>
+        </Grid>
+    </Border>
+</ContentView>

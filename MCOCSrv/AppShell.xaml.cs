@@ -15,7 +15,7 @@ namespace MCOCSrv
         {
 
             var route = e.Current?.Location?.ToString();
-            Debug.WriteLine(route.ToString());
+            Debug.WriteLine(route?.ToString());
 
             string newTitle = route switch
             {

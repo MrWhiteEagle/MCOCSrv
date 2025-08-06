@@ -7,7 +7,7 @@ public partial class StartButton : ContentView
 {
     public event EventHandler<object>? StartRequested;
     public event EventHandler<object>? StopRequested;
-    private InstanceModel BoundInstance;
+    private InstanceModel? BoundInstance;
     public StartButton()
     {
         InitializeComponent();
@@ -25,7 +25,7 @@ public partial class StartButton : ContentView
         StartRequested?.Invoke(this, BindingContext);
     }
 
-    private async void Stop_Instance_Clicked(object sender, EventArgs a)
+    private async void Stop_Instance_Clicked(object? sender, EventArgs a)
     {
         StopBorder.IsEnabled = false;
         StopBorder.IsVisible = false;
@@ -37,57 +37,60 @@ public partial class StartButton : ContentView
         StopRequested?.Invoke(this, BindingContext);
     }
 
-    private async void OnConsoleStateChange(object sender, int state)
+    private async void OnConsoleStateChange(object? sender, int state)
     {
-        UILogger.LogUI($"[BUTTON - {BoundInstance.Name}] State changed to {state}");
-        if (sender == BoundInstance?.Console)
+        if (BoundInstance != null)
         {
-            UILogger.LogUI($"State changed to {state}");
-            await MainThread.InvokeOnMainThreadAsync(() =>
+            UILogger.LogUI($"[BUTTON - {BoundInstance.Name}] State changed to {state}");
+            if (sender == BoundInstance?.Console)
             {
-                switch (state)
+                UILogger.LogUI($"State changed to {state}");
+                await MainThread.InvokeOnMainThreadAsync(() =>
                 {
-                    case 0:
-                        StartBorder.IsEnabled = true;
-                        StartBorder.IsVisible = true;
-                        StartBorder.InputTransparent = false;
-                        WorkingBorder.IsEnabled = false;
-                        WorkingBorder.IsVisible = false;
-                        WorkingBorder.InputTransparent = true;
-                        StopBorder.IsEnabled = false;
-                        StopBorder.IsVisible = false;
-                        StopBorder.InputTransparent = true;
-                        break;
-                    case 1:
-                        StartBorder.IsEnabled = false;
-                        StartBorder.IsVisible = false;
-                        StartBorder.InputTransparent = true;
-                        WorkingBorder.IsEnabled = true;
-                        WorkingBorder.IsVisible = true;
-                        WorkingBorder.InputTransparent = false;
-                        StopBorder.IsEnabled = false;
-                        StopBorder.IsVisible = false;
-                        StopBorder.InputTransparent = true;
-                        break;
-                    case 2:
-                        StartBorder.IsEnabled = false;
-                        StartBorder.IsVisible = false;
-                        StartBorder.InputTransparent = true;
-                        WorkingBorder.IsEnabled = false;
-                        WorkingBorder.IsVisible = false;
-                        WorkingBorder.InputTransparent = true;
-                        StopBorder.IsEnabled = true;
-                        StopBorder.IsVisible = true;
-                        StopBorder.InputTransparent = false;
-                        break;
-                }
-            });
+                    switch (state)
+                    {
+                        case 0:
+                            StartBorder.IsEnabled = true;
+                            StartBorder.IsVisible = true;
+                            StartBorder.InputTransparent = false;
+                            WorkingBorder.IsEnabled = false;
+                            WorkingBorder.IsVisible = false;
+                            WorkingBorder.InputTransparent = true;
+                            StopBorder.IsEnabled = false;
+                            StopBorder.IsVisible = false;
+                            StopBorder.InputTransparent = true;
+                            break;
+                        case 1:
+                            StartBorder.IsEnabled = false;
+                            StartBorder.IsVisible = false;
+                            StartBorder.InputTransparent = true;
+                            WorkingBorder.IsEnabled = true;
+                            WorkingBorder.IsVisible = true;
+                            WorkingBorder.InputTransparent = false;
+                            StopBorder.IsEnabled = false;
+                            StopBorder.IsVisible = false;
+                            StopBorder.InputTransparent = true;
+                            break;
+                        case 2:
+                            StartBorder.IsEnabled = false;
+                            StartBorder.IsVisible = false;
+                            StartBorder.InputTransparent = true;
+                            WorkingBorder.IsEnabled = false;
+                            WorkingBorder.IsVisible = false;
+                            WorkingBorder.InputTransparent = true;
+                            StopBorder.IsEnabled = true;
+                            StopBorder.IsVisible = true;
+                            StopBorder.InputTransparent = false;
+                            break;
+                    }
+                });
 
+            }
         }
     }
 
     // On unload remove the listener (memory leaks prevention
-    private void OnUnloaded(object sender, EventArgs a)
+    private void OnUnloaded(object? sender, EventArgs a)
     {
         if (BoundInstance != null && BoundInstance.Console != null)
         {
@@ -96,7 +99,7 @@ public partial class StartButton : ContentView
     }
 
     // On reload reevaluate state
-    private void OnLoaded(object sender, EventArgs a)
+    private void OnLoaded(object? sender, EventArgs a)
     {
         if (BoundInstance != null && BoundInstance.Console != null)
         {

@@ -24,6 +24,7 @@
             "Paper" => InstanceType.Paper,
             "Purpur" => InstanceType.Purpur,
             "Sponge" => InstanceType.Sponge,
+            _ => InstanceType.Vanilla // Default to Vanilla if unknown type
         };
 
         public static string ToString(InstanceType type) => type switch

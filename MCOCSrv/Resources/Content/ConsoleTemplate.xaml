@@ -6,11 +6,19 @@
 
     <Grid>
         <Grid RowDefinitions="Auto, *" Padding="10">
+            <Grid Grid.Row="0" RowDefinitions="Auto" ColumnDefinitions="2*, *">
             <Label
-        Grid.Row="0"
-        Text="{Binding Name, StringFormat='COMMAND CENTER - {0}'}"
-        Style="{StaticResource TitleHeadLine}" FontAttributes="Bold"
-        HorizontalTextAlignment="Center"/>
+                Grid.Row="0"
+                Text="{Binding Name, StringFormat='COMMAND CENTER - {0}'}"
+                Style="{StaticResource TitleHeadLine}" FontAttributes="Bold"
+                HorizontalTextAlignment="Center"/>
+                <Grid Grid.Row="0" Grid.Column="1" ColumnDefinitions="Auto, Auto, Auto" ColumnSpacing="10">
+                    <Label Grid.Column="0" Text="Status:" Style="{StaticResource SettingsData}"/>
+                    <Ellipse x:Name="Status_Blimp" Grid.Column="1" WidthRequest="10" HeightRequest="10"/>
+                    <Label x:Name="Status_Text" Grid.Column="2" Style="{StaticResource SettingsData}" Text="N/A"/>
+                </Grid>
+                
+            </Grid>
             <Border Grid.Row="1" Stroke="{StaticResource PrimaryDark}" Margin="5">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10"/>
@@ -43,40 +51,54 @@
 
                     <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}" StrokeShape="RoundRectangle 5">
                         <FlexLayout Direction="Column" Wrap="NoWrap" AlignItems="Stretch">
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Start/Stop the server">
                                 <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Start_Stop_Button" ToolTipProperties.Text="Start/Stop the server"/>
+                                    <TapGestureRecognizer x:Name="Start_Stop_Button"/>
                                 </Grid.GestureRecognizers>
                                 <Image Grid.Column="0" Grid.Row="0" x:Name="Start_Stop_Image"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Start/Stop Server" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
                             </Grid>
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Restart the server">
                                 <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Restart_Button" ToolTipProperties.Text="Restart the server" Command="{Binding RestartServer}"/>
+                                    <TapGestureRecognizer x:Name="Restart_Button" Command="{Binding RestartServer}"/>
                                 </Grid.GestureRecognizers>
                                 <Image Grid.Column="0" Grid.Row="0" Source="restart_icon_console.png"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Restart Server" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
                             </Grid>
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Change Active World">
                                 <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="World_Button" ToolTipProperties.Text="Change Active World"/>
+                                    <TapGestureRecognizer x:Name="World_Button"/>
                                 </Grid.GestureRecognizers>
                                 <Image Grid.Column="0" Grid.Row="0" Source="world_icon_console.png"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Change World" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
                             </Grid>
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Backup the server, WARNING! will stop the server from saving any progress for the durection of the backup procedure! May not work properly if server is running, always try to execute if server is stopped.">
                                 <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Backup_Button" ToolTipProperties.Text="Backup the server, WARNING! will stop the server from saving any progress for the durection of the backup procedure!" Command="{Binding ForceBackup}"/>
+                                    <TapGestureRecognizer x:Name="Backup_Button" Command="{Binding ForceBackup}"/>
                                 </Grid.GestureRecognizers>
                                 <Image Grid.Column="0" Grid.Row="0" Source="backup_icon_console.png"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Force Backup" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
                             </Grid>
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto">
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Browse Server Files">
                                 <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Folder_Button" ToolTipProperties.Text="Browse Server Files"/>
+                                    <TapGestureRecognizer x:Name="Folder_Button"/>
                                 </Grid.GestureRecognizers>
                                 <Image Grid.Column="0" Grid.Row="0" Source="folder_icon_console.png"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Browse Files" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                            </Grid>
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Restore Backup">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer x:Name="Restore_Backup_Button"/>
+                                </Grid.GestureRecognizers>
+                                <Image Grid.Column="0" Grid.Row="0" Source="restart_icon_console.png"/>
+                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Restore Backup"/>
+                            </Grid>
+                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Scheduler is a utility used to schedule events to happen at a given time or continuously over windows of time.">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer x:Name="Scheduler_Button"/>
+                                </Grid.GestureRecognizers>
+                                <Image Grid.Column="0" Grid.Row="0" Source="restart_icon_console.png"/>
+                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Scheduler"/>
                             </Grid>
                         </FlexLayout>
                     </Border>
@@ -85,14 +107,51 @@
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="7"/>
                         </Border.StrokeShape>
-                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*,*" Padding="10" RowSpacing="5" ColumnSpacing="5">
-                            <Button Grid.Row="0" Grid.Column="0" Text="Modify Config"/>
+                        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*,*" Padding="10" RowSpacing="5" ColumnSpacing="5">
+                            <Button Grid.Row="0" Grid.Column="0" Text="Modify Config" Clicked="OpenConfigRequest"/>
                             <Button Grid.Row="0" Grid.Column="1" Text="Ban List"/>
+                            <Button Grid.Row="1" Grid.Column="0" Text="Force reload"/>
+                            <Button Grid.Row="1" Grid.Column="1" Text="Op List"/>
+                            <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="Player List" x:Name="ShowPlayerListButton" Clicked="HandleShowPlayerList"/>
+                            <Label Grid.Row="3" Grid.Column="0" Text="Difficulty" Style="{StaticResource SettingsData}"/>
+                            <Picker x:Name="DifficultyPicker" Grid.Row="3" Grid.Column="1" SelectedIndexChanged="HandleChangeOption">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>Peaceful</x:String>
+                                        <x:String>Easy</x:String>
+                                        <x:String>Normal</x:String>
+                                        <x:String>Hard</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                            <Label Grid.Row="4" Grid.Column="0" Text="Weather" Style="{StaticResource SettingsData}"/>
+                            <Picker x:Name="WeatherPicker" Grid.Row="4" Grid.Column="1" SelectedIndexChanged="HandleChangeOption">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>Clear</x:String>
+                                        <x:String>Rain</x:String>
+                                        <x:String>Thunderstorm</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                            <Label Grid.Row="5" Grid.Column="0" Text="Whitelist" Style="{StaticResource SettingsData}" ToolTipProperties.Text="Initial state is based of of server.properties value, changing this will take effect only in current session"/>
+                            <Switch x:Name="WhitelistSwitch" Grid.Row="5" Grid.Column="1" HorizontalOptions="Fill" Toggled="HandleSwitches"/>
+                            <Label Grid.Row="6" Grid.Column="0" Text="Pvp" Style="{StaticResource SettingsData}"/>
+                            <Switch x:Name="PvpSwitch" Grid.Row="6" Grid.Column="1" Toggled="HandleSwitches"/>
+                            <Label Grid.Row="7" Grid.Column="0" Text="Hardcore" Style="{StaticResource SettingsData}"/>
+                            <Switch x:Name="HardcoreSwitch" Grid.Row="7" Grid.Column="1" Toggled="HandleSwitches"/>
+                            <Label Grid.Row="8" Grid.Column="0" Text="Keep Inventory" Style="{StaticResource SettingsData}"/>
+                            <Switch x:Name="KeepInventorySwitch" Grid.Row="8" Grid.Column="1" Toggled="HandleSwitches"/>
+                            <Label Grid.Row="9" Grid.Column="0" Text="Day cycle" Style="{StaticResource SettingsData}"/>
+                            <Switch x:Name="DayCycleSwitch" Grid.Row="9" Grid.Column="1" Toggled="HandleSwitches"/>
+                            <Label Grid.Row="10" Grid.Column="0" Text="Mob Spawning" Style="{StaticResource SettingsData}"/>
+                            <Switch x:Name="MobSpawnSwitch" Grid.Row="10" Grid.Column="1" Toggled="HandleSwitches"/>
                         </Grid>
                     </Border>
                 </Grid>
             </Border>
         </Grid>
             <popups:ManageQuickActionsPopup x:Name="QuickActionsPopup"/>
+            <popups:PlayerListPopup x:Name="PlayerListPopup"/>
     </Grid>
 </ContentView>

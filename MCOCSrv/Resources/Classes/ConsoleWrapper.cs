@@ -9,10 +9,11 @@ namespace MCOCSrv.Resources.Classes
     public class ConsoleWrapper : IDisposable
     {
         private readonly InstanceModel WorkingInstance;
-        private readonly string WorkingPath;
-        private readonly string ServerFile;
-        private readonly string PropertiesFile;
-        private readonly string EulaFile;
+        private readonly InstanceManager manager;
+        private string WorkingPath;
+        private string ServerFile;
+        private string PropertiesFile;
+        private string EulaFile;
         private Process? ServerProcess;
         private bool WasDisposed = false;
         private int _state;
@@ -38,11 +39,27 @@ namespace MCOCSrv.Resources.Classes
         public ConsoleWrapper(InstanceModel instance)
         {
             this.WorkingInstance = instance;
+            this.manager = App.Current.Handler.GetService<InstanceManager>();
             this.WorkingPath = instance.GetPath();
             this.ServerFile = Path.Combine(this.WorkingPath, $"{instance.id}-{instance.Version}.jar");
             this.PropertiesFile = Path.Combine(this.WorkingPath, "server.properties");
             this.EulaFile = Path.Combine(this.WorkingPath, "eula.txt");
             this.State = 0;
+            manager.InstanceSaved += Setup;
+
+        }
+
+        // Called on instance save to update console variables, check if Updated instance is this console's instance
+        public void Setup(object? sender, InstanceModel instance)
+        {
+            if (instance == WorkingInstance)
+            {
+                this.WorkingPath = instance.GetPath();
+                this.ServerFile = Path.Combine(this.WorkingPath, $"{instance.id}-{instance.Version}.jar");
+                this.PropertiesFile = Path.Combine(this.WorkingPath, "server.properties");
+                this.EulaFile = Path.Combine(this.WorkingPath, "eula.txt");
+                this.State = 0;
+            }
         }
 
         //Get wrapper's instance name
@@ -57,7 +74,7 @@ namespace MCOCSrv.Resources.Classes
         }
 
         //Check if running, if serverfile exists and for eula.
-        //Set up a process, subsc ribe to methods calling the handlers
+        //Set up a process, subscribe to methods calling the handlers
         public void StartServer()
         {
             State = 1;
@@ -148,7 +165,7 @@ namespace MCOCSrv.Resources.Classes
         }
 
         //Send stop command if running - after that dispose of resources safely
-        public async Task StopServer()
+        public void StopServer()
         {
             State = 1;
             if (!IsRunning)
@@ -160,7 +177,7 @@ namespace MCOCSrv.Resources.Classes
             UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] STOPPING SERVER...");
             SendCommand("stop");
             int timeout = 10000;
-            if (ServerProcess.WaitForExit(timeout))
+            if (ServerProcess != null && ServerProcess.WaitForExit(timeout))
             {
                 State = 0;
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] SERVER STOPPED.");
@@ -170,7 +187,7 @@ namespace MCOCSrv.Resources.Classes
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] SERVER TIMEOUT OF {timeout} - ATTEMPTING KILL...");
                 try
                 {
-                    ServerProcess.Kill();
+                    ServerProcess?.Kill();
                     State = 0;
                 }
                 catch (InvalidOperationException ex)
@@ -237,7 +254,7 @@ namespace MCOCSrv.Resources.Classes
             if (IsRunning)
             {
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] ATTEMPTING RESTART");
-                await StopServer();
+                StopServer();
                 await Task.Delay(10000);
                 if (!IsRunning)
                 {
@@ -315,8 +332,6 @@ namespace MCOCSrv.Resources.Classes
                 var exitcode = ServerProcess.ExitCode;
                 UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Server Exited with code: {exitcode}");
 
-                DisposeProcess();
-
                 ConsoleExitHandler?.Invoke(this, exitcode);
             }
         }
@@ -331,6 +346,8 @@ namespace MCOCSrv.Resources.Classes
             ServerStateHandler?.Invoke(this, state);
         }
 
+        // Force backup of the world, note that when server is running , it will save-off and save-all before creating the backup.
+        // This still may not backup all chunks if the server is running, so it is recommended to stop the server before creating a backup.
         public async Task ForceServerBackup(string worldname)
         {
             UILogger.LogUI($"[CONSOLE WRAPPER - {WorkingInstance.Name}] Forcing backup of world: {worldname}");

@@ -121,6 +121,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="11.2.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="fNbt" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.60" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.4" />
 	</ItemGroup>
@@ -181,6 +182,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Popups\ManageQuickActionsPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Popups\PlayerListPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

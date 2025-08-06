@@ -8,8 +8,8 @@ namespace MCOCSrv.Resources.Popups;
 public partial class ManageQuickActionsPopup : ContentView
 {
     public ObservableCollection<QuickAction> Actions { get; set; } = new();
-    private InstanceModel instance;
-    private ConsoleTemplate console;
+    private InstanceModel? instance;
+    private ConsoleTemplate? console;
     public ManageQuickActionsPopup()
     {
         InitializeComponent();
@@ -20,9 +20,9 @@ public partial class ManageQuickActionsPopup : ContentView
     public void Initialize(InstanceModel instance, ConsoleTemplate console)
     {
         this.instance = instance;
-        this.console = console;
         if (console != null && instance != null)
         {
+            this.console = console;
             LoadActions();
             this.IsVisible = true;
             this.InputTransparent = false;

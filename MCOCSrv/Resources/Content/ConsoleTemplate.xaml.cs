@@ -1,6 +1,7 @@
 using CommunityToolkit.Maui.Storage;
 using MCOCSrv.Resources.Classes;
 using MCOCSrv.Resources.Models;
+using MCOCSrv.Resources.Pages.SingletonPages;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -25,16 +26,17 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
             }
         }
     }
-    InstanceType? Type;
+    InstanceType Type;
     InstanceModel Instance;
     InstanceManager manager;
     public ObservableCollection<QuickAction> Actions { get; set; } = new();
-    string? Version;
-    string? Path;
+    public ObservableCollection<PlayerData> OnlinePlayers { get; set; } = new();
+    private string? Version;
+    private string? Path;
 
     //============CONSOLE PROPERTIES============
-    ConsoleWrapper Console;
-    private ObservableCollection<string> ConsoleOutputLines { get; set; } = new();
+    private ConsoleWrapper Console;
+    private ObservableCollection<string> ConsoleOutputLines { get; set; } = new(); //List of console output for display
 
     //OUTPUT PROPERTY
     private string _combinedConsoleOutput;
@@ -51,7 +53,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         }
     }
 
-    //============COMMANDS FOR QUICK ACTIONS============
+    //============COMMANDS FOR ACTIONS============
     public ICommand SendCommand { get; set; }
     public ICommand StopServer { get; set; }
     public ICommand StartServer { get; set; }
@@ -62,8 +64,8 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
 
     public ConsoleTemplate()
     {
-        SendCommand = new Command(async () => await ExecuteSendCommand());
-        StopServer = new Command(async () => await ExecuteStopServer());
+        SendCommand = new Command(() => ExecuteSendCommand());
+        StopServer = new Command(() => ExecuteStopServer());
         StartServer = new Command(() => ExecuteStartServer());
         RestartServer = new Command(async () => await ExecuteRestartServer());
         ForceSave = new Command(() => ExecuteForceSave());
@@ -71,9 +73,11 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
 
         InitializeComponent();
         BindingContext = this;
-        manager = App.Current.Handler.GetService<InstanceManager>();
+        manager = App.Current?.Handler?.GetService<InstanceManager>();
     }
 
+    #region Setup
+    //Setup tab once instance is run by console
     public void SetupTab(InstanceModel instance)
     {
         this.Instance = instance;
@@ -86,9 +90,18 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         {
             UILogger.LogUI($"[CONSOLE {Name}] Somehow instance has no console - adding one...");
             instance.Console = new ConsoleWrapper(instance);
+            Console.BoundConsole = this;
         }
+        //Bind wrapper and console to each other
         this.Console = instance.Console;
+        Console.BoundConsole = this;
+
+        //Reload UI elements
         ReloadActions();
+        if (!Console.IsRunning && Instance.IsRunning())
+            SetInitialSidebarActionStates();
+        UpdateUIState();
+        PlayerListPopup.Initialize(this);
 
         //Defensive - duplicate event handlers prevention
         Console.ConsoleOutputHandler -= OnConsoleOutput;
@@ -112,71 +125,45 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         {
             CombinedConsoleOutput = string.Empty;
         }
-        UpdateActionsState();
 
         ConsoleInput.ReturnCommand = SendCommand;
-
-
     }
+    #endregion
 
     //============Console Handler Methods============
+    #region Console Handlers
     private void OnConsoleOutput(object? sender, string data)
     {
         Microsoft.Maui.Controls.Application.Current?.Dispatcher.Dispatch(() =>
         {
             ConsoleOutputLines.Add(data);
             CombinedConsoleOutput += data + Environment.NewLine;
+
+            // Check for player join/leave events and update player list accordingly
+            if (data.Contains("joined"))
+                PlayerListListener(data, true);
+            if (data.Contains("left"))
+                PlayerListListener(data, false);
+
+            //Scroll to end of console on new output
             ScrollToConsoleEnd();
         });
     }
 
-    private void OnConsoleInput()
-    {
-
-    }
-
+    // Handle console exit event - update Ui and notify on output
     private void OnConsoleExit(object? sender, int code)
     {
+        // Notify UI about server exit
         Microsoft.Maui.Controls.Application.Current?.Dispatcher.Dispatch(() =>
         {
             ConsoleOutputLines.Add($"[MCOCSrv] Server exited with code {code}.");
             CombinedConsoleOutput += $"[MCOCSrv] Server exited with code {code}." + Environment.NewLine;
             ScrollToConsoleEnd();
-            UpdateActionsState();
+            UpdateUIState();
         });
     }
 
-    //============Actions Implementation============
-    private void ExecuteStartServer()
-    {
-        if (Console != null && !Console.IsRunning)
-        {
-            UILogger.LogUI($"[CONSOLE {Name}] Requesting Server Start...");
-            Console.StartServer();
-        }
-        else
-        {
-            UILogger.LogUI($"[CONSOLE {Name}] Cannot request start - server running already or console is null.");
-        }
-        UpdateActionsState();
-    }
-
-    private async Task ExecuteStopServer()
-    {
-
-        if (Console != null && Console.IsRunning)
-        {
-            UILogger.LogUI($"[CONSOLE {Name}] Requesting Server Stop...");
-            await Console.StopServer();
-        }
-        else
-        {
-            UILogger.LogUI($"[CONSOLE {Name}] Cannot request stop - server is already not running or console is null.");
-        }
-        UpdateActionsState();
-    }
-
-    private async Task ExecuteSendCommand()
+    private void ExecuteSendCommand()
     {
         if (Console != null && Console.IsRunning && !string.IsNullOrEmpty(ConsoleInput.Text))
         {
@@ -200,14 +187,60 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         ConsoleInput.Text = string.Empty;
     }
 
+    // Scroll to end of output on new output
+    private async void ScrollToConsoleEnd()
+    {
+        await Task.Delay(1);
+        await ConsoleScrollView.ScrollToAsync(ConsoleOutput, ScrollToPosition.End, true);
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    #endregion
+
+    //============Actions Implementation============
+    #region Actions Handlers
+    private void ExecuteStartServer()
+    {
+        if (Console != null && !Console.IsRunning)
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Requesting Server Start...");
+            Console.StartServer();
+        }
+        else
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Cannot request start - server running already or console is null.");
+        }
+        UpdateUIState();
+    }
+
+    private void ExecuteStopServer()
+    {
+
+        if (Console != null && Console.IsRunning)
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Requesting Server Stop...");
+            Console.StopServer();
+        }
+        else
+        {
+            UILogger.LogUI($"[CONSOLE {Name}] Cannot request stop - server is already not running or console is null.");
+        }
+        UpdateUIState();
+    }
+
     private async Task ExecuteRestartServer()
     {
         if (Console != null)
         {
             await Console.RestartServer();
-            UpdateActionsState();
+            UpdateUIState();
         }
     }
+
 
     private void ExecuteForceSave()
     {
@@ -230,51 +263,30 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         }
     }
 
-    private void ExecuteQuickAction(object sender, EventArgs e)
-    {
-        if (sender is Button button && button.BindingContext is QuickAction action)
-        {
-            Console.SendCommand(action.Command);
-        }
-    }
-
+    // Handle force backup - pick world folder and zip it to backups folder
     private async Task ExecuteForceBackup()
     {
-        var world = await FolderPicker.PickAsync(Console.GetWorkingPath());
-        if (world.IsSuccessful && world.Folder != null)
+        if (Console != null)
         {
-            await Console.ForceServerBackup(world.Folder.Name);
+            var world = await FolderPicker.PickAsync(Console.GetWorkingPath());
+            if (world.IsSuccessful && world.Folder != null)
+            {
+                await Console.ForceServerBackup(world.Folder.Name);
+            }
         }
     }
+    #endregion
 
-
-    //============OTHER METHODS============
-    private void UpdateActionsState()
+    //============QuickActions============
+    #region QuickAction
+    private void ExecuteQuickAction(object sender, EventArgs e)
     {
-        bool isRunning = Console.IsRunning;
-        if (isRunning)
-        {
-            Start_Stop_Image.Source = "stop_icon_console.png";
-            Start_Stop_Button.Command = StopServer;
-        }
-        else
-        {
-            Start_Stop_Image.Source = "start_icon_console.png";
-            Start_Stop_Button.Command = StartServer;
-        }
+        if (Console != null)
+            if (sender is Microsoft.Maui.Controls.Button button && button.BindingContext is QuickAction action)
+            {
+                Console.SendCommand(action.Command);
+            }
     }
-    private async void ScrollToConsoleEnd()
-    {
-        await Task.Delay(1);
-        await ConsoleScrollView.ScrollToAsync(ConsoleOutput, ScrollToPosition.End, true);
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
     // OPEN MANAGE QUICK ACTIONS POPUP
     private void ManageQuickActionsBtn_Clicked(object sender, EventArgs e)
     {
@@ -295,7 +307,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     }
 
     // LOAD ACTIONS FROM INSTANCE
-    private void ReloadActions()
+    public void ReloadActions()
     {
         Actions.Clear();
         foreach (var action in Instance.Actions)
@@ -303,4 +315,169 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
             Actions.Add(action);
         }
     }
+    #endregion
+
+    //============SIDEBAR ACTIONS HANDLERS==============
+    #region Sidebar Handlers
+    // Set initial values that mirror current settings
+    public void SetInitialSidebarActionStates()
+    {
+        if (Instance != null && Console != null)
+        {
+            foreach (var setting in Instance.Settings)
+            {
+                if (setting.Name == "difficulty")
+                    DifficultyPicker.SelectedIndex = int.Parse(setting.Value);
+                if (setting.Name == "white-list" && setting.Value == "true")
+                    WhitelistSwitch.IsToggled = true;
+                else
+                    WhitelistSwitch.IsToggled = false;
+                if (setting.Name == "hardcore" && setting.Value == "true")
+                    HardcoreSwitch.IsToggled = true;
+                else
+                    HardcoreSwitch.IsToggled = false;
+            }
+        }
+    }
+    private async void OpenConfigRequest(object? sender, EventArgs e)
+    {
+        if (Instance != null)
+        {
+            await Shell.Current.Navigation.PushAsync(new InstanceSettingsPage(Instance));
+        }
+    }
+
+    private void ForceReload(object? sender, EventArgs e)
+    {
+        if (Instance != null && Console != null)
+        {
+            Console.SendCommand("reload");
+        }
+    }
+
+    // Handle picker actions - console panel
+    private void HandleChangeOption(object? sender, EventArgs e)
+    {
+        if (sender is Picker && Console != null)
+        {
+            if (sender == DifficultyPicker)
+            {
+                int value = DifficultyPicker.SelectedIndex;
+                if (value >= 0 && value <= 3)
+                    Console.SendCommand("difficulty " + value);
+            }
+            if (sender == WeatherPicker && Console != null)
+            {
+                int value = WeatherPicker.SelectedIndex;
+                switch (value)
+                {
+                    case 0:
+                        Console.SendCommand("weather clear");
+                        break;
+                    case 1:
+                        Console.SendCommand("weather rain");
+                        break;
+                    case 2:
+                        Console.SendCommand("weather thunder");
+                        break;
+                    default:
+                        return;
+                }
+            }
+        }
+    }
+
+    private void HandleSwitches(object? sender, ToggledEventArgs e)
+    {
+        if (sender is Switch)
+        {
+            if (sender == WhitelistSwitch)
+                Console.SendCommand(e.Value == true ? "whitelist on" : "whitelist off");
+            if (sender == PvpSwitch)
+                Console.SendCommand(e.Value == true ? "gamerule pvp true" : "gamerule pvp false");
+            //if (sender == HardcoreSwitch)
+            //    Console.SendCommand(e.Value == true ? "gamemode hardcore @a" : "gamemode survival @a");
+            if (sender == KeepInventorySwitch)
+                Console.SendCommand(e.Value == true ? "gamerule keepInventory true" : "gamerule keepInventory false");
+            if (sender == DayCycleSwitch)
+                Console.SendCommand(e.Value == true ? "gamerule doDaylightCycle true" : "gamerule doDaylightCycle false");
+            if (sender == MobSpawnSwitch)
+                Console.SendCommand(e.Value == true ? "gamerule doMobSpawning true" : "gamerule doMobSpawning false");
+        }
+    }
+
+    #endregion
+    //============OTHER METHODS============
+
+    //Update UI based on console state
+    public void UpdateUIState()
+    {
+        bool isRunning = Console.IsRunning;
+        if (isRunning)
+        {
+            Start_Stop_Image.Source = "stop_icon_console.png";
+            Start_Stop_Button.Command = StopServer;
+            Status_Blimp.Fill = new SolidColorBrush(Colors.LimeGreen);
+            Status_Text.Text = "Running";
+        }
+        else
+        {
+            Start_Stop_Image.Source = "start_icon_console.png";
+            Start_Stop_Button.Command = StartServer;
+            Status_Blimp.Fill = new SolidColorBrush(Colors.Red);
+            Status_Text.Text = "Stopped";
+        }
+    }
+
+    //============PLAYER LIST HANDLER============
+    #region Player List Handler
+
+    // ON JOIN/LEAVE OUTPUT CAUGHT, UPDATE PLAYER LIST
+    public void PlayerListListener(string data, bool join_leave)
+    {
+        PlayerData? modify = new PlayerData("", "");
+        if (join_leave)
+        {
+            List<string> words = data.Split(" ").ToList();
+            words.RemoveRange(0, 3);
+            words.RemoveRange(1, words.Count - 1);
+            OnlinePlayers.Add(new PlayerData("", words[0]));
+        }
+        else
+        {
+            List<string> words = data.Split(" ").ToList();
+            words.RemoveRange(0, 3);
+            words.RemoveRange(1, words.Count - 1);
+            foreach (var player in OnlinePlayers)
+            {
+                if (player.Name == words[0])
+                {
+                    // Need to have placeholder in order to avoid modifying collection white iterating
+                    modify = player;
+                }
+            }
+            if (modify != null)
+            {
+                OnlinePlayers.Remove(modify);
+            }
+        }
+        PlayerListPopup.RequestRefresh();
+    }
+    private void HandleShowPlayerList(object? sender, EventArgs e)
+    {
+        if (sender == ShowPlayerListButton)
+        {
+            PlayerListPopup.Initialize(this);
+            PlayerListPopup.OnOpen();
+        }
+    }
+
+    //Used by sidebar actions
+    public void RequestPlayerCommand(PlayerData player, string cmd)
+    {
+        Console.SendCommand($"{cmd} {player.Name}");
+    }
+
+    #endregion
+
 }

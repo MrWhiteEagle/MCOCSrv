@@ -189,34 +189,31 @@ namespace MCOCSrv.Resources.Classes
             {
                 string? id = version.GetProperty("id").GetString();
                 string? versionUrl = version.GetProperty("url").GetString();
-
-                try
-                {
-                    var versionJson = await client.GetStringAsync(versionUrl);
-                    using JsonDocument versionDocument = JsonDocument.Parse(versionJson);
-                    if (versionDocument.RootElement.TryGetProperty("downloads", out JsonElement downloads) &&
-                        downloads.TryGetProperty("server", out JsonElement server) &&
-                        server.TryGetProperty("url", out JsonElement serverUrl))
+                if (id != null)
+                    try
                     {
-                        if (versionDocument.RootElement.TryGetProperty("type", out JsonElement type) && !(type.GetString() == "snapshot"))
+                        var versionJson = await client.GetStringAsync(versionUrl);
+                        using JsonDocument versionDocument = JsonDocument.Parse(versionJson);
+                        if (versionDocument.RootElement.TryGetProperty("downloads", out JsonElement downloads) &&
+                            downloads.TryGetProperty("server", out JsonElement server) &&
+                            server.TryGetProperty("url", out JsonElement serverUrl))
                         {
-                            //id = $"{id}--snapshot";
-                            UILogger.LogUI($"[VANILLA FETCH] Found: {id}");
-                            Vanilla[id] = serverUrl.GetString();
+                            if (versionDocument.RootElement.TryGetProperty("type", out JsonElement type) && !(type.GetString() == "snapshot"))
+                            {
+                                UILogger.LogUI($"[VANILLA FETCH] Found: {id}");
+                                Vanilla[id] = serverUrl.GetString();
+                            }
                         }
-                        //UILogger.LogUI($"[VANILLA FETCH] Found: {id}");
-                        //Vanilla[id] = serverUrl.GetString();
-                    }
-                    else
-                    {
-                        UILogger.LogUI($"[VANILLA FETCH] No server for {id}.");
-                    }
+                        else
+                        {
+                            UILogger.LogUI($"[VANILLA FETCH] No server for {id}.");
+                        }
 
-                }
-                catch (Exception ex)
-                {
-                    UILogger.LogUI($"[VANILLA FETCH] Error fetching data for {id}.");
-                }
+                    }
+                    catch (Exception ex)
+                    {
+                        UILogger.LogUI($"[VANILLA FETCH] Error fetching data for {id}. {ex.Message}");
+                    }
             }
             UILogger.LogUI("[VANILLA FETCH] DONE");
         }

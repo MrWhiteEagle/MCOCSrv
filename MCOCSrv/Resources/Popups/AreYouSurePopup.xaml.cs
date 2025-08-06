@@ -6,13 +6,13 @@ namespace MCOCSrv.Resources.Popups;
 
 public partial class AreYouSurePopup : ContentView, INotifyPropertyChanged
 {
-    private InstanceModel toDelete;
-    private InstanceManager manager;
+    private InstanceModel? toDelete;
+    private InstanceManager? manager;
     public AreYouSurePopup()
     {
         InitializeComponent();
         BindingContext = this;
-        this.manager = Application.Current.Handler.MauiContext.Services.GetService<InstanceManager>();
+        this.manager = App.Current?.Handler.GetService<InstanceManager>();
     }
 
     private void Cancel_Button_Clicked(object sender, EventArgs e)
@@ -22,7 +22,8 @@ public partial class AreYouSurePopup : ContentView, INotifyPropertyChanged
 
     private async void Confirm_Button_Clicked(Object sender, EventArgs e)
     {
-        await manager.DeleteInstance(toDelete);
+        if (manager != null && toDelete != null)
+            await manager.DeleteInstance(toDelete);
         Hide();
     }
 
