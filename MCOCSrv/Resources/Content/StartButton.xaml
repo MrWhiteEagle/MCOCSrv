@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MCOCSrv.Resources.Models"
              x:Class="MCOCSrv.Resources.Content.StartButton">
     <Grid RowDefinitions="40" ColumnDefinitions="40" HeightRequest="40" WidthRequest="40">
-        <Border Grid.Row="0" x:Name="StartBorder" BackgroundColor="{StaticResource Transparent}" Stroke="#0bde00" HeightRequest="40" WidthRequest="40" Padding="5" IsEnabled="True" IsVisible="True" InputTransparent="False" StrokeShape="RoundRectangle 5" ToolTipProperties.Text="Start the server">
+        <Border Grid.Row="0" x:Name="StartBorder" BackgroundColor="{StaticResource Transparent}" Stroke="LawnGreen" HeightRequest="40" WidthRequest="40" Padding="5" IsEnabled="True" IsVisible="True" InputTransparent="False" StrokeShape="RoundRectangle 5" ToolTipProperties.Text="Start the server">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroupList>
                     <VisualStateGroup x:Name="CommonStates">
@@ -23,12 +24,12 @@
             <Border.GestureRecognizers>
             <TapGestureRecognizer Tapped="Start_Instance_Clicked"/>
         </Border.GestureRecognizers>
-            <Image x:Name="StartIcon" Source="start_icon.png"/>
+            <Image x:Name="StartIcon" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.Play}, Color=LawnGreen}"/>
         </Border>
         <Border Grid.Row="0" x:Name="WorkingBorder" BackgroundColor="{StaticResource Transparent}" Stroke="{StaticResource Transparent}" HeightRequest="40" WidthRequest="40" Padding="5" IsEnabled="False" IsVisible="False" InputTransparent="True" StrokeShape="RoundRectangle 5" ToolTipProperties.Text="Working...">
-            <ActivityIndicator IsRunning="True"/>
+            <ActivityIndicator IsRunning="True" VerticalOptions="Center" HorizontalOptions="Center"/>
         </Border>
-        <Border Grid.Row="0" x:Name="StopBorder" BackgroundColor="{StaticResource Transparent}" Stroke="#ff0000" HeightRequest="40" WidthRequest="40" Padding="5" IsEnabled="False" IsVisible="False" InputTransparent="True" StrokeShape="RoundRectangle 5" ToolTipProperties.Text="Stop the server">
+        <Border Grid.Row="0" x:Name="StopBorder" BackgroundColor="{StaticResource Transparent}" Stroke="Red" HeightRequest="40" WidthRequest="40" Padding="5" IsEnabled="False" IsVisible="False" InputTransparent="True" StrokeShape="RoundRectangle 5" ToolTipProperties.Text="Stop the server">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroupList>
                     <VisualStateGroup x:Name="CommonStates">
@@ -48,7 +49,7 @@
             <Border.GestureRecognizers>
                 <TapGestureRecognizer Tapped="Stop_Instance_Clicked"/>
             </Border.GestureRecognizers>
-            <Image x:Name="StopIcon" Source="stop_icon.png"/>
+            <Image x:Name="StopIcon" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.Stop}, Color=Red}"/>
         </Border>
     </Grid>
 </ContentView>

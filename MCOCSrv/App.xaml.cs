@@ -43,14 +43,15 @@ namespace MCOCSrv
         private void Cleanup()
         {
             var manager = App.Current?.Handler.GetService<InstanceManager>();
-            foreach (var instance in manager.running)
-            {
-                if (instance.Console != null && instance.Console.IsRunning)
+            if (manager != null)
+                foreach (var instance in manager.running)
                 {
-                    instance.Console.StopServer();
-                    instance.Console.Dispose();
+                    if (instance.Console != null && instance.Console.IsRunning)
+                    {
+                        instance.Console.StopServer();
+                        instance.Console.Dispose();
+                    }
                 }
-            }
         }
     }
 }

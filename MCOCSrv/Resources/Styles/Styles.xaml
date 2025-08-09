@@ -190,6 +190,13 @@
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}" />
     </Style>
 
+    <Style TargetType="Image" x:Key="ImageIcon">
+        <Setter Property="VerticalOptions" Value="Center"/>
+        <Setter Property="HorizontalOptions" Value="Center"/>
+        <Setter Property="WidthRequest" Value="20"/>
+        <Setter Property="HeightRequest" Value="20"/>
+    </Style>
+
     <Style TargetType="ImageButton">
         <Setter Property="Opacity" Value="0.5" />
         <Setter Property="BorderColor" Value="Transparent"/>
@@ -274,7 +281,12 @@
         <Setter Property="FontSize" Value="25"/>
         <Setter Property="FontAttributes" Value="Bold"/>
     </Style>
-    
+    <Style TargetType="Label" x:Key="Icon">
+        <Setter Property="TextColor" Value="{StaticResource PrimaryDark}"/>
+        <Setter Property="FontFamily" Value="FA"/>
+        <Setter Property="FontSize" Value="32"/>
+    </Style>
+
     <Style TargetType="Span">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
     </Style>

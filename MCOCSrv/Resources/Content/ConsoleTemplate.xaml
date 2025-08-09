@@ -2,6 +2,7 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:popups="clr-namespace:MCOCSrv.Resources.Popups"
+             xmlns:models="clr-namespace:MCOCSrv.Resources.Models"
              x:Class="MCOCSrv.Resources.Content.ConsoleTemplate">
 
     <Grid>
@@ -51,53 +52,57 @@
 
                     <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}" StrokeShape="RoundRectangle 5">
                         <FlexLayout Direction="Column" Wrap="NoWrap" AlignItems="Stretch">
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Start/Stop the server">
+                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Start/Stop the server">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Start_Stop_Button"/>
                                 </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" x:Name="Start_Stop_Image"/>
-                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Start/Stop Server" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                                <Image Grid.Column="0" Grid.Row="0" x:Name="Start_Stop_Image" Style="{StaticResource ImageIcon}">
+                                    <Image.Source>
+                                        <FontImageSource x:Name="StartStopImageSource" FontFamily="FA"/>
+                                    </Image.Source>
+                                </Image>
+                                <Label x:Name="StartStopText" Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Start Server" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
                             </Grid>
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Restart the server">
+                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Restart the server">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Restart_Button" Command="{Binding RestartServer}"/>
                                 </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Source="restart_icon_console.png"/>
+                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.Rotate}, Color=CornflowerBlue}"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Restart Server" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
                             </Grid>
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Change Active World">
+                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Change Active World">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="World_Button"/>
                                 </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Source="world_icon_console.png"/>
+                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.EarthEurope}, Color=LightGreen}"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Change World" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
                             </Grid>
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Backup the server, WARNING! will stop the server from saving any progress for the durection of the backup procedure! May not work properly if server is running, always try to execute if server is stopped.">
+                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Backup the server, WARNING! will stop the server from saving any progress for the durection of the backup procedure! May not work properly if server is running, always try to execute if server is stopped.">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Backup_Button" Command="{Binding ForceBackup}"/>
                                 </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Source="backup_icon_console.png"/>
+                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.Download}, Color={StaticResource Primary}}"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Force Backup" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
                             </Grid>
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Browse Server Files">
+                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Browse Server Files">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Folder_Button"/>
                                 </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Source="folder_icon_console.png"/>
+                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.FolderOpen}, Color={StaticResource Primary}}"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Browse Files" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
                             </Grid>
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Restore Backup">
+                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Restore Backup">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Restore_Backup_Button"/>
                                 </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Source="restart_icon_console.png"/>
+                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.ClockRotateLeft}, Color={StaticResource Primary}}"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Restore Backup"/>
                             </Grid>
-                            <Grid ColumnDefinitions="50, *" RowDefinitions="Auto" ToolTipProperties.Text="Scheduler is a utility used to schedule events to happen at a given time or continuously over windows of time.">
+                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Scheduler is a utility used to schedule events to happen at a given time or continuously over windows of time.">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Scheduler_Button"/>
                                 </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Source="restart_icon_console.png"/>
+                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.Clock}, Color={StaticResource Primary}}"/>
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Scheduler"/>
                             </Grid>
                         </FlexLayout>
@@ -109,9 +114,9 @@
                         </Border.StrokeShape>
                         <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*,*" Padding="10" RowSpacing="5" ColumnSpacing="5">
                             <Button Grid.Row="0" Grid.Column="0" Text="Modify Config" Clicked="OpenConfigRequest"/>
-                            <Button Grid.Row="0" Grid.Column="1" Text="Ban List"/>
+                            <Button Grid.Row="0" Grid.Column="1" Text="Ban List" x:Name="ShowBannedPlayersButton" Clicked="HandleShowPlayerList"/>
                             <Button Grid.Row="1" Grid.Column="0" Text="Force reload"/>
-                            <Button Grid.Row="1" Grid.Column="1" Text="Op List"/>
+                            <Button Grid.Row="1" Grid.Column="1" Text="Op List" x:Name="ShowOppedPlayersButton" Clicked="HandleShowPlayerList"/>
                             <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="Player List" x:Name="ShowPlayerListButton" Clicked="HandleShowPlayerList"/>
                             <Label Grid.Row="3" Grid.Column="0" Text="Difficulty" Style="{StaticResource SettingsData}"/>
                             <Picker x:Name="DifficultyPicker" Grid.Row="3" Grid.Column="1" SelectedIndexChanged="HandleChangeOption">
@@ -153,5 +158,7 @@
         </Grid>
             <popups:ManageQuickActionsPopup x:Name="QuickActionsPopup"/>
             <popups:PlayerListPopup x:Name="PlayerListPopup"/>
+            <popups:PlayerBanListPopup x:Name="PlayerBanListPopup"/>
+            <popups:PlayerOpListPopup x:Name="PlayerOpListPopup"/>
     </Grid>
 </ContentView>

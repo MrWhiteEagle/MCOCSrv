@@ -73,6 +73,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiFont Remove="Resources\Fonts\fa-solid-900.ttf" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Resources\Images\Icons\about_icon.svg" />
 	  <None Remove="Resources\Images\Icons\console_icon.svg" />
 	  <None Remove="Resources\Images\Icons\Console_Icons\backup_icon_console.svg" />
@@ -97,6 +101,12 @@
 	  <None Remove="Resources\Images\Icons\start_icon.svg" />
 	  <None Remove="Resources\Images\Icons\stop_icon.svg" />
 	  <None Remove="Resources\Images\Icons\vanilla_icon.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Resources\Fonts\fa-solid-900.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -138,6 +148,12 @@
 	  </Compile>
 	  <Compile Update="Resources\Popups\LoadingPopup.xaml.cs">
 	    <DependentUpon>LoadingPopup.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Popups\PlayerBanListPopup.xaml.cs">
+	    <DependentUpon>PlayerBanListPopup.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Popups\PlayerOpListPopup.xaml.cs">
+	    <DependentUpon>PlayerOpListPopup.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -184,6 +200,12 @@
 	  <MauiXaml Update="Resources\Popups\ManageQuickActionsPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Resources\Popups\PlayerBanListPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Popups\PlayerOpListPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Resources\Popups\PlayerListPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -196,6 +218,10 @@
 	<ItemGroup>
 	  <MauiAsset Include="Resources\Classes\ServerVersionFetcher.cs" />
 	  <MauiAsset Include="Resources\Classes\InstanceTypes.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<MauiFont Include="Resources\Fonts\fa-solid-900.ttf" Alias="FA"></MauiFont>
 	</ItemGroup>
 
 </Project>

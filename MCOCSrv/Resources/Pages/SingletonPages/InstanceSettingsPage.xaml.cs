@@ -24,6 +24,10 @@ public partial class InstanceSettingsPage : ContentPage
         MinHeap = instance.MinHeap;
         Arguments = instance.LaunchArguments;
         SettingsList = instance.Settings;
+        if (manager.running.Contains(instance))
+        {
+            MoveButton.IsEnabled = false;
+        }
         BindingContext = this;
     }
 

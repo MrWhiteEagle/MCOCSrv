@@ -31,6 +31,8 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     InstanceManager manager;
     public ObservableCollection<QuickAction> Actions { get; set; } = new();
     public ObservableCollection<PlayerData> OnlinePlayers { get; set; } = new();
+    public ObservableCollection<PlayerData> BannedPlayers { get; set; }
+    public ObservableCollection<PlayerData> OppedPlayers { get; set; }
     private string? Version;
     private string? Path;
 
@@ -96,6 +98,10 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         this.Console = instance.Console;
         Console.BoundConsole = this;
 
+        //Load player data
+        BannedPlayers = Instance.BannedPlayers;
+        OppedPlayers = Instance.OppedPlayers;
+
         //Reload UI elements
         ReloadActions();
         if (!Console.IsRunning && Instance.IsRunning())
@@ -144,6 +150,16 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
                 PlayerListListener(data, true);
             if (data.Contains("left"))
                 PlayerListListener(data, false);
+            if (data.ToLower().Contains("banned") || data.ToLower().Contains("unbanned"))
+            {
+                BannedPlayers = Instance.BannedPlayers = manager.GetBannedPlayers(Instance);
+                PlayerBanListPopup.RequestRefresh();
+            }
+            if (data.ToLower().Contains("opped") || data.ToLower().Contains("de-opped"))
+            {
+                OppedPlayers = Instance.OppedPlayers = manager.GetOppedPlayers(Instance);
+                PlayerOpListPopup.RequestRefresh();
+            }
 
             //Scroll to end of console on new output
             ScrollToConsoleEnd();
@@ -415,14 +431,18 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         bool isRunning = Console.IsRunning;
         if (isRunning)
         {
-            Start_Stop_Image.Source = "stop_icon_console.png";
+            StartStopText.Text = "Stop Server";
+            StartStopImageSource.Glyph = FAIconsSolid.Stop;
+            StartStopImageSource.Color = Colors.Red;
             Start_Stop_Button.Command = StopServer;
             Status_Blimp.Fill = new SolidColorBrush(Colors.LimeGreen);
             Status_Text.Text = "Running";
         }
         else
         {
-            Start_Stop_Image.Source = "start_icon_console.png";
+            StartStopText.Text = "Start Server";
+            StartStopImageSource.Glyph = FAIconsSolid.Play;
+            StartStopImageSource.Color = Colors.LawnGreen;
             Start_Stop_Button.Command = StartServer;
             Status_Blimp.Fill = new SolidColorBrush(Colors.Red);
             Status_Text.Text = "Stopped";
@@ -463,12 +483,23 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         }
         PlayerListPopup.RequestRefresh();
     }
+
     private void HandleShowPlayerList(object? sender, EventArgs e)
     {
         if (sender == ShowPlayerListButton)
         {
             PlayerListPopup.Initialize(this);
             PlayerListPopup.OnOpen();
+        }
+        if (sender == ShowBannedPlayersButton)
+        {
+            PlayerBanListPopup.Initialize(this);
+            PlayerBanListPopup.OnOpen();
+        }
+        if (sender == ShowOppedPlayersButton)
+        {
+            PlayerOpListPopup.Initialize(this);
+            PlayerOpListPopup.OnOpen();
         }
     }
 

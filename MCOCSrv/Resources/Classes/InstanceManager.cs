@@ -22,6 +22,7 @@ namespace MCOCSrv.Resources.Classes
         }
 
         //MAIN METHOD TO FETCH INSTALLED INSTANCES
+        #region Fetch methods
         public async Task FetchInstances()
         {
             //CALL FILE CONTAINING KEY-VALUE PAIRS WITH INFO ABOUT INSTANCE LOCATIONS
@@ -57,8 +58,8 @@ namespace MCOCSrv.Resources.Classes
                             {
                                 instance.InitializeConsole();
                                 instance.Settings = GetInstanceSettings(instance);
-                                GetBannedPlayers(instance);
-                                GetOppedPlayers(instance);
+                                instance.BannedPlayers = GetBannedPlayers(instance);
+                                instance.OppedPlayers = GetOppedPlayers(instance);
                                 instances.Add(instance);
                                 UILogger.LogUI($"[INSTANCE MANAGER] {instance.Name} Found and Initiated");
                             }
@@ -80,6 +81,54 @@ namespace MCOCSrv.Resources.Classes
             UILogger.LogUI("[INSTANCE MANAGER] FETCH - DONE");
         }
 
+        public ObservableCollection<PlayerData> GetBannedPlayers(InstanceModel instance)
+        {
+            string path = Path.Combine(instance.GetPath(), "banned-players.json");
+            if (File.Exists(path))
+            {
+                try
+                {
+                    ObservableCollection<PlayerData> players = new();
+                    string json = File.ReadAllText(path);
+                    JsonDocument doc = JsonDocument.Parse(json);
+                    foreach (JsonElement element in doc.RootElement.EnumerateArray())
+                    {
+                        players.Add(new PlayerData(element.GetProperty("uuid").ToString(), element.GetProperty("name").ToString()));
+                    }
+                    return players;
+                }
+                catch (Exception ex)
+                {
+                    UILogger.LogUI($"[INSTANCE MANAGER] Error getting banned players for {instance.Name}: {ex.Message}");
+                }
+            }
+            return new ObservableCollection<PlayerData>();
+        }
+
+        public ObservableCollection<PlayerData> GetOppedPlayers(InstanceModel instance)
+        {
+            string path = Path.Combine(instance.GetPath(), "ops.json");
+            if (File.Exists(path))
+            {
+                try
+                {
+                    ObservableCollection<PlayerData> players = new();
+                    string json = File.ReadAllText(path);
+                    JsonDocument doc = JsonDocument.Parse(json);
+                    foreach (JsonElement element in doc.RootElement.EnumerateArray())
+                    {
+                        players.Add(new PlayerData(element.GetProperty("uuid").ToString(), element.GetProperty("name").ToString()));
+                    }
+                    return players;
+                }
+                catch (Exception ex)
+                {
+                    UILogger.LogUI($"[INSTANCE MANAGER] Error getting operators for {instance.Name}: {ex.Message}");
+                }
+            }
+            return new ObservableCollection<PlayerData>();
+        }
+        #endregion
         public InstanceModel? GetInstanceById(string id)
         {
             foreach (var instance in instances)
@@ -313,53 +362,7 @@ namespace MCOCSrv.Resources.Classes
             return result;
         }
 
-        private List<PlayerData> GetBannedPlayers(InstanceModel instance)
-        {
-            string path = Path.Combine(instance.GetPath(), "banned-players.json");
-            if (File.Exists(path))
-            {
-                try
-                {
-                    List<PlayerData> players = new();
-                    string json = File.ReadAllText(path);
-                    JsonDocument doc = JsonDocument.Parse(json);
-                    foreach (JsonElement element in doc.RootElement.EnumerateArray())
-                    {
-                        players.Add(new PlayerData(element.GetProperty("uuid").ToString(), element.GetProperty("name").ToString()));
-                    }
-                    return players;
-                }
-                catch (Exception ex)
-                {
-                    UILogger.LogUI($"[INSTANCE MANAGER] Error getting banned players for {instance.Name}: {ex.Message}");
-                }
-            }
-            return new List<PlayerData>();
-        }
 
-        private List<PlayerData> GetOppedPlayers(InstanceModel instance)
-        {
-            string path = Path.Combine(instance.GetPath(), "ops.json");
-            if (File.Exists(path))
-            {
-                try
-                {
-                    List<PlayerData> players = new();
-                    string json = File.ReadAllText(path);
-                    JsonDocument doc = JsonDocument.Parse(json);
-                    foreach (JsonElement element in doc.RootElement.EnumerateArray())
-                    {
-                        players.Add(new PlayerData(element.GetProperty("uuid").ToString(), element.GetProperty("name").ToString()));
-                    }
-                    return players;
-                }
-                catch (Exception ex)
-                {
-                    UILogger.LogUI($"[INSTANCE MANAGER] Error getting operators for {instance.Name}: {ex.Message}");
-                }
-            }
-            return new List<PlayerData>();
-        }
 
         public InstanceManager GetInstanceManager()
         {

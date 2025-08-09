@@ -1,4 +1,5 @@
 ﻿using MCOCSrv.Resources.Classes;
+using System.Collections.ObjectModel;
 namespace MCOCSrv.Resources.Models
 {
     public class InstanceModel
@@ -18,6 +19,10 @@ namespace MCOCSrv.Resources.Models
         public string MinHeap { get; set; }
         public List<QuickAction> Actions { get; set; }
         public List<Setting> Settings { get; set; }
+
+        public ObservableCollection<PlayerData> BannedPlayers { get; set; }
+
+        public ObservableCollection<PlayerData> OppedPlayers { get; set; }
 
         public InstanceModel(string Name, string? Description, InstanceType Type, string Version, string? CustomPath)
         {

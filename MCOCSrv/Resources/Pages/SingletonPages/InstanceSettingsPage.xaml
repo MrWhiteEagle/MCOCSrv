@@ -6,7 +6,7 @@
              Shell.NavBarIsVisible="False">
     <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto, Auto, Auto" Padding="10" RowSpacing="10" ColumnSpacing="10">
         <Label Grid.Row="0" Grid.Column="0" Text="{Binding InstanceName, StringFormat='{0} - SETTINGS'}" Style="{StaticResource TitleHeadLine}"/>
-        <Button Grid.Row="0" Grid.Column="1" Text="Move Instance" ToolTipProperties.Text="Move instance folder to another directory" Style="{StaticResource CustomButton}" Clicked="MoveButtonClicked"/>
+        <Button x:Name="MoveButton" Grid.Row="0" Grid.Column="1" Text="Move Instance" ToolTipProperties.Text="Move instance folder to another directory" Style="{StaticResource CustomButton}" Clicked="MoveButtonClicked"/>
         <Button Grid.Row="0" Grid.Column="2" x:Name="CancelButton" Text="Cancel" Style="{StaticResource CancelButton}" Clicked="CancelClicked" HorizontalOptions="End"/>
         <Button Grid.Row="0" Grid.Column="3" x:Name="SaveButton" Text="Save" Style="{StaticResource AddNewButton}" Clicked="SaveClicked" HorizontalOptions="End"/>
         <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" BackgroundColor="{StaticResource Gray950}">
