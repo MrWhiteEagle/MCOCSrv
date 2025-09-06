@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<local:PopupBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MCOCSrv.Resources.Popups"
              x:Class="MCOCSrv.Resources.Popups.LoadingPopup"
              IsEnabled="False"
              InputTransparent="True"
              IsVisible="False"
-             BackgroundColor="#80000000"
-             HorizontalOptions="FillAndExpand"
-             VerticalOptions="FillAndExpand"
              Loaded="Loaded"
              Unloaded="Unloaded">
-    <Grid>
-        <Border Stroke="{StaticResource Primary}" HeightRequest="350" WidthRequest="350" BackgroundColor="{StaticResource Gray900}">
-        <Border.StrokeShape>
-            <RoundRectangle CornerRadius="10"/>
-        </Border.StrokeShape>
-        <VerticalStackLayout Padding="15" Spacing="15">
+    <Grid Style="{StaticResource PopupOverlay}">
+        <Border Style="{StaticResource PopupBorder}">
+            <VerticalStackLayout>
             <Label Text="Fetching server file sources..." Style="{StaticResource TitleHeadLine}" FontSize="20"/>
             <ActivityIndicator IsRunning="True" Color="{StaticResource Primary}" VerticalOptions="Center"/>
             <Label Text="Please wait...."/>
@@ -27,4 +22,4 @@
         </VerticalStackLayout>
         </Border>
     </Grid>
-</ContentView>
+</local:PopupBase>

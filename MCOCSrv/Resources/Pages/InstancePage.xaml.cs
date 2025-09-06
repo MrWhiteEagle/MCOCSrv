@@ -1,4 +1,6 @@
+using MCOCSrv.Resources.Animations;
 using MCOCSrv.Resources.Classes;
+using MCOCSrv.Resources.Content;
 using MCOCSrv.Resources.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -16,13 +18,13 @@ public partial class InstancePage : ContentPage
         InitializeComponent();
         this.manager = instanceManager;
         BindingContext = this;
+        AttachButtonAnimations();
     }
 
     void onCreateInstance(object sender, EventArgs e)
     {
-        CreateInstancePopup.IsVisible = true;
-        CreateInstancePopup.InputTransparent = false;
-        CreateInstancePopup.resetInstancePopup();
+        CreateInstancePopup.Setup();
+        CreateInstancePopup.Show();
     }
 
     // Request instance deletion, and show confirmation popup
@@ -31,7 +33,8 @@ public partial class InstancePage : ContentPage
         if (item is InstanceModel instance)
         {
             Debug.WriteLine($"Delete request: {instance.Name}");
-            DeletionConfirmationPopup.Show(instance);
+            DeletionConfirmationPopup.Setup(instance);
+            DeletionConfirmationPopup.Show();
         }
     }
 
@@ -64,5 +67,20 @@ public partial class InstancePage : ContentPage
             manager.running.Remove(instance);
         }
     }
+
+    #region Animations
+
+    private void AttachButtonAnimations()
+    {
+        Animations.AttachHoverButtonAnimation(AddNewInstanceButton);
+    }
+    private void InstanceListButtonLoaded(object sender, EventArgs e)
+    {
+        if (sender is StartButton || sender is SettingButton || sender is DeleteButton)
+        {
+            Animations.AttachHoverButtonAnimation(sender);
+        }
+    }
+    #endregion
 
 }

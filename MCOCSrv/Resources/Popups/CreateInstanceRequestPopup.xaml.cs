@@ -6,19 +6,23 @@ using System.Collections.ObjectModel;
 
 namespace MCOCSrv.Resources.Popups;
 
-public partial class CreateInstanceRequestPopup : ContentView
+public partial class CreateInstanceRequestPopup : PopupBase
 {
     public ObservableCollection<string> AvaibleVersions { get; set; }
-    private readonly ServerVersionFetcher? serverVersionFetcher;
-    private readonly InstanceManager? manager;
+    private readonly ServerVersionFetcher serverVersionFetcher;
+    private readonly InstanceManager manager;
     public CreateInstanceRequestPopup()
     {
 
         BindingContext = this;
-        this.serverVersionFetcher = App.Current?.Handler?.MauiContext?.Services.GetService<ServerVersionFetcher>();
-        this.manager = App.Current?.Handler?.MauiContext?.Services.GetService<InstanceManager>();
+        this.serverVersionFetcher = App.Current?.Handler?.MauiContext?.Services.GetService<ServerVersionFetcher>() ??
+            throw new NullReferenceException("Couldnt find server version fetcher class on CreateInstanceRequestPopup");
+        this.manager = App.Current?.Handler?.MauiContext?.Services.GetService<InstanceManager>() ??
+            throw new NullReferenceException("Couldnt find instance manager class on CreateInstanceRequestPopup");
         AvaibleVersions = new ObservableCollection<string>();
         InitializeComponent();
+        Animations.Animations.AttachHoverButtonAnimation(AddInstanceButtonConfirm);
+        Animations.Animations.AttachHoverButtonAnimation(CancelAddInstanceButton);
 
     }
 
@@ -26,16 +30,16 @@ public partial class CreateInstanceRequestPopup : ContentView
     {
         if (!string.IsNullOrEmpty(InstanceNameField.Text) &&
             InstanceTypeField.SelectedIndex != -1 &&
-            InstanceVersionField.SelectedIndex != -1 && NameCheck(InstanceNameField.Text))
+            InstanceVersionField.SelectedIndex != -1 &&
+            NameCheck(InstanceNameField.Text))
         {
             InstanceModel newInstance = new(
                 Name: InstanceNameField.Text,
                 Description: null,
                 Type: (InstanceType)InstanceTypeField.SelectedItem,
-                Version: InstanceVersionField.SelectedItem.ToString(),
+                Version: InstanceVersionField.SelectedItem.ToString() ?? "Null",
                 CustomPath: string.IsNullOrEmpty(CustomPathField.Text) || CustomPathSwitch.IsToggled == false ? null : CustomPathField.Text);
-            this.IsVisible = false;
-            this.InputTransparent = true;
+            await Hide();
             await manager.CreateInstance(newInstance);
         }
         else if (!NameCheck(InstanceNameField.Text))
@@ -50,10 +54,9 @@ public partial class CreateInstanceRequestPopup : ContentView
         }
     }
 
-    void onCancel(object sender, EventArgs e)
+    async void onCancel(object sender, EventArgs e)
     {
-        this.IsVisible = false;
-        this.InputTransparent = true;
+        await Hide();
     }
 
     private void CustomPathSwitchToggled(object sender, ToggledEventArgs e)
@@ -85,7 +88,7 @@ public partial class CreateInstanceRequestPopup : ContentView
         }
     }
 
-    public void resetInstancePopup()
+    public void Setup()
     {
         InstanceNameField.Text = null;
         InstanceTypeField.SelectedIndex = -1;
@@ -94,6 +97,8 @@ public partial class CreateInstanceRequestPopup : ContentView
         CustomPathField.Text = null;
         AvaibleVersions.Clear();
         WarningText.IsVisible = false;
+        InstanceVersionField.IsEnabled = false;
+        Show();
     }
 
     private void InstanceTypeField_SelectedIndexChanged(object sender, EventArgs e)
@@ -106,6 +111,7 @@ public partial class CreateInstanceRequestPopup : ContentView
             {
                 AvaibleVersions.Add(version);
             }
+            InstanceVersionField.IsEnabled = true;
 
         }
     }

@@ -27,6 +27,7 @@ public static class MauiProgram
                 fonts.AddFont("Roboto-Thin.ttf", "RobotoThin");
                 fonts.AddFont("Roboto-Light.ttf", "RobotoLight");
                 fonts.AddFont("fa-solid-900.ttf", "FA");
+                fonts.AddFont("MDI.ttf", "MDI");
 
             });
         builder.Services.AddSingleton<ServerVersionFetcher>();

@@ -7,24 +7,21 @@
 
     <Grid>
         <Grid RowDefinitions="Auto, *" Padding="10">
-            <Grid Grid.Row="0" RowDefinitions="Auto" ColumnDefinitions="2*, *">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto, Auto, *" ColumnSpacing="10">
             <Label
-                Grid.Row="0"
                 Text="{Binding Name, StringFormat='COMMAND CENTER - {0}'}"
                 Style="{StaticResource TitleHeadLine}" FontAttributes="Bold"
-                HorizontalTextAlignment="Center"/>
-                <Grid Grid.Row="0" Grid.Column="1" ColumnDefinitions="Auto, Auto, Auto" ColumnSpacing="10">
+                HorizontalTextAlignment="Start"/>
+                <Image Grid.Column="1" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.Console}, Color={StaticResource Primary}}" VerticalOptions="Center" HorizontalOptions="Center"/>
+                <Grid Grid.Column="2" ColumnDefinitions="Auto, Auto, Auto" ColumnSpacing="10" HorizontalOptions="Center">
                     <Label Grid.Column="0" Text="Status:" Style="{StaticResource SettingsData}"/>
                     <Ellipse x:Name="Status_Blimp" Grid.Column="1" WidthRequest="10" HeightRequest="10"/>
                     <Label x:Name="Status_Text" Grid.Column="2" Style="{StaticResource SettingsData}" Text="N/A"/>
                 </Grid>
                 
             </Grid>
-            <Border Grid.Row="1" Stroke="{StaticResource PrimaryDark}" Margin="5">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10"/>
-                </Border.StrokeShape>
-                <Grid RowDefinitions="7*, 3*" ColumnDefinitions="7*,1*,2*" Padding="10" RowSpacing="5" ColumnSpacing="5">
+            <Border Grid.Row="1" Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10">
+                <Grid RowDefinitions="7*, 3*" ColumnDefinitions="7*,1*,2*" Padding="5" RowSpacing="3" ColumnSpacing="3">
                     <Border Grid.Row="0" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="1" Stroke="{StaticResource Black}" BackgroundColor="{StaticResource Black}" StrokeShape="RoundRectangle 5">
                         <Grid RowDefinitions="*,Auto">
                             <ScrollView x:Name="ConsoleScrollView" Grid.Row="0" Padding="10">
@@ -38,12 +35,12 @@
 
                     <Border Grid.Row="1" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}" StrokeShape="RoundRectangle 5">
                         <Grid RowDefinitions="Auto,*" ColumnDefinitions="*, Auto" Padding="10" RowSpacing="10">
-                            <Label Grid.Row="0" Grid.Column="0" Text="Quick Actions" HorizontalOptions="Center" FontSize="17"/>
+                            <Label Grid.Row="0" Grid.Column="0" Text="Quick Actions" Style="{StaticResource RegularWhite}"/>
                             <Button x:Name="ManageQuickActionsBtn" Grid.Row="0" Grid.Column="1" Style="{StaticResource AddNewButton}" Text="Manage" ToolTipProperties.Text="Add/Remove Quick actions" Clicked="ManageQuickActionsBtn_Clicked"/>
-                            <FlexLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BindableLayout.ItemsSource="{Binding Actions}" Direction="Row" Wrap="Wrap" JustifyContent="Start" AlignItems="Start">
+                            <FlexLayout x:Name="QuickActionList" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BindableLayout.ItemsSource="{Binding Actions}" Direction="Row" Wrap="Wrap" JustifyContent="Start" AlignItems="Start">
                                 <BindableLayout.ItemTemplate>
                                     <DataTemplate>
-                                        <Button FlexLayout.Basis="20%"  Text="{Binding Name}" Margin="10, 0" Clicked="ExecuteQuickAction"/>
+                                        <Button FlexLayout.Basis="20%"  Text="{Binding Name}" Margin="10, 0" Clicked="ExecuteQuickAction" Style="{StaticResource CustomButton}"/>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
                             </FlexLayout>
@@ -51,60 +48,66 @@
                     </Border>
 
                     <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}" StrokeShape="RoundRectangle 5">
-                        <FlexLayout Direction="Column" Wrap="NoWrap" AlignItems="Stretch">
-                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Start/Stop the server">
-                                <Grid.GestureRecognizers>
+                        <FlexLayout x:Name="ConsoleActions" Direction="Column" Wrap="NoWrap" AlignItems="Stretch">
+                            <HorizontalStackLayout x:Name="StartStopButton" HeightRequest="75" Padding="10,0" ToolTipProperties.Text="Start/Stop the server" HorizontalOptions="Fill" Spacing="10">
+                                <HorizontalStackLayout.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Start_Stop_Button"/>
-                                </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" x:Name="Start_Stop_Image" Style="{StaticResource ImageIcon}">
+                                </HorizontalStackLayout.GestureRecognizers>
+                                <Image x:Name="Start_Stop_Image" Style="{StaticResource ImageIcon}">
                                     <Image.Source>
-                                        <FontImageSource x:Name="StartStopImageSource" FontFamily="FA"/>
+                                        <FontImageSource x:Name="StartStopImageSource" FontFamily="MDI"/>
                                     </Image.Source>
                                 </Image>
-                                <Label x:Name="StartStopText" Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Start Server" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
-                            </Grid>
-                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Restart the server">
-                                <Grid.GestureRecognizers>
+                                <Label x:Name="StartStopText" Style="{StaticResource RegularWhite}" Text="Start" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            </HorizontalStackLayout>
+                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
+                            <HorizontalStackLayout x:Name="RestartButton" HeightRequest="75" Padding="10,0" ToolTipProperties.Text="Restart the server" HorizontalOptions="Fill" Spacing="10">
+                                <HorizontalStackLayout.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Restart_Button" Command="{Binding RestartServer}"/>
-                                </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.Rotate}, Color=CornflowerBlue}"/>
-                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Restart Server" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
-                            </Grid>
-                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Change Active World">
-                                <Grid.GestureRecognizers>
+                                </HorizontalStackLayout.GestureRecognizers>
+                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.Cached}, Color={StaticResource SecondaryDark}}"/>
+                                <Label Style="{StaticResource RegularWhite}" Text="Restart" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            </HorizontalStackLayout>
+                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
+                            <HorizontalStackLayout x:Name="WorldButton" HeightRequest="75" Padding="10,0" ToolTipProperties.Text="Change Active World" HorizontalOptions="Fill" Spacing="10">
+                                <HorizontalStackLayout.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="World_Button"/>
-                                </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.EarthEurope}, Color=LightGreen}"/>
-                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Change World" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
-                            </Grid>
-                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Backup the server, WARNING! will stop the server from saving any progress for the durection of the backup procedure! May not work properly if server is running, always try to execute if server is stopped.">
-                                <Grid.GestureRecognizers>
+                                </HorizontalStackLayout.GestureRecognizers>
+                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.Earth}, Color=LightGreen}"/>
+                                <Label Style="{StaticResource RegularWhite}" Text="World" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            </HorizontalStackLayout>
+                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
+                            <HorizontalStackLayout x:Name="BackupButton" HeightRequest="75" Padding="10,0" HorizontalOptions="Fill" Spacing="10" ToolTipProperties.Text="Backup the server, WARNING! will stop the server from saving any progress for the durection of the backup procedure! May not work properly if server is running, always try to execute if server is stopped.">
+                                <HorizontalStackLayout.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Backup_Button" Command="{Binding ForceBackup}"/>
-                                </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.Download}, Color={StaticResource Primary}}"/>
-                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Force Backup" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
-                            </Grid>
-                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Browse Server Files">
-                                <Grid.GestureRecognizers>
+                                </HorizontalStackLayout.GestureRecognizers>
+                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.FileDownloadOutline}, Color={StaticResource Primary}}"/>
+                                <Label Style="{StaticResource RegularWhite}" Text="Backup" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            </HorizontalStackLayout>
+                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
+                            <HorizontalStackLayout x:Name="FolderButton" HeightRequest="75" Padding="10,0" ToolTipProperties.Text="Browse Server Files" HorizontalOptions="Fill" Spacing="10">
+                                <HorizontalStackLayout.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Folder_Button"/>
-                                </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.FolderOpen}, Color={StaticResource Primary}}"/>
-                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Browse Files" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
-                            </Grid>
-                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Restore Backup">
-                                <Grid.GestureRecognizers>
+                                </HorizontalStackLayout.GestureRecognizers>
+                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.FolderOpenOutline}, Color={StaticResource Primary}}"/>
+                                <Label Style="{StaticResource RegularWhite}" Text="Browse" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                            </HorizontalStackLayout>
+                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
+                            <HorizontalStackLayout x:Name="RestoreButton" HeightRequest="75" Padding="10,0" ToolTipProperties.Text="Restore Backup" HorizontalOptions="Fill" Spacing="10">
+                                <HorizontalStackLayout.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Restore_Backup_Button"/>
-                                </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.ClockRotateLeft}, Color={StaticResource Primary}}"/>
-                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Restore Backup"/>
-                            </Grid>
-                            <Grid ColumnDefinitions="30, *" RowDefinitions="50" ToolTipProperties.Text="Scheduler is a utility used to schedule events to happen at a given time or continuously over windows of time.">
-                                <Grid.GestureRecognizers>
+                                </HorizontalStackLayout.GestureRecognizers>
+                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.Restore}, Color={StaticResource Primary}}"/>
+                                <Label Style="{StaticResource RegularWhite}" Text="Restore"/>
+                            </HorizontalStackLayout>
+                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
+                            <HorizontalStackLayout x:Name="SchedulerButton" HeightRequest="75" Padding="10,0" HorizontalOptions="Fill" Spacing="10" ToolTipProperties.Text="Scheduler is a utility used to schedule events to happen at a given time or continuously over windows of time.">
+                                <HorizontalStackLayout.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="Scheduler_Button"/>
-                                </Grid.GestureRecognizers>
-                                <Image Grid.Column="0" Grid.Row="0" Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.Clock}, Color={StaticResource Primary}}"/>
-                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource SettingsData}" Text="Scheduler"/>
-                            </Grid>
+                                </HorizontalStackLayout.GestureRecognizers>
+                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.TimerOutline}, Color={StaticResource Primary}}"/>
+                                <Label Grid.Row="0" Style="{StaticResource RegularWhite}" Text="Scheduler"/>
+                            </HorizontalStackLayout>
                         </FlexLayout>
                     </Border>
 
@@ -112,13 +115,13 @@
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="7"/>
                         </Border.StrokeShape>
-                        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*,*" Padding="10" RowSpacing="5" ColumnSpacing="5">
-                            <Button Grid.Row="0" Grid.Column="0" Text="Modify Config" Clicked="OpenConfigRequest"/>
-                            <Button Grid.Row="0" Grid.Column="1" Text="Ban List" x:Name="ShowBannedPlayersButton" Clicked="HandleShowPlayerList"/>
-                            <Button Grid.Row="1" Grid.Column="0" Text="Force reload"/>
-                            <Button Grid.Row="1" Grid.Column="1" Text="Op List" x:Name="ShowOppedPlayersButton" Clicked="HandleShowPlayerList"/>
-                            <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="Player List" x:Name="ShowPlayerListButton" Clicked="HandleShowPlayerList"/>
-                            <Label Grid.Row="3" Grid.Column="0" Text="Difficulty" Style="{StaticResource SettingsData}"/>
+                        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*,*" Padding="10" RowSpacing="6" ColumnSpacing="6">
+                            <Button x:Name="ConfigButton" Grid.Row="0" Grid.Column="0" Text="Config" Clicked="OpenConfigRequest" Style="{StaticResource CustomButton}"/>
+                            <Button x:Name="ShowBannedPlayersButton" Grid.Row="0" Grid.Column="1" Text="Ban List" Clicked="HandleShowPlayerList" Style="{StaticResource CustomButton}"/>
+                            <Button x:Name="ForceReloadButton" Grid.Row="1" Grid.Column="0" Text="Force reload" Style="{StaticResource CustomButton}"/>
+                            <Button x:Name="ShowOppedPlayersButton" Grid.Row="1" Grid.Column="1" Text="Op List" Clicked="HandleShowPlayerList" Style="{StaticResource CustomButton}"/>
+                            <Button x:Name="ShowPlayerListButton" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="Player List" Clicked="HandleShowPlayerList" Style="{StaticResource CustomButton}"/>
+                            <Label Grid.Row="3" Grid.Column="0" Text="Difficulty" Style="{StaticResource RegularWhite}"/>
                             <Picker x:Name="DifficultyPicker" Grid.Row="3" Grid.Column="1" SelectedIndexChanged="HandleChangeOption">
                                 <Picker.ItemsSource>
                                     <x:Array Type="{x:Type x:String}">
@@ -129,7 +132,7 @@
                                     </x:Array>
                                 </Picker.ItemsSource>
                             </Picker>
-                            <Label Grid.Row="4" Grid.Column="0" Text="Weather" Style="{StaticResource SettingsData}"/>
+                            <Label Grid.Row="4" Grid.Column="0" Text="Weather" Style="{StaticResource RegularWhite}"/>
                             <Picker x:Name="WeatherPicker" Grid.Row="4" Grid.Column="1" SelectedIndexChanged="HandleChangeOption">
                                 <Picker.ItemsSource>
                                     <x:Array Type="{x:Type x:String}">
@@ -139,17 +142,17 @@
                                     </x:Array>
                                 </Picker.ItemsSource>
                             </Picker>
-                            <Label Grid.Row="5" Grid.Column="0" Text="Whitelist" Style="{StaticResource SettingsData}" ToolTipProperties.Text="Initial state is based of of server.properties value, changing this will take effect only in current session"/>
+                            <Label Grid.Row="5" Grid.Column="0" Text="Whitelist" Style="{StaticResource RegularWhite}" ToolTipProperties.Text="Initial state is based of of server.properties value, changing this will take effect only in current session"/>
                             <Switch x:Name="WhitelistSwitch" Grid.Row="5" Grid.Column="1" HorizontalOptions="Fill" Toggled="HandleSwitches"/>
-                            <Label Grid.Row="6" Grid.Column="0" Text="Pvp" Style="{StaticResource SettingsData}"/>
+                            <Label Grid.Row="6" Grid.Column="0" Text="Pvp" Style="{StaticResource RegularWhite}"/>
                             <Switch x:Name="PvpSwitch" Grid.Row="6" Grid.Column="1" Toggled="HandleSwitches"/>
-                            <Label Grid.Row="7" Grid.Column="0" Text="Hardcore" Style="{StaticResource SettingsData}"/>
+                            <Label Grid.Row="7" Grid.Column="0" Text="Hardcore" Style="{StaticResource RegularWhite}"/>
                             <Switch x:Name="HardcoreSwitch" Grid.Row="7" Grid.Column="1" Toggled="HandleSwitches"/>
-                            <Label Grid.Row="8" Grid.Column="0" Text="Keep Inventory" Style="{StaticResource SettingsData}"/>
+                            <Label Grid.Row="8" Grid.Column="0" Text="Keep Inventory" Style="{StaticResource RegularWhite}"/>
                             <Switch x:Name="KeepInventorySwitch" Grid.Row="8" Grid.Column="1" Toggled="HandleSwitches"/>
-                            <Label Grid.Row="9" Grid.Column="0" Text="Day cycle" Style="{StaticResource SettingsData}"/>
+                            <Label Grid.Row="9" Grid.Column="0" Text="Day cycle" Style="{StaticResource RegularWhite}"/>
                             <Switch x:Name="DayCycleSwitch" Grid.Row="9" Grid.Column="1" Toggled="HandleSwitches"/>
-                            <Label Grid.Row="10" Grid.Column="0" Text="Mob Spawning" Style="{StaticResource SettingsData}"/>
+                            <Label Grid.Row="10" Grid.Column="0" Text="Mob Spawning" Style="{StaticResource RegularWhite}"/>
                             <Switch x:Name="MobSpawnSwitch" Grid.Row="10" Grid.Column="1" Toggled="HandleSwitches"/>
                         </Grid>
                     </Border>

@@ -2,18 +2,24 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MCOCSrv.Resources.Pages.SingletonPages.InstanceSettingsPage"
+             xmlns:models="clr-namespace:MCOCSrv.Resources.Models"
              Title="InstanceSettingsPage"
              Shell.NavBarIsVisible="False">
-    <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto, Auto, Auto" Padding="10" RowSpacing="10" ColumnSpacing="10">
-        <Label Grid.Row="0" Grid.Column="0" Text="{Binding InstanceName, StringFormat='{0} - SETTINGS'}" Style="{StaticResource TitleHeadLine}"/>
-        <Button x:Name="MoveButton" Grid.Row="0" Grid.Column="1" Text="Move Instance" ToolTipProperties.Text="Move instance folder to another directory" Style="{StaticResource CustomButton}" Clicked="MoveButtonClicked"/>
-        <Button Grid.Row="0" Grid.Column="2" x:Name="CancelButton" Text="Cancel" Style="{StaticResource CancelButton}" Clicked="CancelClicked" HorizontalOptions="End"/>
-        <Button Grid.Row="0" Grid.Column="3" x:Name="SaveButton" Text="Save" Style="{StaticResource AddNewButton}" Clicked="SaveClicked" HorizontalOptions="End"/>
-        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" BackgroundColor="{StaticResource Gray950}">
+    <Grid RowDefinitions="Auto, *" Padding="10" BackgroundColor="{StaticResource BackgroundDark}">
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto, Auto" Padding="20" ColumnSpacing="10">
+            <Grid Grid.Column="0" ColumnDefinitions="Auto, Auto" ColumnSpacing="10">
+                <Label Grid.Column="0" Text="{Binding InstanceName, StringFormat='{0} - PROPERTIES'}" Style="{StaticResource TitleHeadLine}" HorizontalOptions="Start"/>
+                <Image Grid.Column="1" Source="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.Wrench}, Color={StaticResource Primary}, Size=25}" VerticalOptions="Center" HorizontalOptions="Center"/>
+            </Grid>
+            <Button x:Name="MoveButton" Grid.Column="1" Text="Move Instance" ToolTipProperties.Text="Move instance folder to another directory" Style="{StaticResource CustomButton}" Clicked="MoveButtonClicked"/>
+            <Button Grid.Column="2" x:Name="CancelButton" Text="Cancel" Style="{StaticResource CancelButton}" Clicked="CancelClicked" HorizontalOptions="End"/>
+            <Button Grid.Column="3" x:Name="SaveButton" Text="Save" Style="{StaticResource AddNewButton}" Clicked="SaveClicked" HorizontalOptions="End"/>
+        </Grid>
+        <Border Grid.Row="1" Stroke="{StaticResource Primary}" StrokeShape="RoundRectangle 10" BackgroundColor="{StaticResource Gray950}">
             <Grid RowDefinitions="Auto, *" ColumnDefinitions="*" Padding="10" RowSpacing="20">
-                <Border Grid.Row="0" Grid.Column="0" StrokeShape="RoundRectangle 10" Stroke="{StaticResource Gray500}">
+                <Border Grid.Row="0" Grid.Column="0" StrokeShape="RoundRectangle 10" Stroke="{StaticResource Transparent}" Padding="10">
                     <Grid ColumnDefinitions="*, *, *, *" RowDefinitions="Auto, Auto, Auto" ColumnSpacing="10" RowSpacing="10" Padding="10">
-                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Text="Java and memory settings" Style="{StaticResource SettingsData}" FontSize="18"/>
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Text="Java and memory settings" Style="{StaticResource RegularWhite}" FontSize="18" Padding="10"/>
                         <Label Grid.Row="1" Grid.Column="0" Text="Minimum RAM usage in MB" Style="{StaticResource SettingsData}"/>
                         <Entry Grid.Row="2" Grid.Column="0" Text="{Binding MinHeap}" ToolTipProperties.Text="Just the number. Remember that 1GB = 1024MB!"/>
                         <Label Grid.Row="1" Grid.Column="1" Text="Maximum RAM usage in MB" Style="{StaticResource SettingsData}"/>
@@ -24,21 +30,22 @@
 
                     </Grid>
                 </Border>
-                <FlexLayout Grid.Row="1" Grid.Column="0" Direction="Column">
-                    <Label Text="Server.properties settings" Style="{StaticResource SettingsData}" FontSize="18" Margin="10"/>
-                    <ScrollView Padding="10">
+                <Grid Grid.Row="1" Grid.Column="0" RowDefinitions="Auto, Auto, *" RowSpacing="10">
+                    <Label Grid.Row="0" Text="Server.properties settings" Style="{StaticResource RegularWhite}" FontSize="18"/>
+                    <Border Grid.Row="1" HeightRequest="2" WidthRequest="800" Stroke="{StaticResource SecondaryDark}" Padding="2"/>
+                    <ScrollView Grid.Row="2" Padding="10" BackgroundColor="{StaticResource BackgroundDarkerThanDark}">
                         <FlexLayout BindableLayout.ItemsSource="{Binding SettingsList}" Wrap="Wrap" JustifyContent="SpaceAround" AlignItems="Center">
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid ColumnDefinitions="*, *" FlexLayout.Basis="50%" Margin="5">
-                                        <Label Grid.Column="0" Text="{Binding Name}" Style="{StaticResource SettingsData}" HorizontalTextAlignment="Start"/>
+                                    <Grid ColumnDefinitions="*, *" FlexLayout.Basis="50%" Margin="20, 5">
+                                        <Label Grid.Column="0" Text="{Binding Name}" Style="{StaticResource SettingsData}" HorizontalTextAlignment="Start" HorizontalOptions="Start"/>
                                         <Entry Grid.Column="1" Text="{Binding Value}"/>
                                     </Grid>
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
                         </FlexLayout>
                     </ScrollView>
-                </FlexLayout>
+                </Grid>
             </Grid>
         </Border>
     </Grid>

@@ -76,6 +76,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         InitializeComponent();
         BindingContext = this;
         manager = App.Current?.Handler?.GetService<InstanceManager>();
+        AttachButtonAnimations();
     }
 
     #region Setup
@@ -330,6 +331,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         {
             Actions.Add(action);
         }
+        AttachButtonAnimationsQuickActions();
     }
     #endregion
 
@@ -431,8 +433,8 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         bool isRunning = Console.IsRunning;
         if (isRunning)
         {
-            StartStopText.Text = "Stop Server";
-            StartStopImageSource.Glyph = FAIconsSolid.Stop;
+            StartStopText.Text = "Stop";
+            StartStopImageSource.Glyph = MDIcons.CheckboxBlankOutline;
             StartStopImageSource.Color = Colors.Red;
             Start_Stop_Button.Command = StopServer;
             Status_Blimp.Fill = new SolidColorBrush(Colors.LimeGreen);
@@ -440,8 +442,8 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         }
         else
         {
-            StartStopText.Text = "Start Server";
-            StartStopImageSource.Glyph = FAIconsSolid.Play;
+            StartStopText.Text = "Start";
+            StartStopImageSource.Glyph = MDIcons.PlayOutline;
             StartStopImageSource.Color = Colors.LawnGreen;
             Start_Stop_Button.Command = StartServer;
             Status_Blimp.Fill = new SolidColorBrush(Colors.Red);
@@ -511,4 +513,25 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
 
     #endregion
 
+    #region Animation
+    private void AttachButtonAnimations()
+    {
+        foreach (var item in ConsoleActions.Children.OfType<Layout>())
+        {
+            Animations.Animations.AttachHoverAnimationConsoleActions(item);
+        }
+        AttachButtonAnimationsQuickActions();
+    }
+
+    private void AttachButtonAnimationsQuickActions()
+    {
+        foreach (var item in QuickActionList.Children.OfType<Button>())
+        {
+            Animations.Animations.AttachHoverButtonAnimation(item);
+        }
+    }
+
+
+
+    #endregion
 }

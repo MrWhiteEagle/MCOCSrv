@@ -1,15 +1,14 @@
-using MCOCSrv.Resources.Classes;
 using MCOCSrv.Resources.Content;
 using MCOCSrv.Resources.Models;
 using System.Collections.ObjectModel;
 
 namespace MCOCSrv.Resources.Popups;
 
-public partial class ManageQuickActionsPopup : ContentView
+public partial class ManageQuickActionsPopup : PopupBase
 {
     public ObservableCollection<QuickAction> Actions { get; set; } = new();
-    private InstanceModel? instance;
-    private ConsoleTemplate? console;
+    private InstanceModel instance;
+    private ConsoleTemplate console;
     public ManageQuickActionsPopup()
     {
         InitializeComponent();
@@ -19,33 +18,38 @@ public partial class ManageQuickActionsPopup : ContentView
     // INITALIZE THE POPUP WITH INSTANCE AND CONSOLE
     public void Initialize(InstanceModel instance, ConsoleTemplate console)
     {
-        this.instance = instance;
         if (console != null && instance != null)
         {
+            this.instance = instance;
             this.console = console;
             LoadActions();
-            this.IsVisible = true;
-            this.InputTransparent = false;
+            Show();
         }
-        else
+        else if (instance == null)
         {
-            UILogger.LogUI($"[MANAGE QUICK ACTIONS] Instance or console is null, cannot initialize popup.");
+            throw new NullReferenceException("Instance is null, cannot initialize ManageQuickActionsPopup.");
         }
+        else if (console == null)
+        {
+            throw new NullReferenceException("Console or Instance is null, cannot initialize ManageQuickActionsPopup.");
+        }
+        AttachAnimations();
     }
 
     // HANDLING SAVING OR CANCELLING
-    private void CancelButtonClicked(object sender, EventArgs e)
+    private async void CancelButtonClicked(object sender, EventArgs e)
     {
-        this.IsVisible = false;
-        this.InputTransparent = true;
+        await Hide();
         Actions.Clear();
     }
 
-    private void SaveButtonClicked(object sender, EventArgs e)
+    private async void SaveButtonClicked(object sender, EventArgs e)
     {
-        this.IsVisible = false;
-        this.InputTransparent = true;
-        console.OnActionsEdited(Actions);
+        await Hide();
+        if (console != null)
+            console.OnActionsEdited(Actions);
+        else
+            throw new NullReferenceException("Console is null, cannot save actions.");
         Actions.Clear();
     }
 
@@ -78,25 +82,51 @@ public partial class ManageQuickActionsPopup : ContentView
             Actions[i] = newAction;
         else
             Actions.Add(newAction);
+        AttachAnimations();
     }
 
     // RELOAD ACTIONS - REEVALUATE LIST AND SYNC WITH CONSOLE
     private void LoadActions()
     {
-        Actions.Clear();
-        foreach (var action in console.Actions)
+        if (console != null)
         {
-            Actions.Add(action);
-        }
-        if (Actions.Count != 0)
-        {
-            ActionList.IsVisible = true;
-            EmptyActionFallBack.IsVisible = false;
+            Actions.Clear();
+            foreach (var action in console.Actions)
+            {
+                Actions.Add(action);
+            }
+            if (Actions.Count != 0)
+            {
+                ActionList.IsVisible = true;
+                EmptyActionFallBack.IsVisible = false;
+            }
+            else
+            {
+                ActionList.IsVisible = false;
+                EmptyActionFallBack.IsVisible = true;
+            }
+
         }
         else
         {
-            ActionList.IsVisible = false;
-            EmptyActionFallBack.IsVisible = true;
+            throw new NullReferenceException("Console is null, cannot load actions.");
+        }
+    }
+
+    private void AttachAnimations()
+    {
+        Animations.Animations.AttachHoverButtonAnimation(AddActionButton);
+        Animations.Animations.AttachHoverButtonAnimation(CancelButton);
+        Animations.Animations.AttachHoverButtonAnimation(SaveButton);
+        foreach (var item in ActionList.Children.OfType<Border>())
+        {
+            if (item.Content is Grid grid)
+            {
+                foreach (var child in grid.Children.OfType<Button>())
+                {
+                    Animations.Animations.AttachHoverButtonAnimation(child);
+                }
+            }
         }
     }
 }

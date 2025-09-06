@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 
 namespace MCOCSrv.Resources.Popups;
 
-public partial class PlayerOpListPopup : ContentView
+public partial class PlayerOpListPopup : PopupBase
 {
     public ObservableCollection<PlayerData> OppedPlayers { get; set; } = new();
-    private ConsoleTemplate? console;
+    private ConsoleTemplate console;
     public PlayerOpListPopup()
     {
         InitializeComponent();
@@ -18,23 +18,21 @@ public partial class PlayerOpListPopup : ContentView
     public void Initialize(ConsoleTemplate console)
     {
         BindingContext = this;
-        this.console = console;
+        this.console = console ?? throw new NullReferenceException("Console was null in OPPLayerList");
         RequestRefresh();
     }
 
     //Open popup
     public void OnOpen()
     {
-        this.IsVisible = true;
-        this.InputTransparent = false;
+        Show();
         RequestRefresh();
     }
 
     //Close popup
-    private void OnClose(object? sender, EventArgs e)
+    private async void OnClose(object? sender, EventArgs e)
     {
-        this.InputTransparent = true;
-        this.IsVisible = false;
+        await Hide();
     }
 
     // Request reload from console and update the player list.
@@ -53,7 +51,7 @@ public partial class PlayerOpListPopup : ContentView
     {
         if (sender is Button button && button.BindingContext is PlayerData player)
         {
-            console?.RequestPlayerCommand(player, "deop");
+            console.RequestPlayerCommand(player, "deop");
         }
     }
     #endregion

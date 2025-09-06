@@ -1,10 +1,9 @@
 using MCOCSrv.Resources.Classes;
 using MCOCSrv.Resources.Models;
-using System.ComponentModel;
 
 namespace MCOCSrv.Resources.Popups;
 
-public partial class AreYouSurePopup : ContentView, INotifyPropertyChanged
+public partial class AreYouSurePopup : PopupBase
 {
     private InstanceModel? toDelete;
     private InstanceManager? manager;
@@ -13,6 +12,8 @@ public partial class AreYouSurePopup : ContentView, INotifyPropertyChanged
         InitializeComponent();
         BindingContext = this;
         this.manager = App.Current?.Handler.GetService<InstanceManager>();
+        this.IsVisible = false;
+        this.InputTransparent = true;
     }
 
     private void Cancel_Button_Clicked(object sender, EventArgs e)
@@ -27,19 +28,9 @@ public partial class AreYouSurePopup : ContentView, INotifyPropertyChanged
         Hide();
     }
 
-    public void Show(InstanceModel context)
+    public void Setup(InstanceModel context)
     {
-        this.IsEnabled = true;
-        this.IsVisible = true;
-        this.InputTransparent = false;
         toDelete = context;
         DeletionInfo.Text = $"{toDelete.Name} will be deleted forever!";
-    }
-
-    public void Hide()
-    {
-        this.IsEnabled = false;
-        this.IsVisible = false;
-        this.InputTransparent = true;
     }
 }

@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 
 namespace MCOCSrv.Resources.Popups;
 
-public partial class PlayerListPopup : ContentView
+public partial class PlayerListPopup : PopupBase
 {
     public ObservableCollection<PlayerData> Players { get; set; } = new();
-    private ConsoleTemplate? console;
+    private ConsoleTemplate console;
     public PlayerListPopup()
     {
         InitializeComponent();
@@ -17,7 +17,7 @@ public partial class PlayerListPopup : ContentView
     // Beggining of player list lifecycle - assign a console to the popup on Console lifecycle start.
     public void Initialize(ConsoleTemplate console)
     {
-        this.console = console;
+        this.console = console ?? throw new NullReferenceException("Console was null in playerlist");
         RequestRefresh();
         BindingContext = this;
     }
@@ -25,16 +25,14 @@ public partial class PlayerListPopup : ContentView
     //Open popup
     public void OnOpen()
     {
-        this.IsVisible = true;
-        this.InputTransparent = false;
+        Show();
         RequestRefresh();
     }
 
     //Close popup
-    private void OnClose(object? sender, EventArgs e)
+    private async void OnClose(object? sender, EventArgs e)
     {
-        this.InputTransparent = true;
-        this.IsVisible = false;
+        await Hide();
     }
 
     // Request reload from console and update the player list.
@@ -61,7 +59,7 @@ public partial class PlayerListPopup : ContentView
     {
         if (sender is Button button && button.BindingContext is PlayerData player)
         {
-            console?.RequestPlayerCommand(player, "kick");
+            console.RequestPlayerCommand(player, "kick");
             await Task.Delay(500);
             RequestRefresh();
         }
@@ -71,7 +69,7 @@ public partial class PlayerListPopup : ContentView
     {
         if (sender is Button button && button.BindingContext is PlayerData player)
         {
-            console?.RequestPlayerCommand(player, "ban");
+            console.RequestPlayerCommand(player, "ban");
             await Task.Delay(500);
             RequestRefresh();
         }
@@ -81,7 +79,7 @@ public partial class PlayerListPopup : ContentView
     {
         if (sender is Button button && button.BindingContext is PlayerData player)
         {
-            console?.RequestPlayerCommand(player, "op");
+            console.RequestPlayerCommand(player, "op");
         }
     }
     #endregion

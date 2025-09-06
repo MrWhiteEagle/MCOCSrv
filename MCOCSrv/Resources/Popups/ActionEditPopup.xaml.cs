@@ -3,7 +3,7 @@ using MCOCSrv.Resources.Models;
 
 namespace MCOCSrv.Resources.Popups;
 
-public partial class ActionEditPopup : ContentView
+public partial class ActionEditPopup : PopupBase
 {
     ManageQuickActionsPopup? context;
     public ActionEditPopup()
@@ -12,7 +12,7 @@ public partial class ActionEditPopup : ContentView
     }
 
     //HANDLE SAVE AND CANCEL
-    private void SaveButtonClicked(object sender, EventArgs e)
+    private async void SaveButtonClicked(object sender, EventArgs e)
     {
         if (BindingContext is QuickAction && context != null)
         {
@@ -23,16 +23,16 @@ public partial class ActionEditPopup : ContentView
             else
             {
                 context.EditActionCallback((QuickAction)BindingContext, new QuickAction(ActionNameField.Text, ActionCommandField.Text));
+                await Animations.Animations.FadeOutAnimation(this);
                 this.IsVisible = false;
                 this.InputTransparent = true;
             }
         }
     }
 
-    private void CancelButtonClicked(object sender, EventArgs e)
+    private async void CancelButtonClicked(object sender, EventArgs e)
     {
-        this.IsVisible = false;
-        this.InputTransparent = true;
+        await Hide();
         ActionNameField.Text = string.Empty;
         ActionCommandField.Text = string.Empty;
     }
@@ -44,7 +44,13 @@ public partial class ActionEditPopup : ContentView
         BindingContext = action;
         ActionNameField.Text = action.Name;
         ActionCommandField.Text = action.Command;
-        this.IsVisible = true;
-        this.InputTransparent = false;
+        Show();
+        AttachAnimations();
+    }
+
+    private void AttachAnimations()
+    {
+        Animations.Animations.AttachHoverButtonAnimation(CancelButton);
+        Animations.Animations.AttachHoverButtonAnimation(SaveButton);
     }
 }

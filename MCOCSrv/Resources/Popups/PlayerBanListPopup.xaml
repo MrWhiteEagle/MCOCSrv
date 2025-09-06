@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<popups:PopupBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:popups="clr-namespace:MCOCSrv.Resources.Popups"
              x:Class="MCOCSrv.Resources.Popups.PlayerBanListPopup"
              IsVisible="False"
              InputTransparent="True"
              VerticalOptions="Center"
              HorizontalOptions="Center">
-    <Border Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" MaximumWidthRequest="500" BackgroundColor="{StaticResource Gray900}" Padding="10">
-        <Grid>
-        <VerticalStackLayout Spacing="10">
-            <Label Text="Player List"
+    <Grid Style="{StaticResource PopupOverlay}">
+        <Border MinimumWidthRequest="500" Style="{StaticResource PopupBorder}">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Player List"
                    Style="{StaticResource TitleHeadLine}"/>
-            <ScrollView HeightRequest="400">
+                <ScrollView HeightRequest="400">
                     <VerticalStackLayout x:Name="PlayerList" BindableLayout.ItemsSource="{Binding BannedPlayers}">
                         <Label x:Name="EmptyPlaceholder" Text="No players Online" Style="{StaticResource SettingsData}" BackgroundColor="{StaticResource Gray950}"/>
-                            <BindableLayout.ItemTemplate>
+                        <BindableLayout.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto" BackgroundColor="{StaticResource Gray950}" ColumnSpacing="5">
                                     <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" Style="{StaticResource SettingsData}"/>
@@ -24,9 +25,9 @@
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                     </VerticalStackLayout>
-            </ScrollView>
-            <Button Text="Close" Style="{StaticResource CancelButton}" WidthRequest="100" Clicked="OnClose"/>
-        </VerticalStackLayout>
-        </Grid>
-    </Border>
-</ContentView>
+                </ScrollView>
+                <Button Text="Close" Style="{StaticResource CancelButton}" WidthRequest="100" Clicked="OnClose"/>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</popups:PopupBase>

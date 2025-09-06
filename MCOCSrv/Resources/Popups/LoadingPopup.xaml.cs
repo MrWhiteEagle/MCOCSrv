@@ -2,14 +2,14 @@ using MCOCSrv.Resources.Classes;
 
 namespace MCOCSrv.Resources.Popups;
 
-public partial class LoadingPopup : ContentView
+public partial class LoadingPopup : PopupBase
 {
     public LoadingPopup()
     {
         InitializeComponent();
     }
 
-    private async void OnLog(object sender, string msg)
+    private async void OnLog(object? sender, string msg)
     {
         await MainThread.InvokeOnMainThreadAsync(() =>
         {
@@ -19,12 +19,12 @@ public partial class LoadingPopup : ContentView
         });
     }
 
-    private void Loaded(object sender, EventArgs a)
+    private new void Loaded(object sender, EventArgs a)
     {
         UILogger.LogReceived += OnLog;
     }
 
-    private void Unloaded(object sender, EventArgs a)
+    private new void Unloaded(object sender, EventArgs a)
     {
         UILogger.LogReceived -= OnLog;
     }

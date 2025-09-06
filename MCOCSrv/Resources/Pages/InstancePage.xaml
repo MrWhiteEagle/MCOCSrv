@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:popups="clr-namespace:MCOCSrv.Resources.Popups"
              xmlns:models="clr-namespace:MCOCSrv.Resources.Models"
              xmlns:converter="clr-namespace:MCOCSrv.Resources.Classes"
@@ -12,21 +13,22 @@
             <converter:TypeToImageConverter x:Key="TypeToImageConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
-    <Grid>
+    <Grid BackgroundColor="{StaticResource BackgroundDark}">
         <Grid RowDefinitions="Auto, *" Padding="10">
-            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Padding="20" ColumnSpacing="10">
-                <Label
-                Text="INSTALLED INSTANCES"
-                Style="{StaticResource TitleHeadLine}"
-                HorizontalOptions="Start"
-                />
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" RowDefinitions="Auto" Padding="20" ColumnSpacing="10">
+                <Grid Grid.Column="0" ColumnDefinitions="Auto, Auto" ColumnSpacing="10">
+                    <Label Grid.Column="0" Text="INSTALLED INSTANCES" Style="{StaticResource TitleHeadLine}" HorizontalOptions="Start"/>
+                    <Image Grid.Column="1" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.CubeOutline}, Color={StaticResource Primary}}" VerticalOptions="Center" HorizontalOptions="Center"/>
+                </Grid>
                 <Button
-                Text="Add new"
-                SemanticProperties.Hint="Adds a new instance"
-                HorizontalOptions="End"
-                Style="{StaticResource AddNewButton}"
-                Clicked="onCreateInstance"
-                />
+                    Grid.Column="1"
+                    x:Name="AddNewInstanceButton"
+                    ImageSource="{FontImageSource FontFamily=FA, Glyph={x:Static models:FAIconsSolid.Plus}, Color=White, Size=18}"
+                    Text="Create"
+                    SemanticProperties.Hint="Adds a new instance"
+                    HorizontalOptions="End"
+                    Style="{StaticResource AddNewButton}"
+                    Clicked="onCreateInstance"/>
             </Grid>
             <Border Grid.Row="1" Stroke="{StaticResource PrimaryDark}" Padding="5" StrokeThickness="2">
                 <Border.StrokeShape>
@@ -47,9 +49,9 @@
                                     <Label Grid.Column="1" Text="{Binding Name}" Style="{StaticResource InstanceData}"/>
                                     <Label Grid.Column="2" Text="{Binding Type}" Style="{StaticResource InstanceData}"/>
                                     <Label Grid.Column="3" Text="{Binding Version}" Style="{StaticResource InstanceData}"/>
-                                    <buttons:StartButton x:Name="StartBtn" Grid.Column="4" WidthRequest="50" StartRequested="OnStartRequest" StopRequested="OnStopRequest"/>
-                                    <buttons:SettingButton x:Name="SettingsBtn" Grid.Column="5" WidthRequest="50"/>
-                                    <buttons:DeleteButton x:Name="DeleteBtn" Grid.Column="6" WidthRequest="50" DeleteRequested="OnDeleteRequest"/>
+                                    <buttons:StartButton x:Name="StartBtn" Grid.Column="4" WidthRequest="50" StartRequested="OnStartRequest" StopRequested="OnStopRequest" Loaded="InstanceListButtonLoaded"/>
+                                    <buttons:SettingButton x:Name="SettingsBtn" Grid.Column="5" WidthRequest="50" Loaded="InstanceListButtonLoaded"/>
+                                    <buttons:DeleteButton x:Name="DeleteBtn" Grid.Column="6" WidthRequest="50" DeleteRequested="OnDeleteRequest" Loaded="InstanceListButtonLoaded"/>
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -59,9 +61,7 @@
         </Grid>
         <popups:CreateInstanceRequestPopup
             x:Name="CreateInstancePopup"
-            IsVisible="False"
-            VerticalOptions="Center"
-            HorizontalOptions="Center"/>
-        <popups:AreYouSurePopup x:Name="DeletionConfirmationPopup" VerticalOptions="Center" HorizontalOptions="Center"/>
+            IsVisible="False"/>
+        <popups:AreYouSurePopup x:Name="DeletionConfirmationPopup"/>
     </Grid>
 </ContentPage>

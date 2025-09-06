@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace MCOCSrv.Resources.Popups;
 
-public partial class PlayerBanListPopup : ContentView
+public partial class PlayerBanListPopup : PopupBase
 {
     public ObservableCollection<PlayerData> BannedPlayers { get; set; } = new();
     private ConsoleTemplate? console;
@@ -25,25 +25,30 @@ public partial class PlayerBanListPopup : ContentView
     //Open popup
     public void OnOpen()
     {
-        this.IsVisible = true;
-        this.InputTransparent = false;
+        Show();
         RequestRefresh();
     }
 
     //Close popup
-    private void OnClose(object? sender, EventArgs e)
+    private async void OnClose(object? sender, EventArgs e)
     {
-        this.InputTransparent = true;
-        this.IsVisible = false;
+        await Hide();
     }
 
     // Request reload from console and update the player list.
     public void RequestRefresh()
     {
-        BannedPlayers.Clear();
-        foreach (var player in console.BannedPlayers)
+        if (console != null)
         {
-            BannedPlayers.Add(player);
+            BannedPlayers.Clear();
+            foreach (var player in console.BannedPlayers)
+            {
+                BannedPlayers.Add(player);
+            }
+        }
+        else
+        {
+            throw new NullReferenceException("Console not initialized in PlayerBanListPopup");
         }
     }
 
@@ -52,9 +57,13 @@ public partial class PlayerBanListPopup : ContentView
 
     private void PardonPlayerRequest(object? sender, EventArgs e)
     {
-        if (sender is Button button && button.BindingContext is PlayerData player)
+        if (sender is Button button && button.BindingContext is PlayerData player && console != null)
         {
-            console?.RequestPlayerCommand(player, "pardon");
+            console.RequestPlayerCommand(player, "pardon");
+        }
+        else if (console == null)
+        {
+            throw new NullReferenceException("Console not initialized in PlayerBanListPopup");
         }
     }
     #endregion

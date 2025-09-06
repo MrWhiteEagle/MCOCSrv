@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<popups:PopupBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:popups="clr-namespace:MCOCSrv.Resources.Popups"
              x:Class="MCOCSrv.Resources.Popups.PlayerOpListPopup"
              IsVisible="False"
              InputTransparent="True"
              VerticalOptions="Center"
              HorizontalOptions="Center">
-    <Border Stroke="{StaticResource PrimaryDark}" StrokeShape="RoundRectangle 10" MaximumWidthRequest="500" BackgroundColor="{StaticResource Gray900}" Padding="10">
-        <Grid>
-        <VerticalStackLayout Spacing="10">
+    <Grid Style="{StaticResource PopupOverlay}">
+        <Border MinimumWidthRequest="500" Style="{StaticResource PopupBorder}">
+            <VerticalStackLayout Spacing="10">
                 <Label Text="Player List"
                    Style="{StaticResource TitleHeadLine}"/>
                 <ScrollView HeightRequest="400">
@@ -23,9 +24,9 @@
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                     </VerticalStackLayout>
-            </ScrollView>
-            <Button Text="Close" Style="{StaticResource CancelButton}" WidthRequest="100" Clicked="OnClose"/>
-        </VerticalStackLayout>
-        </Grid>
-    </Border>
-</ContentView>
+                </ScrollView>
+                <Button Text="Close" Style="{StaticResource CancelButton}" WidthRequest="100" Clicked="OnClose"/>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</popups:PopupBase>

@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<local:PopupBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MCOCSrv.Resources.Popups.AreYouSurePopup"
-             IsEnabled="False"
-             IsVisible="False"
-             InputTransparent="True">
-    <Border Stroke="{StaticResource PrimaryDark}" BackgroundColor="{StaticResource Gray900}" Padding="40, 20" StrokeShape="RoundRectangle 10">
-        <Grid RowDefinitions="*, *, Auto" ColumnDefinitions="*, *" RowSpacing="30" ColumnSpacing="20">
-            <Label
+             xmlns:local="clr-namespace:MCOCSrv.Resources.Popups"
+             x:Class="MCOCSrv.Resources.Popups.AreYouSurePopup">
+    <Grid Style="{StaticResource PopupOverlay}">
+        <Border Style="{StaticResource PopupBorder}">
+            <Grid RowDefinitions="*, *, Auto" ColumnDefinitions="*, *" RowSpacing="30" ColumnSpacing="20">
+                <Label
             Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-            Text="Are you sure?"
+            Text="DELETION CONFIRMATION"
             Style="{StaticResource TitleHeadLine}"
             FontSize="24"
             VerticalOptions="Center" 
             HorizontalOptions="Center"/>
-            <Label x:Name="DeletionInfo" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalOptions="Center"/>
-            <Button Grid.Row="2" Grid.Column="0" x:Name="Cancel_button" Style="{StaticResource CancelButton}" Text="No" Clicked="Cancel_Button_Clicked"/>
-            <Button Grid.Row="2" Grid.Column="1" x:Name="Confirm_button" Style="{StaticResource AddNewButton}" Text="Yes" Clicked="Confirm_Button_Clicked"/>
-        </Grid>
-    </Border>
-</ContentView>
+                <Label x:Name="DeletionInfo" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalOptions="Center"/>
+                <Button Grid.Row="2" Grid.Column="0" x:Name="Cancel_button" Style="{StaticResource CancelButton}" Text="No" Clicked="Cancel_Button_Clicked"/>
+                <Button Grid.Row="2" Grid.Column="1" x:Name="Confirm_button" Style="{StaticResource AddNewButton}" Text="Yes" Clicked="Confirm_Button_Clicked"/>
+            </Grid>
+        </Border>
+    </Grid>
+</local:PopupBase>

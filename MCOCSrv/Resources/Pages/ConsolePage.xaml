@@ -5,26 +5,26 @@
              x:Class="MCOCSrv.ConsolePage"
              Shell.NavBarIsVisible="False">
     <Grid RowDefinitions="Auto, *">
-        <CollectionView x:Name="InstanceTabList" Grid.Row="0" ItemsSource="{Binding Tabs}" BackgroundColor="{StaticResource Black}" SelectedItem="{Binding CurrentConsole}" SelectionChanged="Tabs_Changed" SelectionMode="Single">
+        <CollectionView x:Name="InstanceTabList" Grid.Row="0" ItemsSource="{Binding Tabs}" BackgroundColor="{StaticResource BackgroundDarkerThanDark}" SelectedItem="{Binding CurrentConsole}" SelectionChanged="Tabs_Changed" SelectionMode="Single">
             <CollectionView.ItemsLayout>
-                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="1"/>
+                <LinearItemsLayout Orientation="Horizontal"/>
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Border Stroke="{StaticResource Transparent}" HeightRequest="30" Padding="15, 0" StrokeShape="RoundRectangle 10">
+                    <Border Stroke="{StaticResource Transparent}" HeightRequest="30" Padding="15, 0" StrokeShape="RoundRectangle 7" BackgroundColor="{StaticResource BackgroundDarkerThanDark}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroupList>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal"/>
                                     <VisualState x:Name="Selected">
                                         <VisualState.Setters>
-                                            <Setter Property="Stroke" Value="{StaticResource Tertiary}"/>
+                                            <Setter Property="Stroke" Value="{StaticResource Secondary}"/>
                                         </VisualState.Setters>
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateGroupList>
                         </VisualStateManager.VisualStateGroups>
-                        <Label Grid.Column="0" Text="{Binding Name}" LineBreakMode="NoWrap" FontSize="12" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" HorizontalOptions="Start"/>
+                        <Label Grid.Column="0" Text="{Binding Name}" LineBreakMode="NoWrap" FontSize="12" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" HorizontalOptions="Center"/>
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
