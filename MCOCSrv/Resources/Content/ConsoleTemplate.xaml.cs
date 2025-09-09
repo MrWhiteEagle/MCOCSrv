@@ -62,6 +62,8 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     public ICommand RestartServer { get; set; }
     public ICommand ForceSave { get; set; }
     public ICommand ForceBackup { get; set; }
+    public ICommand SchedulerOpen { get; set; }
+    public ICommand RestoreBackup { get; set; }
 
 
     public ConsoleTemplate()
@@ -72,10 +74,14 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         RestartServer = new Command(async () => await ExecuteRestartServer());
         ForceSave = new Command(() => ExecuteForceSave());
         ForceBackup = new Command(async () => await ExecuteForceBackup());
+        SchedulerOpen = new Command(() => { UILogger.LogUI("Scheduler Pressed"); });
+        RestoreBackup = new Command(() => { UILogger.LogUI("Restore Pressed"); });
 
         InitializeComponent();
         BindingContext = this;
-        manager = App.Current?.Handler?.GetService<InstanceManager>();
+        manager = App.Current?.Handler?.GetService<InstanceManager>() ?? throw new NullReferenceException("Couldnt fetch manager on ConsoleTemplate");
+
+        //SetActionButtons();
         AttachButtonAnimations();
     }
 
@@ -222,7 +228,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     #region Actions Handlers
     private void ExecuteStartServer()
     {
-        if (Console != null && !Console.IsRunning)
+        if (!Console.IsRunning)
         {
             UILogger.LogUI($"[CONSOLE {Name}] Requesting Server Start...");
             Console.StartServer();
@@ -237,7 +243,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     private void ExecuteStopServer()
     {
 
-        if (Console != null && Console.IsRunning)
+        if (Console.IsRunning)
         {
             UILogger.LogUI($"[CONSOLE {Name}] Requesting Server Stop...");
             Console.StopServer();
@@ -261,7 +267,7 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
 
     private void ExecuteForceSave()
     {
-        if (Console != null && Console.IsRunning)
+        if (Console.IsRunning)
         {
             UILogger.LogUI($"[CONSOLE {Name}] Requesting save...");
             Console.SendCommand("save-all flush");
@@ -283,14 +289,16 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     // Handle force backup - pick world folder and zip it to backups folder
     private async Task ExecuteForceBackup()
     {
-        if (Console != null)
+        var world = await FolderPicker.PickAsync(Console.GetWorkingPath());
+        if (world.IsSuccessful && world.Folder != null)
         {
-            var world = await FolderPicker.PickAsync(Console.GetWorkingPath());
-            if (world.IsSuccessful && world.Folder != null)
-            {
-                await Console.ForceServerBackup(world.Folder.Name);
-            }
+            await Console.ForceServerBackup(world.Folder.Name);
         }
+    }
+
+    private void SetActionButtons()
+    {
+        RestoreButton.Command = RestoreBackup;
     }
     #endregion
 
@@ -298,11 +306,10 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     #region QuickAction
     private void ExecuteQuickAction(object sender, EventArgs e)
     {
-        if (Console != null)
-            if (sender is Microsoft.Maui.Controls.Button button && button.BindingContext is QuickAction action)
-            {
-                Console.SendCommand(action.Command);
-            }
+        if (sender is Microsoft.Maui.Controls.Button button && button.BindingContext is QuickAction action)
+        {
+            Console.SendCommand(action.Command);
+        }
     }
     // OPEN MANAGE QUICK ACTIONS POPUP
     private void ManageQuickActionsBtn_Clicked(object sender, EventArgs e)
@@ -433,19 +440,19 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
         bool isRunning = Console.IsRunning;
         if (isRunning)
         {
-            StartStopText.Text = "Stop";
-            StartStopImageSource.Glyph = MDIcons.CheckboxBlankOutline;
-            StartStopImageSource.Color = Colors.Red;
-            Start_Stop_Button.Command = StopServer;
+            StartButton.ActionName = "Stop";
+            StartButton.Glyph = MDIcons.CheckboxBlankOutline;
+            StartButton.GlyphColor = Colors.Red;
+            StartButton.Command = StopServer;
             Status_Blimp.Fill = new SolidColorBrush(Colors.LimeGreen);
             Status_Text.Text = "Running";
         }
         else
         {
-            StartStopText.Text = "Start";
-            StartStopImageSource.Glyph = MDIcons.PlayOutline;
-            StartStopImageSource.Color = Colors.LawnGreen;
-            Start_Stop_Button.Command = StartServer;
+            StartButton.ActionName = "Start";
+            StartButton.Glyph = MDIcons.PlayOutline;
+            StartButton.GlyphColor = Colors.LawnGreen;
+            StartButton.Command = StartServer;
             Status_Blimp.Fill = new SolidColorBrush(Colors.Red);
             Status_Text.Text = "Stopped";
         }
@@ -516,11 +523,12 @@ public partial class ConsoleTemplate : ContentView, INotifyPropertyChanged
     #region Animation
     private void AttachButtonAnimations()
     {
-        foreach (var item in ConsoleActions.Children.OfType<Layout>())
-        {
-            Animations.Animations.AttachHoverAnimationConsoleActions(item);
-        }
         AttachButtonAnimationsQuickActions();
+        foreach (var item in ConsoleSidePanel.Children.OfType<Button>())
+        {
+            Animations.Animations.AttachHoverButtonAnimation(item);
+        }
+        Animations.Animations.AttachHoverButtonAnimation(ManageQuickActionsBtn);
     }
 
     private void AttachButtonAnimationsQuickActions()

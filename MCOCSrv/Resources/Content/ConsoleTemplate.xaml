@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:popups="clr-namespace:MCOCSrv.Resources.Popups"
              xmlns:models="clr-namespace:MCOCSrv.Resources.Models"
+             xmlns:content="clr-namespace:MCOCSrv.Resources.Content"
              x:Class="MCOCSrv.Resources.Content.ConsoleTemplate">
 
     <Grid>
@@ -49,65 +50,13 @@
 
                     <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="1" Stroke="{StaticResource Gray950}" BackgroundColor="{StaticResource Gray950}" StrokeShape="RoundRectangle 5">
                         <FlexLayout x:Name="ConsoleActions" Direction="Column" Wrap="NoWrap" AlignItems="Stretch">
-                            <HorizontalStackLayout x:Name="StartStopButton" HeightRequest="75" Padding="10,0" ToolTipProperties.Text="Start/Stop the server" HorizontalOptions="Fill" Spacing="10">
-                                <HorizontalStackLayout.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Start_Stop_Button"/>
-                                </HorizontalStackLayout.GestureRecognizers>
-                                <Image x:Name="Start_Stop_Image" Style="{StaticResource ImageIcon}">
-                                    <Image.Source>
-                                        <FontImageSource x:Name="StartStopImageSource" FontFamily="MDI"/>
-                                    </Image.Source>
-                                </Image>
-                                <Label x:Name="StartStopText" Style="{StaticResource RegularWhite}" Text="Start" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                            </HorizontalStackLayout>
-                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
-                            <HorizontalStackLayout x:Name="RestartButton" HeightRequest="75" Padding="10,0" ToolTipProperties.Text="Restart the server" HorizontalOptions="Fill" Spacing="10">
-                                <HorizontalStackLayout.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Restart_Button" Command="{Binding RestartServer}"/>
-                                </HorizontalStackLayout.GestureRecognizers>
-                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.Cached}, Color={StaticResource SecondaryDark}}"/>
-                                <Label Style="{StaticResource RegularWhite}" Text="Restart" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                            </HorizontalStackLayout>
-                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
-                            <HorizontalStackLayout x:Name="WorldButton" HeightRequest="75" Padding="10,0" ToolTipProperties.Text="Change Active World" HorizontalOptions="Fill" Spacing="10">
-                                <HorizontalStackLayout.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="World_Button"/>
-                                </HorizontalStackLayout.GestureRecognizers>
-                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.Earth}, Color=LightGreen}"/>
-                                <Label Style="{StaticResource RegularWhite}" Text="World" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                            </HorizontalStackLayout>
-                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
-                            <HorizontalStackLayout x:Name="BackupButton" HeightRequest="75" Padding="10,0" HorizontalOptions="Fill" Spacing="10" ToolTipProperties.Text="Backup the server, WARNING! will stop the server from saving any progress for the durection of the backup procedure! May not work properly if server is running, always try to execute if server is stopped.">
-                                <HorizontalStackLayout.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Backup_Button" Command="{Binding ForceBackup}"/>
-                                </HorizontalStackLayout.GestureRecognizers>
-                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.FileDownloadOutline}, Color={StaticResource Primary}}"/>
-                                <Label Style="{StaticResource RegularWhite}" Text="Backup" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                            </HorizontalStackLayout>
-                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
-                            <HorizontalStackLayout x:Name="FolderButton" HeightRequest="75" Padding="10,0" ToolTipProperties.Text="Browse Server Files" HorizontalOptions="Fill" Spacing="10">
-                                <HorizontalStackLayout.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Folder_Button"/>
-                                </HorizontalStackLayout.GestureRecognizers>
-                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.FolderOpenOutline}, Color={StaticResource Primary}}"/>
-                                <Label Style="{StaticResource RegularWhite}" Text="Browse" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
-                            </HorizontalStackLayout>
-                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
-                            <HorizontalStackLayout x:Name="RestoreButton" HeightRequest="75" Padding="10,0" ToolTipProperties.Text="Restore Backup" HorizontalOptions="Fill" Spacing="10">
-                                <HorizontalStackLayout.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Restore_Backup_Button"/>
-                                </HorizontalStackLayout.GestureRecognizers>
-                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.Restore}, Color={StaticResource Primary}}"/>
-                                <Label Style="{StaticResource RegularWhite}" Text="Restore"/>
-                            </HorizontalStackLayout>
-                            <BoxView Margin="10,0" HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="{StaticResource BackgroundLight}"/>
-                            <HorizontalStackLayout x:Name="SchedulerButton" HeightRequest="75" Padding="10,0" HorizontalOptions="Fill" Spacing="10" ToolTipProperties.Text="Scheduler is a utility used to schedule events to happen at a given time or continuously over windows of time.">
-                                <HorizontalStackLayout.GestureRecognizers>
-                                    <TapGestureRecognizer x:Name="Scheduler_Button"/>
-                                </HorizontalStackLayout.GestureRecognizers>
-                                <Image Style="{StaticResource ImageIcon}" Source="{FontImageSource FontFamily=MDI, Glyph={x:Static models:MDIcons.TimerOutline}, Color={StaticResource Primary}}"/>
-                                <Label Grid.Row="0" Style="{StaticResource RegularWhite}" Text="Scheduler"/>
-                            </HorizontalStackLayout>
+                            <content:ConsoleActionButton x:Name="StartButton" ActionName="Start" Command="{Binding StartServer}" Glyph="{x:Static models:MDIcons.PlayCircleOutline}" GlyphColor="{StaticResource Primary}"/>
+                            <content:ConsoleActionButton x:Name="RestartButton" ActionName="Restart" Command="{Binding RestartServer}" Glyph="{x:Static models:MDIcons.Cached}" GlyphColor="{StaticResource SecondaryDark}"/>
+                            <content:ConsoleActionButton x:Name="WorldButton" ActionName="World" Glyph="{x:Static models:MDIcons.Earth}" GlyphColor="ForestGreen"/>
+                            <content:ConsoleActionButton x:Name="ForceBackupButton" ActionName="Backup" Glyph="{x:Static models:MDIcons.FileDownloadOutline}" GlyphColor="{StaticResource Primary}"/>
+                            <content:ConsoleActionButton x:Name="OpenFolderButton" ActionName="Files" Glyph="{x:Static models:MDIcons.FolderOpenOutline}" GlyphColor="{StaticResource Primary}"/>
+                            <content:ConsoleActionButton x:Name="RestoreButton" ActionName="Restore" Command="{Binding RestoreBackup}" Glyph="{x:Static models:MDIcons.Restore}" GlyphColor="{StaticResource Primary}"/>
+                            <content:ConsoleActionButton x:Name="SchedulerButton" ActionName="Scheduler" Command="{Binding SchedulerOpen}" Glyph="{x:Static models:MDIcons.TimerOutline}" GlyphColor="{StaticResource Primary}"/>
                         </FlexLayout>
                     </Border>
 
@@ -115,7 +64,7 @@
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="7"/>
                         </Border.StrokeShape>
-                        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*,*" Padding="10" RowSpacing="6" ColumnSpacing="6">
+                        <Grid x:Name="ConsoleSidePanel" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*,*" Padding="10" RowSpacing="6" ColumnSpacing="6">
                             <Button x:Name="ConfigButton" Grid.Row="0" Grid.Column="0" Text="Config" Clicked="OpenConfigRequest" Style="{StaticResource CustomButton}"/>
                             <Button x:Name="ShowBannedPlayersButton" Grid.Row="0" Grid.Column="1" Text="Ban List" Clicked="HandleShowPlayerList" Style="{StaticResource CustomButton}"/>
                             <Button x:Name="ForceReloadButton" Grid.Row="1" Grid.Column="0" Text="Force reload" Style="{StaticResource CustomButton}"/>

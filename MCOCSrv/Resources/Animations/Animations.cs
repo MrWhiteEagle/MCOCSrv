@@ -18,17 +18,15 @@ namespace MCOCSrv.Resources.Animations
 
         public static void AttachHoverAnimationConsoleActions(object? obj)
         {
-            if (obj is View v && !v.GestureRecognizers.OfType<PointerGestureRecognizer>().Any() && v is HorizontalStackLayout layout)
+            if (obj is View v && !v.GestureRecognizers.OfType<PointerGestureRecognizer>().Any() && v is Layout layout)
             {
                 foreach (var item in layout.Children.OfType<View>())
                 {
                     if (item is Label label)
                     {
                         var recognizer = new PointerGestureRecognizer();
-                        label.IsVisible = false;
-                        label.IsEnabled = false;
-                        recognizer.PointerEntered += HoverConsoleActionAnimation;
-                        recognizer.PointerExited += HoverConsoleActionAnimationRev;
+                        recognizer.PointerEntered += ConsoleButtonAnimation;
+                        recognizer.PointerExited += ConsoleButtonAnimationRev;
                         layout.GestureRecognizers.Add(recognizer);
                     }
                 }
@@ -69,40 +67,42 @@ namespace MCOCSrv.Resources.Animations
             }
         }
 
-        public static async void HoverConsoleActionAnimation(object? o, PointerEventArgs e)
+        public static async void ConsoleButtonAnimation(object? o, PointerEventArgs e)
         {
-            if (o is HorizontalStackLayout layout)
+            if (o is AbsoluteLayout layout)
             {
-                foreach (var child in layout.Children.OfType<Label>())
+                var Lwidth = layout.Width;
+                foreach (var child in layout.Children.OfType<VisualElement>())
                 {
-                    child.IsVisible = true;
-                    child.IsEnabled = true;
-                    Task task = child.FadeTo(1, 200, Easing.Linear);
-                    await task;
+                    Microsoft.Maui.Controls.ViewExtensions.CancelAnimations(child);
                 }
                 foreach (var child in layout.Children.OfType<Image>())
                 {
-                    //Task task = child.TranslateTo(child.TranslationX + child.TranslationX, child.TranslationY, 200, Easing.Linear);
-                    //await task;
+                    await child.TranslateTo((child.Width - Lwidth) / 2 + child.Width / 2, 0, 200, Easing.SinIn);
+                }
+                foreach (var child in layout.Children.OfType<Label>())
+                {
+                    await child.FadeTo(1, 200, Easing.SinIn);
                 }
             }
         }
 
-        public static async void HoverConsoleActionAnimationRev(object? o, PointerEventArgs e)
+        public static async void ConsoleButtonAnimationRev(object? o, PointerEventArgs e)
         {
-            if (o is HorizontalStackLayout layout)
+            if (o is AbsoluteLayout layout)
             {
+                var Lwidth = layout.Width;
+                foreach (var child in layout.Children.OfType<VisualElement>())
+                {
+                    Microsoft.Maui.Controls.ViewExtensions.CancelAnimations(child);
+                }
                 foreach (var child in layout.Children.OfType<Label>())
                 {
-                    Task task = child.FadeTo(0, 200, Easing.Linear);
-                    await task;
-                    child.IsVisible = false;
-                    child.IsEnabled = false;
+                    await child.FadeTo(0, 200, Easing.SinOut);
                 }
                 foreach (var child in layout.Children.OfType<Image>())
                 {
-                    //Task task = child.TranslateTo(child.TranslationX - 10, child.TranslationY, 200, Easing.Linear);
-                    //await task;
+                    await child.TranslateTo(0, 0, 200, Easing.SinOut);
                 }
             }
         }
